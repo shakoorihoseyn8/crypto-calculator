@@ -619,9 +619,93 @@
      <section id="journalView" class="card" style="display: none;">
       <h2 class="card-title">ژورنال معاملات</h2>
 
-      <p style="color: var(--muted); line-height: 2; text-align: center;">
+          <p style="color: var(--muted); line-height: 2; text-align: center;">
         هنوز معامله‌ای در ژورنال ثبت نشده است.
       </p>
+
+      <div style="margin-top: 18px;">
+        <label
+          for="entryScreenshotInput"
+          style="
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 48px;
+            padding: 10px;
+            border: 1px dashed var(--blue);
+            border-radius: 11px;
+            background: var(--input);
+            color: var(--muted);
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+          "
+        >
+          افزودن اسکرین‌شات نقطه ورود
+        </label>
+
+        <input
+          id="entryScreenshotInput"
+          type="file"
+          accept="image/*"
+          style="display: none;"
+          onchange="previewEntryScreenshot(event)"
+        >
+
+        <p
+          id="entryScreenshotName"
+          style="
+            margin: 10px 0 0;
+            color: var(--muted);
+            text-align: center;
+            font-size: 12px;
+          "
+        >
+          هنوز تصویری انتخاب نشده است.
+        </p>
+
+        <div
+          id="entryScreenshotPreviewBox"
+          style="
+            display: none;
+            margin-top: 14px;
+            padding: 8px;
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            background: var(--input);
+          "
+        >
+          <img
+            id="entryScreenshotPreview"
+            alt="پیش‌نمایش اسکرین‌شات ورود"
+            style="
+              display: block;
+              width: 100%;
+              max-height: 420px;
+              object-fit: contain;
+              border-radius: 8px;
+            "
+          >
+
+          <button
+            type="button"
+            onclick="removeEntryScreenshot()"
+            style="
+              width: 100%;
+              min-height: 42px;
+              margin-top: 10px;
+              border: 1px solid var(--red);
+              border-radius: 9px;
+              background: rgba(239, 51, 64, 0.12);
+              color: #ffd6da;
+              font-family: inherit;
+              cursor: pointer;
+            "
+          >
+            حذف تصویر
+          </button>
+        </div>
+      </div>
     </section>
   </main>
 
@@ -948,7 +1032,74 @@
       }
     }
 
-       function showCalculator() {
+          let entryScreenshotObjectUrl = null;
+
+    function previewEntryScreenshot(event) {
+      const input = event.target;
+      const file = input.files && input.files[0];
+
+      if (!file) {
+        return;
+      }
+
+      if (!file.type.startsWith("image/")) {
+        alert("فایل انتخاب‌شده باید تصویر باشد.");
+        input.value = "";
+        return;
+      }
+
+      const maximumSize = 10 * 1024 * 1024;
+
+      if (file.size > maximumSize) {
+        alert("حجم تصویر نباید بیشتر از ۱۰ مگابایت باشد.");
+        input.value = "";
+        return;
+      }
+
+      if (entryScreenshotObjectUrl) {
+        URL.revokeObjectURL(entryScreenshotObjectUrl);
+      }
+
+      entryScreenshotObjectUrl = URL.createObjectURL(file);
+
+      const preview =
+        document.getElementById("entryScreenshotPreview");
+
+      const previewBox =
+        document.getElementById("entryScreenshotPreviewBox");
+
+      const fileName =
+        document.getElementById("entryScreenshotName");
+
+      preview.src = entryScreenshotObjectUrl;
+      previewBox.style.display = "block";
+      fileName.textContent = file.name;
+    }
+
+    function removeEntryScreenshot() {
+      const input =
+        document.getElementById("entryScreenshotInput");
+
+      const preview =
+        document.getElementById("entryScreenshotPreview");
+
+      const previewBox =
+        document.getElementById("entryScreenshotPreviewBox");
+
+      const fileName =
+        document.getElementById("entryScreenshotName");
+
+      if (entryScreenshotObjectUrl) {
+        URL.revokeObjectURL(entryScreenshotObjectUrl);
+        entryScreenshotObjectUrl = null;
+      }
+
+      input.value = "";
+      preview.removeAttribute("src");
+      previewBox.style.display = "none";
+      fileName.textContent = "هنوز تصویری انتخاب نشده است.";
+    }
+    function showCalculator() {
       const cards = document.querySelectorAll(".app > .card");
 
       cards.forEach(function (card) {
