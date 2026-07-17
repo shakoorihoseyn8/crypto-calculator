@@ -1428,7 +1428,12 @@
         await renderJournalTrades();
 
         removeEntryScreenshot();
+        const newTradeDetails =
+          document.getElementById("newTradeDetails");
 
+        if (newTradeDetails) {
+          newTradeDetails.open = false;
+        }
         alert("معامله با موفقیت در ژورنال ذخیره شد.");
       } catch (error) {
         console.error(error);
