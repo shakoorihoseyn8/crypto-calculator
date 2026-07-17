@@ -332,6 +332,45 @@
         font-size: 12px;
       }
     }
+      body {
+      padding-bottom: 82px;
+    }
+
+    .bottom-nav {
+      position: fixed;
+      right: 50%;
+      bottom: 0;
+      transform: translateX(50%);
+      width: 100%;
+      max-width: 830px;
+      height: 68px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      padding: 8px;
+      background: rgba(13, 34, 56, 0.96);
+      border-top: 1px solid var(--card-border);
+      z-index: 1000;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid var(--card-border);
+      border-radius: 11px;
+      background: var(--input);
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: bold;
+    }
+
+    .nav-item.active {
+      background: var(--green);
+      border-color: var(--green);
+      color: #071d12;
+    }
   </style>
 </head>
 
@@ -917,5 +956,14 @@
     }
   </script>
 
+  <nav class="bottom-nav">
+    <button type="button" class="nav-item active">
+      ماشین‌حساب
+    </button>
+
+    <button type="button" class="nav-item">
+      ژورنال
+    </button>
+  </nav>
 </body>
 </html>
