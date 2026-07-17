@@ -3,10 +3,919 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   <title>ماشین حساب ارز دیجیتال</title>
+
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    :root {
+      --background: #0d2238;
+      --card: #1b3a5c;
+      --card-border: #2b5279;
+      --input: #102840;
+      --text: #f4f8fc;
+      --muted: #87b9eb;
+      --line: #31516f;
+      --green: #2ecc71;
+      --red: #ef3340;
+      --blue: #5aa7ec;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: var(--background);
+      color: var(--text);
+      font-family: Tahoma, Arial, sans-serif;
+    }
+
+    button,
+    input {
+      font-family: inherit;
+    }
+
+    .app {
+      width: 100%;
+      max-width: 830px;
+      margin: 0 auto;
+      padding: 12px 7px 30px;
+    }
+
+    .header {
+      text-align: center;
+      padding: 8px 0 18px;
+    }
+
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      direction: ltr;
+    }
+
+    .brand-name {
+      font-size: 25px;
+      font-weight: 800;
+    }
+
+    .brand-name .crypto {
+      color: #ffffff;
+    }
+
+    .brand-name .smart {
+      color: #1ac5a4;
+    }
+
+    .logo {
+      width: 47px;
+      height: 47px;
+      border: 3px solid #e8eef5;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #1bd0b1;
+      font-size: 24px;
+      font-weight: bold;
+      box-shadow: inset 0 0 0 4px #294767;
+    }
+
+    .subtitle {
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--card-border);
+      border-radius: 15px;
+      padding: 15px;
+      margin-bottom: 14px;
+    }
+
+    .card-title {
+      margin: 5px 0 15px;
+      color: var(--muted);
+      font-size: 14px;
+      font-weight: bold;
+    }
+
+    .side-selector {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-bottom: 17px;
+    }
+
+    .side-button {
+      border: 1px solid var(--card-border);
+      border-radius: 10px;
+      padding: 12px;
+      background: transparent;
+      color: var(--muted);
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    .side-button.active-long {
+      background: var(--green);
+      border-color: var(--green);
+      color: #071d12;
+    }
+
+    .side-button.active-short {
+      background: var(--red);
+      border-color: var(--red);
+      color: #ffffff;
+    }
+
+    .dot {
+      display: inline-block;
+      width: 17px;
+      height: 17px;
+      border: 1.5px solid #000;
+      border-radius: 50%;
+      vertical-align: middle;
+      margin-left: 4px;
+    }
+
+    .green-dot {
+      background: #22d145;
+    }
+
+    .red-dot {
+      background: #f21f37;
+    }
+
+    .field {
+      margin-bottom: 14px;
+    }
+
+    .field:last-child {
+      margin-bottom: 0;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 7px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    input {
+      width: 100%;
+      height: 42px;
+      border: 1px solid var(--card-border);
+      border-radius: 10px;
+      background: var(--input);
+      color: #ffffff;
+      padding: 0 12px;
+      font-size: 16px;
+      direction: ltr;
+      text-align: left;
+      outline: none;
+    }
+
+    input:focus {
+      border-color: var(--blue);
+      box-shadow: 0 0 0 2px rgba(90, 167, 236, 0.15);
+    }
+
+    input::placeholder {
+      color: #7890a5;
+    }
+
+    .targets-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 11px;
+    }
+
+    .two-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 11px;
+    }
+
+    .result-row {
+      min-height: 47px;
+      border-bottom: 1px solid var(--line);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 15px;
+    }
+
+    .result-row:last-child {
+      border-bottom: none;
+    }
+
+    .result-label {
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .result-value {
+      direction: ltr;
+      color: #ffffff;
+      font-size: 16px;
+      font-weight: bold;
+      text-align: left;
+    }
+
+    .error-box {
+      display: none;
+      margin-top: 13px;
+      padding: 11px;
+      border: 1px solid rgba(239, 51, 64, 0.7);
+      border-radius: 10px;
+      background: rgba(239, 51, 64, 0.12);
+      color: #ffd6da;
+      font-size: 13px;
+      line-height: 1.8;
+    }
+
+    .profit-table {
+      width: 100%;
+      border-collapse: collapse;
+      table-layout: fixed;
+    }
+
+    .profit-table th {
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: normal;
+      padding: 8px 3px 15px;
+    }
+
+    .profit-table td {
+      color: #ffffff;
+      font-size: 13px;
+      text-align: center;
+      padding: 15px 3px;
+      border-bottom: 1px solid var(--line);
+      direction: ltr;
+    }
+
+    .profit-table td:first-child {
+      direction: rtl;
+      color: var(--muted);
+    }
+
+    .summary-row {
+      min-height: 48px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 15px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .summary-row:last-of-type {
+      border-bottom: none;
+    }
+
+    .summary-label {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .summary-value {
+      direction: ltr;
+      color: #ffffff;
+      font-weight: bold;
+    }
+
+    .note {
+      margin: 12px 0 0;
+      text-align: center;
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1.7;
+    }
+
+    @media (max-width: 520px) {
+      .app {
+        padding: 8px 6px 25px;
+      }
+
+      .card {
+        padding: 13px;
+      }
+
+      .targets-grid {
+        gap: 7px;
+      }
+
+      label {
+        font-size: 11px;
+      }
+
+      input {
+        padding: 0 7px;
+        font-size: 14px;
+      }
+
+      .profit-table th,
+      .profit-table td {
+        font-size: 11px;
+      }
+
+      .result-label,
+      .summary-label {
+        font-size: 12px;
+      }
+    }
+  </style>
 </head>
+
 <body>
-  <h1>ماشین حساب ارز دیجیتال</h1>
-  <p>نسخه آزمایشی با موفقیت ساخته شد.</p>
+
+  <main class="app">
+
+    <header class="header">
+      <div class="brand">
+        <div class="brand-name">
+          <span class="crypto">Crypto</span><span class="smart">Smart</span>
+        </div>
+
+        <div class="logo">S</div>
+      </div>
+
+      <div class="subtitle">ماشین‌حساب مدیریت ریسک و پوزیشن</div>
+    </header>
+
+    <section class="card">
+
+      <h2 class="card-title">مشخصات معامله</h2>
+
+      <div class="side-selector">
+        <button
+          type="button"
+          id="longButton"
+          class="side-button active-long"
+          onclick="selectSide('long')"
+        >
+          لانگ
+          <span class="dot green-dot"></span>
+        </button>
+
+        <button
+          type="button"
+          id="shortButton"
+          class="side-button"
+          onclick="selectSide('short')"
+        >
+          شورت
+          <span class="dot red-dot"></span>
+        </button>
+      </div>
+
+      <div class="field">
+        <label for="entry">قیمت ورود</label>
+        <input
+          id="entry"
+          type="number"
+          inputmode="decimal"
+          step="any"
+          min="0"
+          placeholder="مثلاً 0.408"
+        >
+      </div>
+
+      <div class="field">
+        <label for="stop">حد ضرر (Stop)</label>
+        <input
+          id="stop"
+          type="number"
+          inputmode="decimal"
+          step="any"
+          min="0"
+          placeholder="مثلاً 0.385"
+        >
+      </div>
+
+      <div class="targets-grid">
+
+        <div class="field">
+          <label for="tp1">هدف اول (TP1)</label>
+          <input
+            id="tp1"
+            type="number"
+            inputmode="decimal"
+            step="any"
+            min="0"
+          >
+        </div>
+
+        <div class="field">
+          <label for="tp2">هدف دوم (TP2)</label>
+          <input
+            id="tp2"
+            type="number"
+            inputmode="decimal"
+            step="any"
+            min="0"
+          >
+        </div>
+
+        <div class="field">
+          <label for="tp3">هدف سوم (TP3)</label>
+          <input
+            id="tp3"
+            type="number"
+            inputmode="decimal"
+            step="any"
+            min="0"
+          >
+        </div>
+
+      </div>
+
+    </section>
+
+    <section class="card">
+
+      <h2 class="card-title">سرمایه و ریسک</h2>
+
+      <div class="field">
+        <label for="capital">سرمایه کل (دلار)</label>
+        <input
+          id="capital"
+          type="number"
+          inputmode="decimal"
+          step="any"
+          min="0"
+          placeholder="مثلاً 1000"
+        >
+      </div>
+
+      <div class="two-grid">
+
+        <div class="field">
+          <label for="leverage">اهرم (Leverage)</label>
+          <input
+            id="leverage"
+            type="number"
+            inputmode="decimal"
+            step="any"
+            min="1"
+            placeholder="مثلاً 10"
+          >
+        </div>
+
+        <div class="field">
+          <label for="riskPercent">درصد ریسک از سرمایه</label>
+          <input
+            id="riskPercent"
+            type="number"
+            inputmode="decimal"
+            step="any"
+            min="0"
+            max="100"
+            placeholder="مثلاً 2"
+          >
+        </div>
+
+      </div>
+
+      <div id="errorBox" class="error-box"></div>
+
+    </section>
+
+    <section class="card">
+
+      <h2 class="card-title">نتیجه</h2>
+
+      <div class="result-row">
+        <span class="result-label">حجم پوزیشن</span>
+        <span id="quantityResult" class="result-value">—</span>
+      </div>
+
+      <div class="result-row">
+        <span class="result-label">ارزش پوزیشن</span>
+        <span id="positionValueResult" class="result-value">—</span>
+      </div>
+
+      <div class="result-row">
+        <span class="result-label">مارجین لازم</span>
+        <span id="marginResult" class="result-value">—</span>
+      </div>
+
+      <div class="result-row">
+        <span class="result-label">مبلغ در معرض ریسک</span>
+        <span id="riskAmountResult" class="result-value">—</span>
+      </div>
+
+      <div class="result-row">
+        <span class="result-label">قیمت لیکویید (تقریبی)</span>
+        <span id="liquidationResult" class="result-value">—</span>
+      </div>
+
+    </section>
+
+    <section class="card">
+
+      <h2 class="card-title">اهداف سود</h2>
+
+      <table class="profit-table">
+        <thead>
+          <tr>
+            <th>هدف</th>
+            <th>R:R</th>
+            <th>سود ($)</th>
+            <th>بازده (%)</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <tr>
+            <td>TP1</td>
+            <td id="tp1RR">—</td>
+            <td id="tp1Profit">—</td>
+            <td id="tp1Return">—</td>
+          </tr>
+
+          <tr>
+            <td>TP2</td>
+            <td id="tp2RR">—</td>
+            <td id="tp2Profit">—</td>
+            <td id="tp2Return">—</td>
+          </tr>
+
+          <tr>
+            <td>TP3</td>
+            <td id="tp3RR">—</td>
+            <td id="tp3Profit">—</td>
+            <td id="tp3Return">—</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="summary-row">
+        <span class="summary-label">
+          سود کل طبق پلن پله‌ای (۳۰٪ / ۳۰٪ / ۴۰٪)
+        </span>
+
+        <span id="steppedProfitResult" class="summary-value">—</span>
+      </div>
+
+      <div class="summary-row">
+        <span class="summary-label">R:R کلی پوزیشن</span>
+        <span id="totalRRResult" class="summary-value">—</span>
+      </div>
+
+      <p class="note">
+        قیمت لیکویید تقریبی است و کارمزد صرافی، نرخ مارجین نگهداری و نوع مارجین را در نظر نمی‌گیرد.
+      </p>
+
+    </section>
+
+  </main>
+
+  <script>
+    let selectedSide = "long";
+
+    const inputIds = [
+      "entry",
+      "stop",
+      "tp1",
+      "tp2",
+      "tp3",
+      "capital",
+      "leverage",
+      "riskPercent"
+    ];
+
+    inputIds.forEach(function (id) {
+      document.getElementById(id).addEventListener("input", calculateTrade);
+    });
+
+    function selectSide(side) {
+      selectedSide = side;
+
+      const longButton = document.getElementById("longButton");
+      const shortButton = document.getElementById("shortButton");
+
+      longButton.classList.remove("active-long");
+      shortButton.classList.remove("active-short");
+
+      if (side === "long") {
+        longButton.classList.add("active-long");
+      } else {
+        shortButton.classList.add("active-short");
+      }
+
+      calculateTrade();
+    }
+
+    function getNumber(id) {
+      const value = document.getElementById(id).value.trim();
+
+      if (value === "") {
+        return null;
+      }
+
+      const number = Number(value);
+
+      return Number.isFinite(number) ? number : null;
+    }
+
+    function formatNumber(value, maximumDecimals) {
+      if (!Number.isFinite(value)) {
+        return "—";
+      }
+
+      return value.toLocaleString("en-US", {
+        minimumFractionDigits: 0,
+        maximumFractionDigits: maximumDecimals
+      });
+    }
+
+    function formatPrice(value) {
+      if (!Number.isFinite(value)) {
+        return "—";
+      }
+
+      return value.toLocaleString("en-US", {
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 8
+      });
+    }
+
+    function showError(messages) {
+      const errorBox = document.getElementById("errorBox");
+
+      if (messages.length === 0) {
+        errorBox.style.display = "none";
+        errorBox.innerHTML = "";
+        return;
+      }
+
+      errorBox.style.display = "block";
+      errorBox.innerHTML = messages.join("<br>");
+    }
+
+    function clearMainResults() {
+      document.getElementById("quantityResult").textContent = "—";
+      document.getElementById("positionValueResult").textContent = "—";
+      document.getElementById("marginResult").textContent = "—";
+      document.getElementById("riskAmountResult").textContent = "—";
+      document.getElementById("liquidationResult").textContent = "—";
+
+      clearTargetResult(1);
+      clearTargetResult(2);
+      clearTargetResult(3);
+
+      document.getElementById("steppedProfitResult").textContent = "—";
+      document.getElementById("totalRRResult").textContent = "—";
+    }
+
+    function clearTargetResult(number) {
+      document.getElementById("tp" + number + "RR").textContent = "—";
+      document.getElementById("tp" + number + "Profit").textContent = "—";
+      document.getElementById("tp" + number + "Return").textContent = "—";
+    }
+
+    function calculateTarget(targetPrice, quantity, entry, riskAmount, capital) {
+      if (targetPrice === null || targetPrice <= 0) {
+        return null;
+      }
+
+      const priceDifference =
+        selectedSide === "long"
+          ? targetPrice - entry
+          : entry - targetPrice;
+
+      const profit = quantity * priceDifference;
+      const rewardRisk = profit / riskAmount;
+      const returnPercent = (profit / capital) * 100;
+
+      return {
+        profit: profit,
+        rewardRisk: rewardRisk,
+        returnPercent: returnPercent
+      };
+    }
+
+    function renderTarget(number, result) {
+      if (!result) {
+        clearTargetResult(number);
+        return;
+      }
+
+      document.getElementById("tp" + number + "RR").textContent =
+        formatNumber(result.rewardRisk, 2);
+
+      document.getElementById("tp" + number + "Profit").textContent =
+        "$" + formatNumber(result.profit, 2);
+
+      document.getElementById("tp" + number + "Return").textContent =
+        formatNumber(result.returnPercent, 2) + "%";
+    }
+
+    function calculateTrade() {
+      const entry = getNumber("entry");
+      const stop = getNumber("stop");
+      const tp1 = getNumber("tp1");
+      const tp2 = getNumber("tp2");
+      const tp3 = getNumber("tp3");
+      const capital = getNumber("capital");
+      const leverage = getNumber("leverage");
+      const riskPercent = getNumber("riskPercent");
+
+      const requiredValues = [
+        entry,
+        stop,
+        capital,
+        leverage,
+        riskPercent
+      ];
+
+      if (requiredValues.some(function (value) {
+        return value === null;
+      })) {
+        clearMainResults();
+        showError([]);
+        return;
+      }
+
+      const errors = [];
+
+      if (entry <= 0) {
+        errors.push("قیمت ورود باید بیشتر از صفر باشد.");
+      }
+
+      if (stop <= 0) {
+        errors.push("حد ضرر باید بیشتر از صفر باشد.");
+      }
+
+      if (capital <= 0) {
+        errors.push("سرمایه کل باید بیشتر از صفر باشد.");
+      }
+
+      if (leverage < 1) {
+        errors.push("اهرم باید حداقل ۱ باشد.");
+      }
+
+      if (riskPercent <= 0 || riskPercent > 100) {
+        errors.push("درصد ریسک باید بیشتر از صفر و حداکثر ۱۰۰ باشد.");
+      }
+
+      if (selectedSide === "long" && stop >= entry) {
+        errors.push("در معامله لانگ، حد ضرر باید پایین‌تر از قیمت ورود باشد.");
+      }
+
+      if (selectedSide === "short" && stop <= entry) {
+        errors.push("در معامله شورت، حد ضرر باید بالاتر از قیمت ورود باشد.");
+      }
+
+      const targets = [tp1, tp2, tp3];
+
+      targets.forEach(function (target, index) {
+        if (target === null) {
+          return;
+        }
+
+        if (selectedSide === "long" && target <= entry) {
+          errors.push(
+            "در معامله لانگ، هدف TP" +
+            (index + 1) +
+            " باید بالاتر از قیمت ورود باشد."
+          );
+        }
+
+        if (selectedSide === "short" && target >= entry) {
+          errors.push(
+            "در معامله شورت، هدف TP" +
+            (index + 1) +
+            " باید پایین‌تر از قیمت ورود باشد."
+          );
+        }
+      });
+
+      if (errors.length > 0) {
+        clearMainResults();
+        showError(errors);
+        return;
+      }
+
+      showError([]);
+
+      const riskAmount = capital * (riskPercent / 100);
+      const stopDistance = Math.abs(entry - stop);
+      const quantity = riskAmount / stopDistance;
+      const positionValue = quantity * entry;
+      const requiredMargin = positionValue / leverage;
+
+      const liquidationPrice =
+        selectedSide === "long"
+          ? entry * (1 - 1 / leverage)
+          : entry * (1 + 1 / leverage);
+
+      document.getElementById("quantityResult").textContent =
+        formatNumber(quantity, 8);
+
+      document.getElementById("positionValueResult").textContent =
+        "$" + formatNumber(positionValue, 2);
+
+      document.getElementById("marginResult").textContent =
+        "$" + formatNumber(requiredMargin, 2);
+
+      document.getElementById("riskAmountResult").textContent =
+        "$" + formatNumber(riskAmount, 2);
+
+      document.getElementById("liquidationResult").textContent =
+        formatPrice(Math.max(liquidationPrice, 0));
+
+      const tp1Result = calculateTarget(
+        tp1,
+        quantity,
+        entry,
+        riskAmount,
+        capital
+      );
+
+      const tp2Result = calculateTarget(
+        tp2,
+        quantity,
+        entry,
+        riskAmount,
+        capital
+      );
+
+      const tp3Result = calculateTarget(
+        tp3,
+        quantity,
+        entry,
+        riskAmount,
+        capital
+      );
+
+      renderTarget(1, tp1Result);
+      renderTarget(2, tp2Result);
+      renderTarget(3, tp3Result);
+
+      const targetResults = [
+        tp1Result,
+        tp2Result,
+        tp3Result
+      ];
+
+      const weights = [0.30, 0.30, 0.40];
+
+      let steppedProfit = 0;
+      let totalWeight = 0;
+
+      targetResults.forEach(function (result, index) {
+        if (!result) {
+          return;
+        }
+
+        steppedProfit += result.profit * weights[index];
+        totalWeight += weights[index];
+      });
+
+      if (totalWeight === 1) {
+        const totalRewardRisk = steppedProfit / riskAmount;
+
+        document.getElementById("steppedProfitResult").textContent =
+          "$" + formatNumber(steppedProfit, 2);
+
+        document.getElementById("totalRRResult").textContent =
+          formatNumber(totalRewardRisk, 2);
+      } else {
+        document.getElementById("steppedProfitResult").textContent = "—";
+        document.getElementById("totalRRResult").textContent = "—";
+      }
+
+      if (requiredMargin > capital) {
+        showError([
+          "هشدار: مارجین لازم از کل سرمایه بیشتر است. اهرم یا درصد ریسک را اصلاح کن."
+        ]);
+      }
+    }
+
+    if (window.Telegram && window.Telegram.WebApp) {
+      const telegramApp = window.Telegram.WebApp;
+
+      telegramApp.ready();
+      telegramApp.expand();
+
+      try {
+        telegramApp.setHeaderColor("#0d2238");
+        telegramApp.setBackgroundColor("#0d2238");
+      } catch (error) {
+        console.log(error);
+      }
+    }
+  </script>
+
 </body>
 </html>
