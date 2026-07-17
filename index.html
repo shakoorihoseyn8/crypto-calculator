@@ -616,6 +616,13 @@
 
     </section>
 
+     <section id="journalView" class="card" style="display: none;">
+      <h2 class="card-title">ژورنال معاملات</h2>
+
+      <p style="color: var(--muted); line-height: 2; text-align: center;">
+        هنوز معامله‌ای در ژورنال ثبت نشده است.
+      </p>
+    </section>
   </main>
 
   <script>
@@ -941,6 +948,55 @@
       }
     }
 
+       function showCalculator() {
+      const cards = document.querySelectorAll(".app > .card");
+
+      cards.forEach(function (card) {
+        if (card.id === "journalView") {
+          card.style.display = "none";
+        } else {
+          card.style.display = "";
+        }
+      });
+
+      document
+        .getElementById("calculatorNavButton")
+        .classList.add("active");
+
+      document
+        .getElementById("journalNavButton")
+        .classList.remove("active");
+
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth"
+      });
+    }
+
+    function showJournal() {
+      const cards = document.querySelectorAll(".app > .card");
+
+      cards.forEach(function (card) {
+        if (card.id === "journalView") {
+          card.style.display = "block";
+        } else {
+          card.style.display = "none";
+        }
+      });
+
+      document
+        .getElementById("calculatorNavButton")
+        .classList.remove("active");
+
+      document
+        .getElementById("journalNavButton")
+        .classList.add("active");
+
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth"
+      });
+    }
     if (window.Telegram && window.Telegram.WebApp) {
       const telegramApp = window.Telegram.WebApp;
 
@@ -955,15 +1011,22 @@
       }
     }
   </script>
-
   <nav class="bottom-nav">
-    <button type="button" class="nav-item active">
+    <button
+      id="calculatorNavButton"
+      type="button"
+      class="nav-item active"
+      onclick="showCalculator()"
+    >
       ماشین‌حساب
     </button>
 
-    <button type="button" class="nav-item">
+    <button
+      id="journalNavButton"
+      type="button"
+      class="nav-item"
+      onclick="showJournal()"
+    >
       ژورنال
     </button>
   </nav>
-</body>
-</html>
