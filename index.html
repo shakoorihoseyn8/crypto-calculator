@@ -1281,6 +1281,45 @@
         });
       });
     }  
+        function updateTradeInDatabase(trade) {
+      return openJournalDatabase().then(function (database) {
+        return new Promise(function (resolve, reject) {
+          const transaction = database.transaction(
+            JOURNAL_STORE_NAME,
+            "readwrite"
+          );
+
+          const store =
+            transaction.objectStore(JOURNAL_STORE_NAME);
+
+          const request = store.put(trade);
+
+          request.onsuccess = function () {
+            resolve(request.result);
+          };
+
+          request.onerror = function () {
+            reject(
+              request.error ||
+              new Error("ویرایش نتیجه معامله ناموفق بود.")
+            );
+          };
+
+          transaction.oncomplete = function () {
+            database.close();
+          };
+
+          transaction.onabort = function () {
+            database.close();
+
+            reject(
+              transaction.error ||
+              new Error("ویرایش نتیجه معامله متوقف شد.")
+            );
+          };
+        });
+      });
+    }
     let entryScreenshotObjectUrl = null;
 
     function previewEntryScreenshot(event) {
@@ -1675,7 +1714,179 @@ sideTitle.textContent =
 
             card.appendChild(image);
           }
+                    if (trade.status) {
+            const resultBox =
+              document.createElement("div");
 
+            resultBox.style.cssText = `
+              margin-top: 12px;
+              padding: 11px;
+              border: 1px solid var(--card-border);
+              border-radius: 10px;
+              background: rgba(27, 58, 92, 0.65);
+            `;
+
+            const resultTitle =
+              document.createElement("strong");
+
+            resultTitle.textContent =
+              trade.status === "closed"
+                ? "نتیجه معامله: بسته‌شده"
+                : "نتیجه معامله: لغوشده";
+
+            resultTitle.style.cssText = `
+              display: block;
+              margin-bottom: 10px;
+              color: ${
+                trade.status === "closed"
+                  ? (
+                      trade.actualProfitLoss > 0
+                        ? "var(--green)"
+                        : trade.actualProfitLoss < 0
+                          ? "var(--red)"
+                          : "var(--muted)"
+                    )
+                  : "var(--muted)"
+              };
+            `;
+
+            resultBox.appendChild(resultTitle);
+
+            if (trade.status === "closed") {
+              const resultDetails =
+                document.createElement("div");
+
+              resultDetails.style.cssText = `
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 8px;
+                color: var(--muted);
+                font-size: 12px;
+                line-height: 1.8;
+              `;
+
+              resultDetails.innerHTML = `
+                <div>
+                  قیمت خروج:
+                  ${formatPrice(trade.exitPrice)}
+                </div>
+
+                <div>
+                  سود یا زیان:
+                  $${formatNumber(
+                    trade.actualProfitLoss,
+                    2
+                  )}
+                </div>
+
+                <div>
+                  نتیجه برحسب R:
+                  ${formatNumber(
+                    trade.actualR,
+                    2
+                  )}R
+                </div>
+
+                <div>
+                  بازده:
+                  ${formatNumber(
+                    trade.actualReturnPercent,
+                    2
+                  )}%
+                </div>
+              `;
+
+              resultBox.appendChild(resultDetails);
+            }
+
+            if (trade.exitNote) {
+              const exitNoteBox =
+                document.createElement("div");
+
+              exitNoteBox.textContent =
+                "ارزیابی بعد از معامله: " +
+                trade.exitNote;
+
+              exitNoteBox.style.cssText = `
+                margin-top: 10px;
+                padding-top: 10px;
+                border-top: 1px solid var(--line);
+                color: var(--muted);
+                font-size: 12px;
+                line-height: 1.9;
+                white-space: pre-wrap;
+                overflow-wrap: anywhere;
+              `;
+
+              resultBox.appendChild(exitNoteBox);
+            }
+
+            if (trade.exitScreenshotBlob) {
+              const exitImageUrl =
+                URL.createObjectURL(
+                  trade.exitScreenshotBlob
+                );
+
+              journalImageObjectUrls.push(
+                exitImageUrl
+              );
+
+              const exitImage =
+                document.createElement("img");
+
+              exitImage.src = exitImageUrl;
+              exitImage.alt =
+                "اسکرین‌شات نقطه خروج";
+
+              exitImage.style.cssText = `
+                display: block;
+                width: 100%;
+                max-height: 420px;
+                margin-top: 11px;
+                object-fit: contain;
+                border-radius: 9px;
+                border: 1px solid var(--card-border);
+              `;
+
+              resultBox.appendChild(exitImage);
+            }
+
+            card.appendChild(resultBox);
+          }
+          const resultButton =
+            document.createElement("button");
+
+          resultButton.type = "button";
+
+         resultButton.textContent =
+  trade.status
+    ? "ویرایش نتیجه معامله"
+    : "ثبت نتیجه معامله";
+
+          resultButton.style.cssText = `
+            width: 100%;
+            min-height: 42px;
+            margin-top: 12px;
+            border: 1px solid var(--blue);
+            border-radius: 9px;
+            background: rgba(90, 167, 236, 0.12);
+            color: var(--muted);
+            font-family: inherit;
+            font-weight: bold;
+            cursor: pointer;
+          `;
+
+          resultButton.addEventListener(
+            "click",
+            function () {
+              toggleTradeResultForm(
+                trade,
+                card
+              );
+            }
+          );
+
+          card.appendChild(resultButton);
           const deleteButton =
             document.createElement("button");
 
@@ -1713,7 +1924,390 @@ sideTitle.textContent =
           "خواندن اطلاعات ژورنال با خطا مواجه شد.";
       }
     }
+    function toggleTradeResultForm(trade, card) {
+      const oldForm =
+        card.querySelector(".trade-result-form");
 
+      if (oldForm) {
+        oldForm.remove();
+        return;
+      }
+
+      const form =
+        document.createElement("div");
+
+      form.className = "trade-result-form";
+
+      form.style.cssText = `
+        margin-top: 12px;
+        padding: 12px;
+        border: 1px solid var(--blue);
+        border-radius: 10px;
+        background: rgba(90, 167, 236, 0.08);
+      `;
+
+      const title =
+        document.createElement("strong");
+
+      title.textContent = "ثبت نتیجه معامله";
+
+      title.style.cssText = `
+        display: block;
+        margin-bottom: 14px;
+        color: var(--muted);
+      `;
+
+      form.appendChild(title);
+
+      const statusLabel =
+        document.createElement("label");
+
+      statusLabel.textContent = "وضعیت معامله";
+
+      const statusSelect =
+        document.createElement("select");
+
+      statusSelect.style.cssText = `
+        width: 100%;
+        min-height: 43px;
+        margin: 7px 0 13px;
+        padding: 0 10px;
+        border: 1px solid var(--card-border);
+        border-radius: 9px;
+        background: var(--input);
+        color: #ffffff;
+        font-family: inherit;
+      `;
+
+      statusSelect.innerHTML = `
+        <option value="closed">بسته‌شده</option>
+        <option value="cancelled">لغوشده</option>
+      `;
+
+      statusSelect.value =
+        trade.status === "cancelled"
+          ? "cancelled"
+          : "closed";
+
+      form.appendChild(statusLabel);
+      form.appendChild(statusSelect);
+
+      const exitPriceLabel =
+        document.createElement("label");
+
+      exitPriceLabel.textContent = "قیمت خروج";
+
+      const exitPriceInput =
+        document.createElement("input");
+
+      exitPriceInput.type = "number";
+      exitPriceInput.step = "any";
+      exitPriceInput.min = "0";
+      exitPriceInput.placeholder =
+        "مثلاً 108";
+
+      exitPriceInput.value =
+        Number.isFinite(trade.exitPrice)
+          ? trade.exitPrice
+          : "";
+
+      exitPriceInput.style.margin =
+        "7px 0 13px";
+
+      form.appendChild(exitPriceLabel);
+      form.appendChild(exitPriceInput);
+
+      const noteLabel =
+        document.createElement("label");
+
+      noteLabel.textContent =
+        "یادداشت و ارزیابی بعد از معامله";
+
+      const noteInput =
+        document.createElement("textarea");
+
+      noteInput.rows = 4;
+      noteInput.maxLength = 1000;
+      noteInput.placeholder =
+        "نتیجه، اشتباهات، نکات مثبت و درس معامله";
+
+      noteInput.value =
+        trade.exitNote || "";
+
+      noteInput.style.cssText = `
+        width: 100%;
+        min-height: 95px;
+        margin: 7px 0 13px;
+        padding: 10px;
+        border: 1px solid var(--card-border);
+        border-radius: 9px;
+        background: var(--input);
+        color: #ffffff;
+        font-family: inherit;
+        line-height: 1.8;
+        resize: vertical;
+        outline: none;
+      `;
+
+      form.appendChild(noteLabel);
+      form.appendChild(noteInput);
+
+      const screenshotLabel =
+        document.createElement("label");
+
+      screenshotLabel.textContent =
+        "اسکرین‌شات نقطه خروج";
+
+      const screenshotInput =
+        document.createElement("input");
+
+      screenshotInput.type = "file";
+      screenshotInput.accept = "image/*";
+
+      screenshotInput.style.cssText = `
+        width: 100%;
+        margin: 8px 0 13px;
+        padding: 9px;
+        border: 1px dashed var(--blue);
+        border-radius: 9px;
+        background: var(--input);
+        color: var(--muted);
+      `;
+
+      form.appendChild(screenshotLabel);
+      form.appendChild(screenshotInput);
+
+      if (trade.exitScreenshotBlob) {
+        const savedImageNotice =
+          document.createElement("p");
+
+        savedImageNotice.textContent =
+          "اسکرین‌شات خروج قبلاً ثبت شده است. انتخاب تصویر جدید، آن را جایگزین می‌کند.";
+
+        savedImageNotice.style.cssText = `
+          margin: 0 0 12px;
+          color: var(--muted);
+          font-size: 11px;
+          line-height: 1.8;
+        `;
+
+        form.appendChild(savedImageNotice);
+      }
+
+      const buttons =
+        document.createElement("div");
+
+      buttons.style.cssText = `
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+      `;
+
+      const saveButton =
+        document.createElement("button");
+
+      saveButton.type = "button";
+      saveButton.textContent =
+        "ذخیره نتیجه";
+
+      saveButton.style.cssText = `
+        min-height: 43px;
+        border: 1px solid var(--green);
+        border-radius: 9px;
+        background: var(--green);
+        color: #071d12;
+        font-family: inherit;
+        font-weight: bold;
+        cursor: pointer;
+      `;
+
+      const cancelButton =
+        document.createElement("button");
+
+      cancelButton.type = "button";
+      cancelButton.textContent = "انصراف";
+
+      cancelButton.style.cssText = `
+        min-height: 43px;
+        border: 1px solid var(--card-border);
+        border-radius: 9px;
+        background: var(--input);
+        color: var(--muted);
+        font-family: inherit;
+        cursor: pointer;
+      `;
+
+      cancelButton.addEventListener(
+        "click",
+        function () {
+          form.remove();
+        }
+      );
+
+      saveButton.addEventListener(
+        "click",
+        async function () {
+          const status = statusSelect.value;
+
+          const exitPriceText =
+            exitPriceInput.value.trim();
+
+          const exitPrice =
+            exitPriceText === ""
+              ? null
+              : Number(exitPriceText);
+
+          if (
+            status === "closed" &&
+            (
+              !Number.isFinite(exitPrice) ||
+              exitPrice <= 0
+            )
+          ) {
+            alert(
+              "برای معامله بسته‌شده، قیمت خروج معتبر وارد کن."
+            );
+            return;
+          }
+
+          const screenshotFile =
+            screenshotInput.files &&
+            screenshotInput.files[0]
+              ? screenshotInput.files[0]
+              : null;
+
+          if (
+            screenshotFile &&
+            !screenshotFile.type.startsWith("image/")
+          ) {
+            alert(
+              "فایل اسکرین‌شات خروج باید تصویر باشد."
+            );
+            return;
+          }
+
+          if (
+            screenshotFile &&
+            screenshotFile.size >
+              10 * 1024 * 1024
+          ) {
+            alert(
+              "حجم تصویر خروج نباید بیشتر از ۱۰ مگابایت باشد."
+            );
+            return;
+          }
+
+          let actualProfitLoss = 0;
+          let actualR = 0;
+          let actualReturnPercent = 0;
+
+          if (status === "closed") {
+            const priceDifference =
+              trade.side === "long"
+                ? exitPrice - trade.entry
+                : trade.entry - exitPrice;
+
+            actualProfitLoss =
+              trade.quantity *
+              priceDifference;
+
+            actualR =
+              trade.riskAmount > 0
+                ? actualProfitLoss /
+                  trade.riskAmount
+                : 0;
+
+            actualReturnPercent =
+              trade.capital > 0
+                ? (
+                    actualProfitLoss /
+                    trade.capital
+                  ) * 100
+                : 0;
+          }
+
+          trade.status = status;
+
+          trade.exitPrice =
+            status === "closed"
+              ? exitPrice
+              : null;
+
+          trade.actualProfitLoss =
+            actualProfitLoss;
+
+          trade.actualR =
+            actualR;
+
+          trade.actualReturnPercent =
+            actualReturnPercent;
+
+          trade.exitNote =
+            noteInput.value.trim();
+
+          trade.closedAt =
+            Date.now();
+
+          if (screenshotFile) {
+            trade.exitScreenshotBlob =
+              screenshotFile.slice(
+                0,
+                screenshotFile.size,
+                screenshotFile.type
+              );
+
+            trade.exitScreenshotName =
+              screenshotFile.name;
+          }
+
+          saveButton.disabled = true;
+          saveButton.textContent =
+            "در حال ذخیره...";
+
+          try {
+            await updateTradeInDatabase(
+              trade
+            );
+
+            await renderJournalTrades();
+
+            alert(
+              "نتیجه معامله با موفقیت ذخیره شد."
+            );
+          } catch (error) {
+            console.error(error);
+
+            alert(
+              "ذخیره نتیجه انجام نشد. دوباره تلاش کن."
+            );
+          } finally {
+            if (
+              document.body.contains(
+                saveButton
+              )
+            ) {
+              saveButton.disabled = false;
+              saveButton.textContent =
+                "ذخیره نتیجه";
+            }
+          }
+        }
+      );
+
+      buttons.appendChild(saveButton);
+      buttons.appendChild(cancelButton);
+      form.appendChild(buttons);
+
+      card.insertBefore(
+        form,
+        card.lastElementChild
+      );
+
+      form.scrollIntoView({
+        behavior: "smooth",
+        block: "nearest"
+      });
+    }
     async function deleteSavedTrade(tradeId) {
       const confirmed = confirm(
         "این معامله از ژورنال حذف شود؟"
