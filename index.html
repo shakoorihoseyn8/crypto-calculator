@@ -619,9 +619,26 @@
      <section id="journalView" class="card" style="display: none;">
       <h2 class="card-title">ژورنال معاملات</h2>
 
-          <p style="color: var(--muted); line-height: 2; text-align: center;">
+               <p
+        id="journalEmptyMessage"
+        style="
+          color: var(--muted);
+          line-height: 2;
+          text-align: center;
+        "
+      >
         هنوز معامله‌ای در ژورنال ثبت نشده است.
       </p>
+
+      <div
+        id="journalTradesList"
+        style="
+          display: flex;
+          flex-direction: column;
+          gap: 12px;
+          margin-bottom: 18px;
+        "
+      ></div>
 
       <div style="margin-top: 18px;">
         <label
@@ -706,6 +723,26 @@
           </button>
         </div>
       </div>
+             <button
+        id="saveTradeButton"
+        type="button"
+        onclick="saveTradeToJournal()"
+        style="
+          width: 100%;
+          min-height: 48px;
+          margin-top: 16px;
+          border: 1px solid var(--green);
+          border-radius: 10px;
+          background: var(--green);
+          color: #071d12;
+          font-family: inherit;
+          font-size: 14px;
+          font-weight: bold;
+          cursor: pointer;
+        "
+      >
+        ذخیره معامله در ژورنال
+      </button>
     </section>
   </main>
 
@@ -1032,7 +1069,155 @@
       }
     }
 
-          let entryScreenshotObjectUrl = null;
+           const JOURNAL_DB_NAME = "CryptoSmartJournalDB";
+    const JOURNAL_DB_VERSION = 1;
+    const JOURNAL_STORE_NAME = "trades";
+
+    function openJournalDatabase() {
+      return new Promise(function (resolve, reject) {
+        const request = indexedDB.open(
+          JOURNAL_DB_NAME,
+          JOURNAL_DB_VERSION
+        );
+
+        request.onupgradeneeded = function (event) {
+          const database = event.target.result;
+
+          if (
+            !database.objectStoreNames.contains(
+              JOURNAL_STORE_NAME
+            )
+          ) {
+            const store = database.createObjectStore(
+              JOURNAL_STORE_NAME,
+              {
+                keyPath: "id",
+                autoIncrement: true
+              }
+            );
+
+            store.createIndex(
+              "createdAt",
+              "createdAt",
+              {
+                unique: false
+              }
+            );
+          }
+        };
+
+        request.onsuccess = function () {
+          resolve(request.result);
+        };
+
+        request.onerror = function () {
+          reject(
+            request.error ||
+            new Error("بازکردن دیتابیس ژورنال ناموفق بود.")
+          );
+        };
+      });
+    }
+
+    function addTradeToDatabase(trade) {
+      return openJournalDatabase().then(function (database) {
+        return new Promise(function (resolve, reject) {
+          const transaction = database.transaction(
+            JOURNAL_STORE_NAME,
+            "readwrite"
+          );
+
+          const store =
+            transaction.objectStore(JOURNAL_STORE_NAME);
+
+          const request = store.add(trade);
+
+          request.onsuccess = function () {
+            resolve(request.result);
+          };
+
+          request.onerror = function () {
+            reject(
+              request.error ||
+              new Error("ذخیره معامله ناموفق بود.")
+            );
+          };
+
+          transaction.oncomplete = function () {
+            database.close();
+          };
+        });
+      });
+    }
+
+    function getTradesFromDatabase() {
+      return openJournalDatabase().then(function (database) {
+        return new Promise(function (resolve, reject) {
+          const transaction = database.transaction(
+            JOURNAL_STORE_NAME,
+            "readonly"
+          );
+
+          const store =
+            transaction.objectStore(JOURNAL_STORE_NAME);
+
+          const request = store.getAll();
+
+          request.onsuccess = function () {
+            const trades = request.result || [];
+
+            trades.sort(function (firstTrade, secondTrade) {
+              return secondTrade.createdAt - firstTrade.createdAt;
+            });
+
+            resolve(trades);
+          };
+
+          request.onerror = function () {
+            reject(
+              request.error ||
+              new Error("خواندن ژورنال ناموفق بود.")
+            );
+          };
+
+          transaction.oncomplete = function () {
+            database.close();
+          };
+        });
+      });
+    }
+
+    function deleteTradeFromDatabase(tradeId) {
+      return openJournalDatabase().then(function (database) {
+        return new Promise(function (resolve, reject) {
+          const transaction = database.transaction(
+            JOURNAL_STORE_NAME,
+            "readwrite"
+          );
+
+          const store =
+            transaction.objectStore(JOURNAL_STORE_NAME);
+
+          const request = store.delete(tradeId);
+
+          request.onsuccess = function () {
+            resolve();
+          };
+
+          request.onerror = function () {
+            reject(
+              request.error ||
+              new Error("حذف معامله ناموفق بود.")
+            );
+          };
+
+          transaction.oncomplete = function () {
+            database.close();
+          };
+        });
+      });
+    }  
+    let entryScreenshotObjectUrl = null;
 
     function previewEntryScreenshot(event) {
       const input = event.target;
@@ -1099,6 +1284,349 @@
       previewBox.style.display = "none";
       fileName.textContent = "هنوز تصویری انتخاب نشده است.";
     }
+     let journalImageObjectUrls = [];
+
+    async function saveTradeToJournal() {
+      const entry = getNumber("entry");
+      const stop = getNumber("stop");
+      const tp1 = getNumber("tp1");
+      const tp2 = getNumber("tp2");
+      const tp3 = getNumber("tp3");
+      const capital = getNumber("capital");
+      const leverage = getNumber("leverage");
+      const riskPercent = getNumber("riskPercent");
+
+      if (
+        entry === null ||
+        stop === null ||
+        capital === null ||
+        leverage === null ||
+        riskPercent === null
+      ) {
+        alert(
+          "ابتدا قیمت ورود، حد ضرر، سرمایه، اهرم و درصد ریسک را کامل وارد کن."
+        );
+        return;
+      }
+
+      if (
+        entry <= 0 ||
+        stop <= 0 ||
+        capital <= 0 ||
+        leverage < 1 ||
+        riskPercent <= 0 ||
+        riskPercent > 100
+      ) {
+        alert("مقادیر واردشده معتبر نیستند.");
+        return;
+      }
+
+      if (selectedSide === "long" && stop >= entry) {
+        alert(
+          "در معامله لانگ، حد ضرر باید پایین‌تر از قیمت ورود باشد."
+        );
+        return;
+      }
+
+      if (selectedSide === "short" && stop <= entry) {
+        alert(
+          "در معامله شورت، حد ضرر باید بالاتر از قیمت ورود باشد."
+        );
+        return;
+      }
+
+      const screenshotInput =
+        document.getElementById("entryScreenshotInput");
+
+      const screenshotFile =
+        screenshotInput.files &&
+        screenshotInput.files.length > 0
+          ? screenshotInput.files[0]
+          : null;
+
+      const riskAmount =
+        capital * (riskPercent / 100);
+
+      const stopDistance =
+        Math.abs(entry - stop);
+
+      const quantity =
+        riskAmount / stopDistance;
+
+      const positionValue =
+        quantity * entry;
+
+      const requiredMargin =
+        positionValue / leverage;
+
+      const liquidationPrice =
+        selectedSide === "long"
+          ? entry * (1 - 1 / leverage)
+          : entry * (1 + 1 / leverage);
+
+      const trade = {
+        side: selectedSide,
+        entry: entry,
+        stop: stop,
+        tp1: tp1,
+        tp2: tp2,
+        tp3: tp3,
+        capital: capital,
+        leverage: leverage,
+        riskPercent: riskPercent,
+        riskAmount: riskAmount,
+        quantity: quantity,
+        positionValue: positionValue,
+        requiredMargin: requiredMargin,
+        liquidationPrice: liquidationPrice,
+        screenshotBlob: screenshotFile
+          ? screenshotFile.slice(
+              0,
+              screenshotFile.size,
+              screenshotFile.type
+            )
+          : null,
+        screenshotName: screenshotFile
+          ? screenshotFile.name
+          : "",
+        createdAt: Date.now()
+      };
+
+      const saveButton =
+        document.getElementById("saveTradeButton");
+
+      saveButton.disabled = true;
+      saveButton.textContent = "در حال ذخیره...";
+
+      try {
+        await addTradeToDatabase(trade);
+        await renderJournalTrades();
+
+        removeEntryScreenshot();
+
+        alert("معامله با موفقیت در ژورنال ذخیره شد.");
+      } catch (error) {
+        console.error(error);
+
+        alert(
+          "ذخیره معامله انجام نشد. دوباره تلاش کن."
+        );
+      } finally {
+        saveButton.disabled = false;
+        saveButton.textContent =
+          "ذخیره معامله در ژورنال";
+      }
+    }
+
+    async function renderJournalTrades() {
+      const tradesList =
+        document.getElementById("journalTradesList");
+
+      const emptyMessage =
+        document.getElementById("journalEmptyMessage");
+
+      journalImageObjectUrls.forEach(function (url) {
+        URL.revokeObjectURL(url);
+      });
+
+      journalImageObjectUrls = [];
+      tradesList.innerHTML = "";
+
+      try {
+        const trades =
+          await getTradesFromDatabase();
+
+        if (trades.length === 0) {
+          emptyMessage.style.display = "block";
+          return;
+        }
+
+        emptyMessage.style.display = "none";
+
+        trades.forEach(function (trade) {
+          const card =
+            document.createElement("article");
+
+          card.style.cssText = `
+            padding: 13px;
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            background: var(--input);
+          `;
+
+          const header =
+            document.createElement("div");
+
+          header.style.cssText = `
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 12px;
+          `;
+
+          const sideTitle =
+            document.createElement("strong");
+
+          sideTitle.textContent =
+            trade.side === "long"
+              ? "معامله لانگ"
+              : "معامله شورت";
+
+          sideTitle.style.color =
+            trade.side === "long"
+              ? "var(--green)"
+              : "var(--red)";
+
+          const date =
+            document.createElement("span");
+
+          date.textContent =
+            new Date(
+              trade.createdAt
+            ).toLocaleString("fa-IR");
+
+          date.style.cssText = `
+            color: var(--muted);
+            font-size: 11px;
+          `;
+
+          header.appendChild(sideTitle);
+          header.appendChild(date);
+          card.appendChild(header);
+
+          const details =
+            document.createElement("div");
+
+          details.style.cssText = `
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            color: var(--muted);
+            font-size: 12px;
+            line-height: 1.8;
+          `;
+
+          details.innerHTML = `
+            <div>ورود: ${formatPrice(trade.entry)}</div>
+            <div>استاپ: ${formatPrice(trade.stop)}</div>
+            <div>هدف اول: ${
+              trade.tp1 === null
+                ? "—"
+                : formatPrice(trade.tp1)
+            }</div>
+            <div>هدف دوم: ${
+              trade.tp2 === null
+                ? "—"
+                : formatPrice(trade.tp2)
+            }</div>
+            <div>هدف سوم: ${
+              trade.tp3 === null
+                ? "—"
+                : formatPrice(trade.tp3)
+            }</div>
+            <div>ریسک: $${formatNumber(
+              trade.riskAmount,
+              2
+            )}</div>
+            <div>حجم: ${formatNumber(
+              trade.quantity,
+              8
+            )}</div>
+            <div>مارجین: $${formatNumber(
+              trade.requiredMargin,
+              2
+            )}</div>
+          `;
+
+          card.appendChild(details);
+
+          if (trade.screenshotBlob) {
+            const imageUrl =
+              URL.createObjectURL(
+                trade.screenshotBlob
+              );
+
+            journalImageObjectUrls.push(imageUrl);
+
+            const image =
+              document.createElement("img");
+
+            image.src = imageUrl;
+            image.alt =
+              "اسکرین‌شات نقطه ورود";
+
+            image.style.cssText = `
+              display: block;
+              width: 100%;
+              max-height: 420px;
+              margin-top: 12px;
+              object-fit: contain;
+              border-radius: 9px;
+              border: 1px solid var(--card-border);
+            `;
+
+            card.appendChild(image);
+          }
+
+          const deleteButton =
+            document.createElement("button");
+
+          deleteButton.type = "button";
+          deleteButton.textContent =
+            "حذف این معامله";
+
+          deleteButton.style.cssText = `
+            width: 100%;
+            min-height: 40px;
+            margin-top: 12px;
+            border: 1px solid var(--red);
+            border-radius: 9px;
+            background: rgba(239, 51, 64, 0.12);
+            color: #ffd6da;
+            font-family: inherit;
+            cursor: pointer;
+          `;
+
+          deleteButton.addEventListener(
+            "click",
+            function () {
+              deleteSavedTrade(trade.id);
+            }
+          );
+
+          card.appendChild(deleteButton);
+          tradesList.appendChild(card);
+        });
+      } catch (error) {
+        console.error(error);
+
+        emptyMessage.style.display = "block";
+        emptyMessage.textContent =
+          "خواندن اطلاعات ژورنال با خطا مواجه شد.";
+      }
+    }
+
+    async function deleteSavedTrade(tradeId) {
+      const confirmed = confirm(
+        "این معامله از ژورنال حذف شود؟"
+      );
+
+      if (!confirmed) {
+        return;
+      }
+
+      try {
+        await deleteTradeFromDatabase(tradeId);
+        await renderJournalTrades();
+      } catch (error) {
+        console.error(error);
+
+        alert(
+          "حذف معامله انجام نشد. دوباره تلاش کن."
+        );
+      }
+    }  
     function showCalculator() {
       const cards = document.querySelectorAll(".app > .card");
 
@@ -1110,18 +1638,18 @@
         }
       });
 
-      document
-        .getElementById("calculatorNavButton")
-        .classList.add("active");
+    document
+  .getElementById("calculatorNavButton")
+  .classList.add("active");
 
-      document
-        .getElementById("journalNavButton")
-        .classList.remove("active");
+document
+  .getElementById("journalNavButton")
+  .classList.remove("active");
 
-      window.scrollTo({
-        top: 0,
-        behavior: "smooth"
-      });
+window.scrollTo({
+  top: 0,
+  behavior: "smooth"
+});
     }
 
     function showJournal() {
@@ -1142,7 +1670,7 @@
       document
         .getElementById("journalNavButton")
         .classList.add("active");
-
+renderJournalTrades();
       window.scrollTo({
         top: 0,
         behavior: "smooth"
