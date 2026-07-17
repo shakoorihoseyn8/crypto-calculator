@@ -415,7 +415,46 @@
           <span class="dot red-dot"></span>
         </button>
       </div>
+      <div class="field">
+        <label for="symbol">نماد ارز</label>
 
+        <input
+          id="symbol"
+          type="text"
+          inputmode="text"
+          autocomplete="off"
+          maxlength="30"
+          placeholder="مثلاً BTCUSDT"
+          style="
+            text-transform: uppercase;
+          "
+        >
+      </div>
+
+      <div class="field">
+        <label for="tradeNote">یادداشت یا دلیل ورود</label>
+
+        <textarea
+          id="tradeNote"
+          rows="4"
+          maxlength="1000"
+          placeholder="مثلاً پولبک به حمایت و شکست ساختار"
+          style="
+            width: 100%;
+            min-height: 95px;
+            padding: 12px;
+            border: 1px solid var(--card-border);
+            border-radius: 10px;
+            background: var(--input);
+            color: #ffffff;
+            font-family: inherit;
+            font-size: 14px;
+            line-height: 1.8;
+            resize: vertical;
+            outline: none;
+          "
+        ></textarea>
+      </div>
       <div class="field">
         <label for="entry">قیمت ورود</label>
         <input
@@ -1320,7 +1359,15 @@
       const capital = getNumber("capital");
       const leverage = getNumber("leverage");
       const riskPercent = getNumber("riskPercent");
+const symbol =
+  document.getElementById("symbol").value.trim().toUpperCase();
 
+const tradeNote =
+  document.getElementById("tradeNote").value.trim();
+      if (symbol === "") {
+  alert("نماد ارز را وارد کن؛ مثلاً BTCUSDT.");
+  return;
+}
       if (
         entry === null ||
         stop === null ||
@@ -1390,6 +1437,8 @@
           : entry * (1 + 1 / leverage);
 
       const trade = {
+        symbol: symbol,
+tradeNote: tradeNote,
         side: selectedSide,
         entry: entry,
         stop: stop,
@@ -1498,10 +1547,17 @@
           const sideTitle =
             document.createElement("strong");
 
-          sideTitle.textContent =
-            trade.side === "long"
-              ? "معامله لانگ"
-              : "معامله شورت";
+         const tradeSymbol =
+  trade.symbol || "بدون نماد";
+
+sideTitle.textContent =
+  tradeSymbol +
+  " — " +
+  (
+    trade.side === "long"
+      ? "لانگ"
+      : "شورت"
+  );
 
           sideTitle.style.color =
             trade.side === "long"
@@ -1570,7 +1626,28 @@
           `;
 
           card.appendChild(details);
+          if (trade.tradeNote) {
+            const noteBox =
+              document.createElement("div");
 
+            noteBox.textContent =
+              "یادداشت: " + trade.tradeNote;
+
+            noteBox.style.cssText = `
+              margin-top: 12px;
+              padding: 10px;
+              border: 1px solid var(--card-border);
+              border-radius: 9px;
+              background: rgba(27, 58, 92, 0.6);
+              color: var(--muted);
+              font-size: 12px;
+              line-height: 1.9;
+              white-space: pre-wrap;
+              overflow-wrap: anywhere;
+            `;
+
+            card.appendChild(noteBox);
+          }
           if (trade.screenshotBlob) {
             const imageUrl =
               URL.createObjectURL(
