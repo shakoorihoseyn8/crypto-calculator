@@ -817,8 +817,8 @@
 const SUPABASE_PUBLISHABLE_KEY =
   "sb_publishable_Dxs5cE4y3oxKqwEZzUcS3w_z5L_Iw60";
 let telegramJournalUser = null;
-
-async function authenticateTelegramJournalUser() {
+let cloudJournalTrades = [];
+async function loadCloudJournalTrades() {
   const telegramApp =
     window.Telegram &&
     window.Telegram.WebApp
@@ -833,7 +833,7 @@ async function authenticateTelegramJournalUser() {
 
   if (!initData) {
     throw new Error(
-      "اطلاعات ورود تلگرام دریافت نشد. مینی‌اپ را داخل تلگرام باز کن."
+      "اطلاعات ورود تلگرام دریافت نشد."
     );
   }
 
@@ -848,6 +848,7 @@ async function authenticateTelegramJournalUser() {
       },
 
       body: JSON.stringify({
+        action: "listTrades",
         initData: initData
       })
     }
@@ -859,25 +860,28 @@ async function authenticateTelegramJournalUser() {
     result = await response.json();
   } catch {
     throw new Error(
-      "پاسخ سرور قابل خواندن نیست."
+      "پاسخ معاملات ابری قابل خواندن نیست."
     );
   }
 
   if (!response.ok || !result.ok) {
     throw new Error(
       result.error ||
-      "احراز هویت تلگرام ناموفق بود."
+      "دریافت معاملات ابری ناموفق بود."
     );
   }
 
-  telegramJournalUser = result.user;
+  cloudJournalTrades =
+    Array.isArray(result.trades)
+      ? result.trades
+      : [];
 
   console.log(
-    "Telegram journal user authenticated:",
-    telegramJournalUser
+    "Cloud journal trades:",
+    cloudJournalTrades
   );
 
-  return telegramJournalUser;
+  return cloudJournalTrades;
 }
 let selectedSide = "long";
 
@@ -2450,21 +2454,26 @@ renderJournalTrades();
 
       telegramApp.ready();
       telegramApp.expand();
-      authenticateTelegramJournalUser()
-        .then(function (user) {
-          alert(
-            "اتصال ابری با موفقیت برقرار شد، " +
-            user.firstName
-          );
-        })
-        .catch(function (error) {
-          console.error(
-            "Telegram cloud authentication failed:",
-            error
-          );
+authenticateTelegramJournalUser()
+  .then(async function (user) {
+    const trades =
+      await loadCloudJournalTrades();
 
-          alert(error.message);
-        });
+    alert(
+      "اتصال ابری با موفقیت برقرار شد، " +
+      user.firstName +
+      "\nتعداد معاملات ابری: " +
+      trades.length
+    );
+  })
+  .catch(function (error) {
+    console.error(
+      "Telegram cloud authentication failed:",
+      error
+    );
+
+    alert(error.message);
+  });
       try {
         telegramApp.setHeaderColor("#0d2238");
         telegramApp.setBackgroundColor("#0d2238");
