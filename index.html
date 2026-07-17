@@ -2454,26 +2454,7 @@ renderJournalTrades();
 
       telegramApp.ready();
       telegramApp.expand();
-authenticateTelegramJournalUser()
-  .then(async function (user) {
-    const trades =
-      await loadCloudJournalTrades();
 
-    alert(
-      "اتصال ابری با موفقیت برقرار شد، " +
-      user.firstName +
-      "\nتعداد معاملات ابری: " +
-      trades.length
-    );
-  })
-  .catch(function (error) {
-    console.error(
-      "Telegram cloud authentication failed:",
-      error
-    );
-
-    alert(error.message);
-  });
       try {
         telegramApp.setHeaderColor("#0d2238");
         telegramApp.setBackgroundColor("#0d2238");
