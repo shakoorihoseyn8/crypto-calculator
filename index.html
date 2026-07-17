@@ -1,17 +1,13 @@
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-  <title>ماشین حساب ارز دیجیتال</title>
-
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#0d2238" />
+  <title>CryptoSmart Calculator</title>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
-
   <style>
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
 
     :root {
       --background: #0d2238;
@@ -24,26 +20,29 @@
       --green: #2ecc71;
       --red: #ef3340;
       --blue: #5aa7ec;
+      --footer-height: 34px;
+      --nav-height: 72px;
     }
+
+    html, body { min-height: 100%; }
 
     body {
       margin: 0;
-      min-height: 100vh;
       background: var(--background);
       color: var(--text);
       font-family: Tahoma, Arial, sans-serif;
+      overflow-x: hidden;
     }
 
-    button,
-    input {
-      font-family: inherit;
-    }
+    button, input, textarea, select { font-family: inherit; }
+
+    button { -webkit-tap-highlight-color: transparent; }
 
     .app {
       width: 100%;
       max-width: 830px;
       margin: 0 auto;
-      padding: 12px 7px 30px;
+      padding: 12px 7px calc(var(--footer-height) + var(--nav-height) + 28px);
     }
 
     .header {
@@ -63,13 +62,8 @@
       font-weight: 800;
     }
 
-    .brand-name .crypto {
-      color: #ffffff;
-    }
-
-    .brand-name .smart {
-      color: #1ac5a4;
-    }
+    .brand-name .crypto { color: #fff; }
+    .brand-name .smart { color: #1ac5a4; }
 
     .logo {
       width: 47px;
@@ -90,6 +84,8 @@
       color: var(--muted);
       font-size: 12px;
     }
+
+    .view[hidden] { display: none !important; }
 
     .card {
       background: var(--card);
@@ -121,6 +117,7 @@
       color: var(--muted);
       cursor: pointer;
       font-size: 14px;
+      min-height: 46px;
     }
 
     .side-button.active-long {
@@ -132,7 +129,7 @@
     .side-button.active-short {
       background: var(--red);
       border-color: var(--red);
-      color: #ffffff;
+      color: #fff;
     }
 
     .dot {
@@ -145,225 +142,370 @@
       margin-left: 4px;
     }
 
-    .green-dot {
-      background: #22d145;
-    }
+    .green-dot { background: #22d145; }
+    .red-dot { background: #ff2f45; }
 
-    .red-dot {
-      background: #f21f37;
-    }
+    .field { margin-bottom: 14px; }
 
-    .field {
-      margin-bottom: 14px;
-    }
-
-    .field:last-child {
-      margin-bottom: 0;
-    }
-
-    label {
+    .field label {
       display: block;
       margin-bottom: 7px;
       color: var(--muted);
-      font-size: 13px;
+      font-size: 12px;
     }
 
-    input {
+    input, textarea, select {
       width: 100%;
-      height: 42px;
       border: 1px solid var(--card-border);
       border-radius: 10px;
       background: var(--input);
-      color: #ffffff;
-      padding: 0 12px;
-      font-size: 16px;
-      direction: ltr;
-      text-align: left;
+      color: var(--text);
+      padding: 11px;
+      font-size: 14px;
       outline: none;
     }
 
-    input:focus {
+    input { min-height: 43px; }
+    textarea { min-height: 95px; line-height: 1.8; resize: vertical; }
+
+    input:focus, textarea:focus, select:focus {
       border-color: var(--blue);
-      box-shadow: 0 0 0 2px rgba(90, 167, 236, 0.15);
+      box-shadow: 0 0 0 2px rgba(90, 167, 236, 0.12);
     }
 
-    input::placeholder {
-      color: #7890a5;
-    }
-
-    .targets-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 11px;
-    }
+    input::placeholder, textarea::placeholder { color: #6d9cc7; }
 
     .two-grid {
       display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 11px;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
     }
 
-    .result-row {
-      min-height: 47px;
-      border-bottom: 1px solid var(--line);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 15px;
-    }
-
-    .result-row:last-child {
-      border-bottom: none;
-    }
-
-    .result-label {
-      color: var(--muted);
-      font-size: 14px;
-    }
-
-    .result-value {
-      direction: ltr;
-      color: #ffffff;
-      font-size: 16px;
-      font-weight: bold;
-      text-align: left;
+    .three-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
     }
 
     .error-box {
       display: none;
-      margin-top: 13px;
-      padding: 11px;
-      border: 1px solid rgba(239, 51, 64, 0.7);
-      border-radius: 10px;
-      background: rgba(239, 51, 64, 0.12);
+      padding: 10px;
+      border: 1px solid var(--red);
+      border-radius: 9px;
       color: #ffd6da;
-      font-size: 13px;
+      background: rgba(239, 51, 64, 0.12);
+      font-size: 12px;
       line-height: 1.8;
+    }
+
+    .result-row, .summary-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 0;
+      border-bottom: 1px solid rgba(49, 81, 111, 0.8);
+    }
+
+    .result-row:last-child, .summary-row:last-child { border-bottom: 0; }
+
+    .result-label, .summary-label {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .result-value, .summary-value {
+      direction: ltr;
+      text-align: left;
+      font-size: 13px;
+      font-weight: bold;
     }
 
     .profit-table {
       width: 100%;
       border-collapse: collapse;
-      table-layout: fixed;
+      font-size: 11px;
+      margin-bottom: 10px;
     }
 
-    .profit-table th {
-      color: var(--muted);
-      font-size: 12px;
-      font-weight: normal;
-      padding: 8px 3px 15px;
-    }
-
-    .profit-table td {
-      color: #ffffff;
-      font-size: 13px;
+    .profit-table th, .profit-table td {
+      padding: 9px 4px;
+      border-bottom: 1px solid var(--line);
       text-align: center;
-      padding: 15px 3px;
-      border-bottom: 1px solid var(--line);
       direction: ltr;
     }
 
-    .profit-table td:first-child {
-      direction: rtl;
+    .profit-table th { color: var(--muted); font-weight: normal; }
+
+    .note {
       color: var(--muted);
+      font-size: 11px;
+      line-height: 1.8;
+      margin: 12px 0 0;
     }
 
-    .summary-row {
-      min-height: 48px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 15px;
-      border-bottom: 1px solid var(--line);
-    }
-
-    .summary-row:last-of-type {
-      border-bottom: none;
-    }
-
-    .summary-label {
-      color: var(--muted);
-      font-size: 13px;
-    }
-
-    .summary-value {
-      direction: ltr;
-      color: #ffffff;
+    .primary-button, .danger-button, .secondary-button {
+      width: 100%;
+      min-height: 46px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 14px;
       font-weight: bold;
     }
 
-    .note {
-      margin: 12px 0 0;
-      text-align: center;
+    .primary-button {
+      border: 1px solid var(--green);
+      background: var(--green);
+      color: #071d12;
+    }
+
+    .danger-button {
+      border: 1px solid var(--red);
+      background: rgba(239, 51, 64, 0.12);
+      color: #ffd6da;
+    }
+
+    .secondary-button {
+      border: 1px solid var(--blue);
+      background: rgba(90, 167, 236, 0.12);
       color: var(--muted);
-      font-size: 11px;
-      line-height: 1.7;
     }
 
-    @media (max-width: 520px) {
-      .app {
-        padding: 8px 6px 25px;
-      }
-
-      .card {
-        padding: 13px;
-      }
-
-      .targets-grid {
-        gap: 7px;
-      }
-
-      label {
-        font-size: 11px;
-      }
-
-      input {
-        padding: 0 7px;
-        font-size: 14px;
-      }
-
-      .profit-table th,
-      .profit-table td {
-        font-size: 11px;
-      }
-
-      .result-label,
-      .summary-label {
-        font-size: 12px;
-      }
+    .upload-label {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 48px;
+      padding: 10px;
+      border: 1px dashed var(--blue);
+      border-radius: 11px;
+      background: var(--input);
+      color: var(--muted);
+      font-size: 14px;
+      font-weight: bold;
+      cursor: pointer;
+      text-align: center;
     }
-      body {
-      padding-bottom: 82px;
+
+    .file-name {
+      margin: 9px 0 0;
+      color: var(--muted);
+      text-align: center;
+      font-size: 12px;
     }
+
+    .preview-box {
+      display: none;
+      margin-top: 12px;
+      padding: 8px;
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      background: var(--input);
+    }
+
+    .preview-box img, .journal-image {
+      display: block;
+      width: 100%;
+      max-height: 420px;
+      object-fit: contain;
+      border-radius: 8px;
+      border: 1px solid var(--card-border);
+    }
+
+    details.entry-details {
+      margin-top: 18px;
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      background: rgba(16, 40, 64, 0.45);
+      overflow: hidden;
+    }
+
+    details.entry-details > summary {
+      padding: 15px;
+      color: var(--muted);
+      font-size: 14px;
+      font-weight: bold;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .journal-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+
+    .journal-card {
+      padding: 13px;
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      background: var(--input);
+    }
+
+    .journal-card-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .journal-title {
+      margin: 0;
+      direction: ltr;
+      font-size: 15px;
+    }
+
+    .journal-date {
+      color: var(--muted);
+      font-size: 10px;
+      direction: ltr;
+      white-space: nowrap;
+    }
+
+    .journal-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px 12px;
+      font-size: 12px;
+      margin-bottom: 12px;
+    }
+
+    .journal-grid div {
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+      border-bottom: 1px dashed rgba(49, 81, 111, 0.75);
+      padding-bottom: 5px;
+    }
+
+    .journal-grid span:first-child { color: var(--muted); }
+    .journal-grid strong { direction: ltr; }
+
+    .journal-note, .result-box {
+      margin-top: 10px;
+      padding: 10px;
+      border: 1px solid var(--card-border);
+      border-radius: 9px;
+      background: rgba(27, 58, 92, 0.6);
+      font-size: 12px;
+      line-height: 1.9;
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+    }
+
+    .result-box.closed { border-color: rgba(46, 204, 113, 0.7); }
+    .result-box.loss { border-color: rgba(239, 51, 64, 0.7); }
+
+    .journal-actions {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .trade-result-form {
+      margin-top: 12px;
+      padding: 12px;
+      border: 1px solid var(--blue);
+      border-radius: 10px;
+      background: rgba(90, 167, 236, 0.08);
+    }
+
+    .statement-summary {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+
+    .metric-card {
+      padding: 12px;
+      border: 1px solid var(--card-border);
+      border-radius: 10px;
+      background: var(--input);
+      text-align: center;
+    }
+
+    .metric-card span {
+      display: block;
+      margin-bottom: 7px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .metric-card strong {
+      display: block;
+      direction: ltr;
+      font-size: 15px;
+    }
+
+    .chart-box {
+      padding: 12px;
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      background: var(--input);
+      margin-bottom: 16px;
+    }
+
+    #statementChart {
+      display: block;
+      width: 100%;
+      height: 240px;
+    }
+
+    .statement-details {
+      display: grid;
+      gap: 8px;
+    }
+
+    .statement-detail {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 10px 12px;
+      border: 1px solid var(--card-border);
+      border-radius: 9px;
+      background: rgba(16, 40, 64, 0.35);
+    }
+
+    .statement-detail span { color: var(--muted); font-size: 12px; }
+    .statement-detail strong { direction: ltr; text-align: left; font-size: 13px; }
 
     .bottom-nav {
       position: fixed;
-      right: 50%;
-      bottom: 0;
-      transform: translateX(50%);
+      left: 50%;
+      bottom: var(--footer-height);
+      transform: translateX(-50%);
       width: 100%;
       max-width: 830px;
-      height: 68px;
+      min-height: var(--nav-height);
       display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 8px;
-      padding: 8px;
-      background: rgba(13, 34, 56, 0.96);
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 6px;
+      padding: 8px 7px;
+      background: rgba(13, 34, 56, 0.98);
       border-top: 1px solid var(--card-border);
-      z-index: 1000;
+      z-index: 10000;
     }
 
     .nav-item {
       display: flex;
       align-items: center;
       justify-content: center;
+      min-width: 0;
+      min-height: 50px;
       border: 1px solid var(--card-border);
-      border-radius: 11px;
-      background: var(--input);
+      border-radius: 10px;
+      background: transparent;
       color: var(--muted);
-      text-decoration: none;
-      font-size: 14px;
+      font-size: 12px;
       font-weight: bold;
+      cursor: pointer;
+      white-space: nowrap;
+      padding: 7px 3px;
     }
 
     .nav-item.active {
@@ -371,2114 +513,990 @@
       border-color: var(--green);
       color: #071d12;
     }
+
+    .footer {
+      position: fixed;
+      left: 50%;
+      bottom: 0;
+      transform: translateX(-50%);
+      width: 100%;
+      max-width: 830px;
+      height: var(--footer-height);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #111f2c;
+      color: #d7e7f5;
+      font-size: 12px;
+      z-index: 10001;
+    }
+
+    .toast {
+      position: fixed;
+      left: 50%;
+      bottom: calc(var(--footer-height) + var(--nav-height) + 14px);
+      transform: translateX(-50%) translateY(15px);
+      width: calc(100% - 28px);
+      max-width: 500px;
+      padding: 12px 14px;
+      border-radius: 10px;
+      background: #0a1724;
+      color: #fff;
+      border: 1px solid var(--card-border);
+      opacity: 0;
+      pointer-events: none;
+      transition: 0.2s ease;
+      z-index: 20000;
+      text-align: center;
+      font-size: 13px;
+    }
+
+    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+    .toast.error { border-color: var(--red); }
+
+    @media (max-width: 430px) {
+      .app { padding-right: 5px; padding-left: 5px; }
+      .card { padding: 13px; }
+      .three-grid { gap: 7px; }
+      .three-grid .field label { font-size: 11px; }
+      .journal-grid { grid-template-columns: 1fr; }
+      .nav-item { font-size: 11px; }
+    }
   </style>
 </head>
-
 <body>
-
   <main class="app">
-
     <header class="header">
       <div class="brand">
-        <div class="brand-name">
-          <span class="crypto">Crypto</span><span class="smart">Smart</span>
-        </div>
-
+        <div class="brand-name"><span class="crypto">Crypto</span><span class="smart">Smart</span></div>
         <div class="logo">S</div>
       </div>
-
       <div class="subtitle">ماشین‌حساب مدیریت ریسک و پوزیشن</div>
     </header>
 
-    <section class="card">
-
-      <h2 class="card-title">مشخصات معامله</h2>
-
-      <div class="side-selector">
-        <button
-          type="button"
-          id="longButton"
-          class="side-button active-long"
-          onclick="selectSide('long')"
-        >
-          لانگ
-          <span class="dot green-dot"></span>
-        </button>
-
-        <button
-          type="button"
-          id="shortButton"
-          class="side-button"
-          onclick="selectSide('short')"
-        >
-          شورت
-          <span class="dot red-dot"></span>
-        </button>
-      </div>
-      <div class="field">
-        <label for="symbol">نماد ارز</label>
-
-        <input
-          id="symbol"
-          type="text"
-          inputmode="text"
-          autocomplete="off"
-          maxlength="30"
-          placeholder="مثلاً BTCUSDT"
-          style="
-            text-transform: uppercase;
-          "
-        >
-      </div>
-
-      <div class="field">
-        <label for="tradeNote">یادداشت یا دلیل ورود</label>
-
-        <textarea
-          id="tradeNote"
-          rows="4"
-          maxlength="1000"
-          placeholder="مثلاً پولبک به حمایت و شکست ساختار"
-          style="
-            width: 100%;
-            min-height: 95px;
-            padding: 12px;
-            border: 1px solid var(--card-border);
-            border-radius: 10px;
-            background: var(--input);
-            color: #ffffff;
-            font-family: inherit;
-            font-size: 14px;
-            line-height: 1.8;
-            resize: vertical;
-            outline: none;
-          "
-        ></textarea>
-      </div>
-      <div class="field">
-        <label for="entry">قیمت ورود</label>
-        <input
-          id="entry"
-          type="number"
-          inputmode="decimal"
-          step="any"
-          min="0"
-          placeholder="مثلاً 0.408"
-        >
-      </div>
-
-      <div class="field">
-        <label for="stop">حد ضرر (Stop)</label>
-        <input
-          id="stop"
-          type="number"
-          inputmode="decimal"
-          step="any"
-          min="0"
-          placeholder="مثلاً 0.385"
-        >
-      </div>
-
-      <div class="targets-grid">
-
-        <div class="field">
-          <label for="tp1">هدف اول (TP1)</label>
-          <input
-            id="tp1"
-            type="number"
-            inputmode="decimal"
-            step="any"
-            min="0"
-          >
-        </div>
-
-        <div class="field">
-          <label for="tp2">هدف دوم (TP2)</label>
-          <input
-            id="tp2"
-            type="number"
-            inputmode="decimal"
-            step="any"
-            min="0"
-          >
-        </div>
-
-        <div class="field">
-          <label for="tp3">هدف سوم (TP3)</label>
-          <input
-            id="tp3"
-            type="number"
-            inputmode="decimal"
-            step="any"
-            min="0"
-          >
-        </div>
-
-      </div>
-
-    </section>
-
-    <section class="card">
-
-      <h2 class="card-title">سرمایه و ریسک</h2>
-
-      <div class="field">
-        <label for="capital">سرمایه کل (دلار)</label>
-        <input
-          id="capital"
-          type="number"
-          inputmode="decimal"
-          step="any"
-          min="0"
-          placeholder="مثلاً 1000"
-        >
-      </div>
-
-      <div class="two-grid">
-
-        <div class="field">
-          <label for="leverage">اهرم (Leverage)</label>
-          <input
-            id="leverage"
-            type="number"
-            inputmode="decimal"
-            step="any"
-            min="1"
-            placeholder="مثلاً 10"
-          >
-        </div>
-
-        <div class="field">
-          <label for="riskPercent">درصد ریسک از سرمایه</label>
-          <input
-            id="riskPercent"
-            type="number"
-            inputmode="decimal"
-            step="any"
-            min="0"
-            max="100"
-            placeholder="مثلاً 2"
-          >
-        </div>
-
-      </div>
-
-      <div id="errorBox" class="error-box"></div>
-
-    </section>
-
-    <section class="card">
-
-      <h2 class="card-title">نتیجه</h2>
-
-      <div class="result-row">
-        <span class="result-label">حجم پوزیشن</span>
-        <span id="quantityResult" class="result-value">—</span>
-      </div>
-
-      <div class="result-row">
-        <span class="result-label">ارزش پوزیشن</span>
-        <span id="positionValueResult" class="result-value">—</span>
-      </div>
-
-      <div class="result-row">
-        <span class="result-label">مارجین لازم</span>
-        <span id="marginResult" class="result-value">—</span>
-      </div>
-
-      <div class="result-row">
-        <span class="result-label">مبلغ در معرض ریسک</span>
-        <span id="riskAmountResult" class="result-value">—</span>
-      </div>
-
-      <div class="result-row">
-        <span class="result-label">قیمت لیکویید (تقریبی)</span>
-        <span id="liquidationResult" class="result-value">—</span>
-      </div>
-
-    </section>
-
-    <section class="card">
-
-      <h2 class="card-title">اهداف سود</h2>
-
-      <table class="profit-table">
-        <thead>
-          <tr>
-            <th>هدف</th>
-            <th>R:R</th>
-            <th>سود ($)</th>
-            <th>بازده (%)</th>
-          </tr>
-        </thead>
-
-        <tbody>
-          <tr>
-            <td>TP1</td>
-            <td id="tp1RR">—</td>
-            <td id="tp1Profit">—</td>
-            <td id="tp1Return">—</td>
-          </tr>
-
-          <tr>
-            <td>TP2</td>
-            <td id="tp2RR">—</td>
-            <td id="tp2Profit">—</td>
-            <td id="tp2Return">—</td>
-          </tr>
-
-          <tr>
-            <td>TP3</td>
-            <td id="tp3RR">—</td>
-            <td id="tp3Profit">—</td>
-            <td id="tp3Return">—</td>
-          </tr>
-        </tbody>
-      </table>
-
-      <div class="summary-row">
-        <span class="summary-label">
-          سود کل طبق پلن پله‌ای (۳۰٪ / ۳۰٪ / ۴۰٪)
-        </span>
-
-        <span id="steppedProfitResult" class="summary-value">—</span>
-      </div>
-
-      <div class="summary-row">
-        <span class="summary-label">R:R کلی پوزیشن</span>
-        <span id="totalRRResult" class="summary-value">—</span>
-      </div>
-
-      <p class="note">
-        قیمت لیکویید تقریبی است و کارمزد صرافی، نرخ مارجین نگهداری و نوع مارجین را در نظر نمی‌گیرد.
-      </p>
-
-    </section>
-
-     <section id="journalView" class="card" style="display: none;">
-      <h2 class="card-title">ژورنال معاملات</h2>
-
-               <p
-        id="journalEmptyMessage"
-        style="
-          color: var(--muted);
-          line-height: 2;
-          text-align: center;
-        "
-      >
-        هنوز معامله‌ای در ژورنال ثبت نشده است.
-      </p>
-
-      <div
-        id="journalTradesList"
-        style="
-          display: flex;
-          flex-direction: column;
-          gap: 12px;
-          margin-bottom: 18px;
-        "
-      ></div>
-
-     <details
-  id="newTradeDetails"
-  style="
-    margin-top: 18px;
-    border: 1px solid var(--card-border);
-    border-radius: 12px;
-    background: rgba(16, 40, 64, 0.45);
-    overflow: hidden;
-  "
->
-  <summary
-    style="
-      padding: 15px;
-      color: var(--muted);
-      font-size: 14px;
-      font-weight: bold;
-      cursor: pointer;
-      user-select: none;
-    "
-  >
-    ثبت معامله جدید
-  </summary>
-
-  <div style="padding: 0 12px 12px;">
-        <label
-          for="entryScreenshotInput"
-          style="
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            min-height: 48px;
-            padding: 10px;
-            border: 1px dashed var(--blue);
-            border-radius: 11px;
-            background: var(--input);
-            color: var(--muted);
-            font-size: 14px;
-            font-weight: bold;
-            cursor: pointer;
-          "
-        >
-          افزودن اسکرین‌شات نقطه ورود
-        </label>
-
-        <input
-          id="entryScreenshotInput"
-          type="file"
-          accept="image/*"
-          style="display: none;"
-          onchange="previewEntryScreenshot(event)"
-        >
-
-        <p
-          id="entryScreenshotName"
-          style="
-            margin: 10px 0 0;
-            color: var(--muted);
-            text-align: center;
-            font-size: 12px;
-          "
-        >
-          هنوز تصویری انتخاب نشده است.
-        </p>
-
-        <div
-          id="entryScreenshotPreviewBox"
-          style="
-            display: none;
-            margin-top: 14px;
-            padding: 8px;
-            border: 1px solid var(--card-border);
-            border-radius: 12px;
-            background: var(--input);
-          "
-        >
-          <img
-            id="entryScreenshotPreview"
-            alt="پیش‌نمایش اسکرین‌شات ورود"
-            style="
-              display: block;
-              width: 100%;
-              max-height: 420px;
-              object-fit: contain;
-              border-radius: 8px;
-            "
-          >
-
-          <button
-            type="button"
-            onclick="removeEntryScreenshot()"
-            style="
-              width: 100%;
-              min-height: 42px;
-              margin-top: 10px;
-              border: 1px solid var(--red);
-              border-radius: 9px;
-              background: rgba(239, 51, 64, 0.12);
-              color: #ffd6da;
-              font-family: inherit;
-              cursor: pointer;
-            "
-          >
-            حذف تصویر
+    <div id="calculatorView" class="view">
+      <section class="card">
+        <h2 class="card-title">مشخصات معامله</h2>
+        <div class="side-selector">
+          <button id="longButton" class="side-button active-long" type="button" onclick="selectSide('long')">
+            <span class="dot green-dot"></span> لانگ
+          </button>
+          <button id="shortButton" class="side-button" type="button" onclick="selectSide('short')">
+            <span class="dot red-dot"></span> شورت
           </button>
         </div>
+
+        <div class="field">
+          <label for="symbol">نماد ارز</label>
+          <input id="symbol" type="text" maxlength="30" placeholder="مثلاً BTCUSDT" autocomplete="off" />
+        </div>
+
+        <div class="field">
+          <label for="tradeNote">یادداشت یا دلیل ورود</label>
+          <textarea id="tradeNote" maxlength="1000" placeholder="مثلاً پولبک به حمایت و شکست ساختار"></textarea>
+        </div>
+
+        <div class="field">
+          <label for="entry">قیمت ورود</label>
+          <input id="entry" type="number" inputmode="decimal" step="any" min="0" placeholder="مثلاً 0.408" />
+        </div>
+
+        <div class="field">
+          <label for="stop">حد ضرر (Stop)</label>
+          <input id="stop" type="number" inputmode="decimal" step="any" min="0" placeholder="مثلاً 0.385" />
+        </div>
+
+        <div class="three-grid">
+          <div class="field">
+            <label for="tp1">هدف اول (TP1)</label>
+            <input id="tp1" type="number" inputmode="decimal" step="any" min="0" />
+          </div>
+          <div class="field">
+            <label for="tp2">هدف دوم (TP2)</label>
+            <input id="tp2" type="number" inputmode="decimal" step="any" min="0" />
+          </div>
+          <div class="field">
+            <label for="tp3">هدف سوم (TP3)</label>
+            <input id="tp3" type="number" inputmode="decimal" step="any" min="0" />
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2 class="card-title">سرمایه و ریسک</h2>
+        <div class="field">
+          <label for="capital">سرمایه کل (دلار)</label>
+          <input id="capital" type="number" inputmode="decimal" step="any" min="0" placeholder="مثلاً 1000" />
+        </div>
+        <div class="two-grid">
+          <div class="field">
+            <label for="leverage">اهرم (Leverage)</label>
+            <input id="leverage" type="number" inputmode="decimal" step="any" min="1" placeholder="مثلاً 10" />
+          </div>
+          <div class="field">
+            <label for="riskPercent">درصد ریسک از سرمایه</label>
+            <input id="riskPercent" type="number" inputmode="decimal" step="any" min="0" max="100" placeholder="مثلاً 2" />
+          </div>
+        </div>
+        <div id="errorBox" class="error-box"></div>
+      </section>
+
+      <section class="card">
+        <h2 class="card-title">نتیجه</h2>
+        <div class="result-row"><span class="result-label">حجم پوزیشن</span><span id="quantityResult" class="result-value">—</span></div>
+        <div class="result-row"><span class="result-label">ارزش پوزیشن</span><span id="positionValueResult" class="result-value">—</span></div>
+        <div class="result-row"><span class="result-label">مارجین لازم</span><span id="marginResult" class="result-value">—</span></div>
+        <div class="result-row"><span class="result-label">مبلغ در معرض ریسک</span><span id="riskAmountResult" class="result-value">—</span></div>
+        <div class="result-row"><span class="result-label">قیمت لیکویید (تقریبی)</span><span id="liquidationResult" class="result-value">—</span></div>
+      </section>
+
+      <section class="card">
+        <h2 class="card-title">اهداف سود</h2>
+        <table class="profit-table">
+          <thead><tr><th>هدف</th><th>R:R</th><th>سود ($)</th><th>بازده (%)</th></tr></thead>
+          <tbody>
+            <tr><td>TP1</td><td id="tp1RR">—</td><td id="tp1Profit">—</td><td id="tp1Return">—</td></tr>
+            <tr><td>TP2</td><td id="tp2RR">—</td><td id="tp2Profit">—</td><td id="tp2Return">—</td></tr>
+            <tr><td>TP3</td><td id="tp3RR">—</td><td id="tp3Profit">—</td><td id="tp3Return">—</td></tr>
+          </tbody>
+        </table>
+        <div class="summary-row"><span class="summary-label">سود کل طبق پلن پله‌ای (۳۰٪ / ۳۰٪ / ۴۰٪)</span><span id="steppedProfitResult" class="summary-value">—</span></div>
+        <div class="summary-row"><span class="summary-label">R:R کلی پوزیشن</span><span id="totalRRResult" class="summary-value">—</span></div>
+        <p class="note">قیمت لیکویید تقریبی است و کارمزد صرافی، نرخ مارجین نگهداری و نوع مارجین را در نظر نمی‌گیرد.</p>
+      </section>
+    </div>
+
+    <section id="journalView" class="view card" hidden>
+      <h2 class="card-title">ژورنال معاملات</h2>
+      <p id="journalEmptyMessage" class="note" style="text-align:center;line-height:2;">هنوز معامله‌ای در ژورنال ثبت نشده است.</p>
+      <div id="journalTradesList" class="journal-list"></div>
+
+      <details id="newTradeDetails" class="entry-details">
+        <summary>ثبت معامله جدید</summary>
+        <div style="padding:0 12px 12px;">
+          <label class="upload-label" for="entryScreenshotInput">افزودن اسکرین‌شات نقطه ورود</label>
+          <input id="entryScreenshotInput" type="file" accept="image/*" style="display:none;" onchange="previewEntryScreenshot(event)" />
+          <p id="entryScreenshotName" class="file-name">هنوز تصویری انتخاب نشده است.</p>
+          <div id="entryScreenshotPreviewBox" class="preview-box">
+            <img id="entryScreenshotPreview" alt="پیش‌نمایش اسکرین‌شات ورود" />
+            <button type="button" class="danger-button" style="margin-top:10px;" onclick="removeEntryScreenshot()">حذف تصویر</button>
+          </div>
+          <button id="saveTradeButton" type="button" class="primary-button" style="margin-top:16px;" onclick="saveTradeToJournal()">ذخیره معامله در ژورنال</button>
+        </div>
+      </details>
+    </section>
+
+    <section id="statementView" class="view card" hidden>
+      <h2 class="card-title">استیتمنت معاملاتی</h2>
+      <p id="statementEmptyMessage" class="note" style="text-align:center;line-height:2;">برای نمایش استیتمنت، ابتدا نتیجه معاملات بسته‌شده را ثبت کن.</p>
+      <div id="statementContent" hidden>
+        <div id="statementSummary" class="statement-summary"></div>
+        <div class="chart-box">
+          <strong style="display:block;margin-bottom:12px;">نمودار سود تجمعی</strong>
+          <canvas id="statementChart"></canvas>
+        </div>
+        <div id="statementDetails" class="statement-details"></div>
       </div>
-             <button
-        id="saveTradeButton"
-        type="button"
-        onclick="saveTradeToJournal()"
-        style="
-          width: 100%;
-          min-height: 48px;
-          margin-top: 16px;
-          border: 1px solid var(--green);
-          border-radius: 10px;
-          background: var(--green);
-          color: #071d12;
-          font-family: inherit;
-          font-size: 14px;
-          font-weight: bold;
-          cursor: pointer;
-        "
-      >
-        ذخیره معامله در ژورنال
-      </button>
-         </div>
-</details>
     </section>
   </main>
 
+  <nav class="bottom-nav" aria-label="ناوبری اصلی">
+    <button id="calculatorNavButton" class="nav-item active" type="button" onclick="showCalculator()">ماشین‌حساب</button>
+    <button id="journalNavButton" class="nav-item" type="button" onclick="showJournal()">ژورنال</button>
+    <button id="statementNavButton" class="nav-item" type="button" onclick="showStatement()">استیتمنت</button>
+  </nav>
+
+  <footer class="footer">@CryptoSmartTradeBot</footer>
+  <div id="toast" class="toast" role="status"></div>
+
   <script>
-    const TELEGRAM_JOURNAL_API_URL =
-  "https://bufobmvflinalnskdlcq.supabase.co/functions/v1/telegram-journal-api";
+    "use strict";
 
-const SUPABASE_PUBLISHABLE_KEY =
-  "sb_publishable_Dxs5cE4y3oxKqwEZzUcS3w_z5L_Iw60";
-let telegramJournalUser = null;
-let cloudJournalTrades = [];
-async function loadCloudJournalTrades() {
-  const telegramApp =
-    window.Telegram &&
-    window.Telegram.WebApp
-      ? window.Telegram.WebApp
-      : null;
+    const DB_NAME = "cryptoSmartJournalDB";
+    const DB_VERSION = 1;
+    const STORE_NAME = "trades";
 
-  const initData =
-    telegramApp &&
-    typeof telegramApp.initData === "string"
-      ? telegramApp.initData
-      : "";
+    let selectedSide = "long";
+    let entryScreenshotFile = null;
+    let entryScreenshotObjectUrl = null;
+    let journalObjectUrls = [];
+    let toastTimer = null;
+    let legacyMigrationAttempted = false;
 
-  if (!initData) {
-    throw new Error(
-      "اطلاعات ورود تلگرام دریافت نشد."
-    );
-  }
-
-  const response = await fetch(
-    TELEGRAM_JOURNAL_API_URL,
-    {
-      method: "POST",
-
-      headers: {
-        "Content-Type": "application/json",
-        "apikey": SUPABASE_PUBLISHABLE_KEY
-      },
-
-      body: JSON.stringify({
-        action: "listTrades",
-        initData: initData
-      })
-    }
-  );
-
-  let result;
-
-  try {
-    result = await response.json();
-  } catch {
-    throw new Error(
-      "پاسخ معاملات ابری قابل خواندن نیست."
-    );
-  }
-
-  if (!response.ok || !result.ok) {
-    throw new Error(
-      result.error ||
-      "دریافت معاملات ابری ناموفق بود."
-    );
-  }
-
-  cloudJournalTrades =
-    Array.isArray(result.trades)
-      ? result.trades
-      : [];
-
-  console.log(
-    "Cloud journal trades:",
-    cloudJournalTrades
-  );
-
-  return cloudJournalTrades;
-}
-let selectedSide = "long";
-
-    const inputIds = [
-      "entry",
-      "stop",
-      "tp1",
-      "tp2",
-      "tp3",
-      "capital",
-      "leverage",
-      "riskPercent"
-    ];
+    const inputIds = ["entry", "stop", "tp1", "tp2", "tp3", "capital", "leverage", "riskPercent"];
 
     inputIds.forEach(function (id) {
-      document.getElementById(id).addEventListener("input", calculateTrade);
+      const element = document.getElementById(id);
+      if (element) element.addEventListener("input", calculateTrade);
     });
 
-    function selectSide(side) {
-      selectedSide = side;
+    function showToast(message, isError) {
+      const toast = document.getElementById("toast");
+      if (!toast) return;
+      toast.textContent = message;
+      toast.classList.toggle("error", Boolean(isError));
+      toast.classList.add("show");
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(function () { toast.classList.remove("show"); }, 2600);
+    }
 
-      const longButton = document.getElementById("longButton");
-      const shortButton = document.getElementById("shortButton");
-
-      longButton.classList.remove("active-long");
-      shortButton.classList.remove("active-short");
-
-      if (side === "long") {
-        longButton.classList.add("active-long");
-      } else {
-        shortButton.classList.add("active-short");
-      }
-
-      calculateTrade();
+    function formatNumber(value, digits) {
+      const number = Number(value);
+      if (!Number.isFinite(number)) return "—";
+      return number.toLocaleString("en-US", {
+        minimumFractionDigits: digits,
+        maximumFractionDigits: digits
+      });
     }
 
     function getNumber(id) {
-      const value = document.getElementById(id).value.trim();
-
-      if (value === "") {
-        return null;
-      }
-
+      const element = document.getElementById(id);
+      if (!element) return null;
+      const value = element.value.trim();
+      if (value === "") return null;
       const number = Number(value);
-
       return Number.isFinite(number) ? number : null;
     }
 
-    function formatNumber(value, maximumDecimals) {
-      if (!Number.isFinite(value)) {
-        return "—";
-      }
-
-      return value.toLocaleString("en-US", {
-        minimumFractionDigits: 0,
-        maximumFractionDigits: maximumDecimals
-      });
+    function selectSide(side) {
+      selectedSide = side === "short" ? "short" : "long";
+      const longButton = document.getElementById("longButton");
+      const shortButton = document.getElementById("shortButton");
+      longButton.classList.toggle("active-long", selectedSide === "long");
+      shortButton.classList.toggle("active-short", selectedSide === "short");
+      calculateTrade();
     }
 
-    function formatPrice(value) {
-      if (!Number.isFinite(value)) {
-        return "—";
-      }
-
-      return value.toLocaleString("en-US", {
-        minimumFractionDigits: 0,
-        maximumFractionDigits: 8
-      });
+    function clearResults() {
+      ["quantityResult", "positionValueResult", "marginResult", "riskAmountResult", "liquidationResult",
+       "tp1RR", "tp1Profit", "tp1Return", "tp2RR", "tp2Profit", "tp2Return",
+       "tp3RR", "tp3Profit", "tp3Return", "steppedProfitResult", "totalRRResult"]
+        .forEach(function (id) { document.getElementById(id).textContent = "—"; });
     }
 
-    function showError(messages) {
-      const errorBox = document.getElementById("errorBox");
-
-      if (messages.length === 0) {
-        errorBox.style.display = "none";
-        errorBox.innerHTML = "";
+    function setError(message) {
+      const box = document.getElementById("errorBox");
+      if (!message) {
+        box.style.display = "none";
+        box.textContent = "";
         return;
       }
-
-      errorBox.style.display = "block";
-      errorBox.innerHTML = messages.join("<br>");
-    }
-
-    function clearMainResults() {
-      document.getElementById("quantityResult").textContent = "—";
-      document.getElementById("positionValueResult").textContent = "—";
-      document.getElementById("marginResult").textContent = "—";
-      document.getElementById("riskAmountResult").textContent = "—";
-      document.getElementById("liquidationResult").textContent = "—";
-
-      clearTargetResult(1);
-      clearTargetResult(2);
-      clearTargetResult(3);
-
-      document.getElementById("steppedProfitResult").textContent = "—";
-      document.getElementById("totalRRResult").textContent = "—";
-    }
-
-    function clearTargetResult(number) {
-      document.getElementById("tp" + number + "RR").textContent = "—";
-      document.getElementById("tp" + number + "Profit").textContent = "—";
-      document.getElementById("tp" + number + "Return").textContent = "—";
-    }
-
-    function calculateTarget(targetPrice, quantity, entry, riskAmount, capital) {
-      if (targetPrice === null || targetPrice <= 0) {
-        return null;
-      }
-
-      const priceDifference =
-        selectedSide === "long"
-          ? targetPrice - entry
-          : entry - targetPrice;
-
-      const profit = quantity * priceDifference;
-      const rewardRisk = profit / riskAmount;
-      const returnPercent = (profit / capital) * 100;
-
-      return {
-        profit: profit,
-        rewardRisk: rewardRisk,
-        returnPercent: returnPercent
-      };
-    }
-
-    function renderTarget(number, result) {
-      if (!result) {
-        clearTargetResult(number);
-        return;
-      }
-
-      document.getElementById("tp" + number + "RR").textContent =
-        formatNumber(result.rewardRisk, 2);
-
-      document.getElementById("tp" + number + "Profit").textContent =
-        "$" + formatNumber(result.profit, 2);
-
-      document.getElementById("tp" + number + "Return").textContent =
-        formatNumber(result.returnPercent, 2) + "%";
+      box.textContent = message;
+      box.style.display = "block";
     }
 
     function calculateTrade() {
       const entry = getNumber("entry");
       const stop = getNumber("stop");
-      const tp1 = getNumber("tp1");
-      const tp2 = getNumber("tp2");
-      const tp3 = getNumber("tp3");
       const capital = getNumber("capital");
       const leverage = getNumber("leverage");
       const riskPercent = getNumber("riskPercent");
 
-      const requiredValues = [
-        entry,
-        stop,
-        capital,
-        leverage,
-        riskPercent
-      ];
+      setError("");
 
-      if (requiredValues.some(function (value) {
-        return value === null;
-      })) {
-        clearMainResults();
-        showError([]);
-        return;
+      if ([entry, stop, capital, leverage, riskPercent].some(function (value) { return value === null; })) {
+        clearResults();
+        return null;
       }
 
-      const errors = [];
-
-      if (entry <= 0) {
-        errors.push("قیمت ورود باید بیشتر از صفر باشد.");
+      if (entry <= 0 || stop <= 0 || capital <= 0 || leverage <= 0 || riskPercent <= 0) {
+        clearResults();
+        setError("همه مقادیر اصلی باید بزرگ‌تر از صفر باشند.");
+        return null;
       }
 
-      if (stop <= 0) {
-        errors.push("حد ضرر باید بیشتر از صفر باشد.");
+      if (entry === stop) {
+        clearResults();
+        setError("قیمت ورود و حد ضرر نمی‌توانند برابر باشند.");
+        return null;
       }
 
-      if (capital <= 0) {
-        errors.push("سرمایه کل باید بیشتر از صفر باشد.");
+      const stopIsValid = selectedSide === "long" ? stop < entry : stop > entry;
+      if (!stopIsValid) {
+        clearResults();
+        setError(selectedSide === "long" ? "در معامله لانگ، حد ضرر باید پایین‌تر از ورود باشد." : "در معامله شورت، حد ضرر باید بالاتر از ورود باشد.");
+        return null;
       }
 
-      if (leverage < 1) {
-        errors.push("اهرم باید حداقل ۱ باشد.");
-      }
-
-      if (riskPercent <= 0 || riskPercent > 100) {
-        errors.push("درصد ریسک باید بیشتر از صفر و حداکثر ۱۰۰ باشد.");
-      }
-
-      if (selectedSide === "long" && stop >= entry) {
-        errors.push("در معامله لانگ، حد ضرر باید پایین‌تر از قیمت ورود باشد.");
-      }
-
-      if (selectedSide === "short" && stop <= entry) {
-        errors.push("در معامله شورت، حد ضرر باید بالاتر از قیمت ورود باشد.");
-      }
-
-      const targets = [tp1, tp2, tp3];
-
-      targets.forEach(function (target, index) {
-        if (target === null) {
-          return;
-        }
-
-        if (selectedSide === "long" && target <= entry) {
-          errors.push(
-            "در معامله لانگ، هدف TP" +
-            (index + 1) +
-            " باید بالاتر از قیمت ورود باشد."
-          );
-        }
-
-        if (selectedSide === "short" && target >= entry) {
-          errors.push(
-            "در معامله شورت، هدف TP" +
-            (index + 1) +
-            " باید پایین‌تر از قیمت ورود باشد."
-          );
-        }
-      });
-
-      if (errors.length > 0) {
-        clearMainResults();
-        showError(errors);
-        return;
-      }
-
-      showError([]);
-
+      const riskDistance = Math.abs(entry - stop);
       const riskAmount = capital * (riskPercent / 100);
-      const stopDistance = Math.abs(entry - stop);
-      const quantity = riskAmount / stopDistance;
+      const quantity = riskAmount / riskDistance;
       const positionValue = quantity * entry;
       const requiredMargin = positionValue / leverage;
+      const liquidationPrice = selectedSide === "long" ? entry * (1 - 1 / leverage) : entry * (1 + 1 / leverage);
 
-      const liquidationPrice =
-        selectedSide === "long"
-          ? entry * (1 - 1 / leverage)
-          : entry * (1 + 1 / leverage);
+      document.getElementById("quantityResult").textContent = formatNumber(quantity, 6);
+      document.getElementById("positionValueResult").textContent = formatNumber(positionValue, 2) + " $";
+      document.getElementById("marginResult").textContent = formatNumber(requiredMargin, 2) + " $";
+      document.getElementById("riskAmountResult").textContent = formatNumber(riskAmount, 2) + " $";
+      document.getElementById("liquidationResult").textContent = formatNumber(Math.max(liquidationPrice, 0), 6);
 
-      document.getElementById("quantityResult").textContent =
-        formatNumber(quantity, 8);
-
-      document.getElementById("positionValueResult").textContent =
-        "$" + formatNumber(positionValue, 2);
-
-      document.getElementById("marginResult").textContent =
-        "$" + formatNumber(requiredMargin, 2);
-
-      document.getElementById("riskAmountResult").textContent =
-        "$" + formatNumber(riskAmount, 2);
-
-      document.getElementById("liquidationResult").textContent =
-        formatPrice(Math.max(liquidationPrice, 0));
-
-      const tp1Result = calculateTarget(
-        tp1,
-        quantity,
-        entry,
-        riskAmount,
-        capital
-      );
-
-      const tp2Result = calculateTarget(
-        tp2,
-        quantity,
-        entry,
-        riskAmount,
-        capital
-      );
-
-      const tp3Result = calculateTarget(
-        tp3,
-        quantity,
-        entry,
-        riskAmount,
-        capital
-      );
-
-      renderTarget(1, tp1Result);
-      renderTarget(2, tp2Result);
-      renderTarget(3, tp3Result);
-
-      const targetResults = [
-        tp1Result,
-        tp2Result,
-        tp3Result
-      ];
-
-      const weights = [0.30, 0.30, 0.40];
-
+      const weights = [0.3, 0.3, 0.4];
       let steppedProfit = 0;
-      let totalWeight = 0;
+      let steppedRR = 0;
+      let usedWeight = 0;
 
-      targetResults.forEach(function (result, index) {
-        if (!result) {
+      ["tp1", "tp2", "tp3"].forEach(function (id, index) {
+        const target = getNumber(id);
+        const rrElement = document.getElementById(id + "RR");
+        const profitElement = document.getElementById(id + "Profit");
+        const returnElement = document.getElementById(id + "Return");
+
+        if (target === null || target <= 0) {
+          rrElement.textContent = "—";
+          profitElement.textContent = "—";
+          returnElement.textContent = "—";
           return;
         }
 
-        steppedProfit += result.profit * weights[index];
-        totalWeight += weights[index];
+        const directionalDistance = selectedSide === "long" ? target - entry : entry - target;
+        const profit = directionalDistance * quantity;
+        const rr = directionalDistance / riskDistance;
+        const returnPercent = (profit / capital) * 100;
+
+        rrElement.textContent = formatNumber(rr, 2);
+        profitElement.textContent = formatNumber(profit, 2);
+        returnElement.textContent = formatNumber(returnPercent, 2) + "%";
+
+        steppedProfit += profit * weights[index];
+        steppedRR += rr * weights[index];
+        usedWeight += weights[index];
       });
 
-      if (totalWeight === 1) {
-        const totalRewardRisk = steppedProfit / riskAmount;
+      document.getElementById("steppedProfitResult").textContent = usedWeight > 0 ? formatNumber(steppedProfit, 2) + " $" : "—";
+      document.getElementById("totalRRResult").textContent = usedWeight > 0 ? formatNumber(steppedRR, 2) : "—";
 
-        document.getElementById("steppedProfitResult").textContent =
-          "$" + formatNumber(steppedProfit, 2);
-
-        document.getElementById("totalRRResult").textContent =
-          formatNumber(totalRewardRisk, 2);
-      } else {
-        document.getElementById("steppedProfitResult").textContent = "—";
-        document.getElementById("totalRRResult").textContent = "—";
-      }
-
-      if (requiredMargin > capital) {
-        showError([
-          "هشدار: مارجین لازم از کل سرمایه بیشتر است. اهرم یا درصد ریسک را اصلاح کن."
-        ]);
-      }
+      return {
+        entry, stop, capital, leverage, riskPercent, riskAmount, quantity, positionValue, requiredMargin,
+        liquidationPrice: Math.max(liquidationPrice, 0)
+      };
     }
-
-           const JOURNAL_DB_NAME = "CryptoSmartJournalDB";
-    const JOURNAL_DB_VERSION = 1;
-    const JOURNAL_STORE_NAME = "trades";
 
     function openJournalDatabase() {
       return new Promise(function (resolve, reject) {
-        const request = indexedDB.open(
-          JOURNAL_DB_NAME,
-          JOURNAL_DB_VERSION
-        );
-
-        request.onupgradeneeded = function (event) {
-          const database = event.target.result;
-
-          if (
-            !database.objectStoreNames.contains(
-              JOURNAL_STORE_NAME
-            )
-          ) {
-            const store = database.createObjectStore(
-              JOURNAL_STORE_NAME,
-              {
-                keyPath: "id",
-                autoIncrement: true
-              }
-            );
-
-            store.createIndex(
-              "createdAt",
-              "createdAt",
-              {
-                unique: false
-              }
-            );
+        const request = indexedDB.open(DB_NAME, DB_VERSION);
+        request.onupgradeneeded = function () {
+          const database = request.result;
+          if (!database.objectStoreNames.contains(STORE_NAME)) {
+            const store = database.createObjectStore(STORE_NAME, { keyPath: "id", autoIncrement: true });
+            store.createIndex("createdAt", "createdAt", { unique: false });
+            store.createIndex("status", "status", { unique: false });
           }
         };
+        request.onsuccess = function () { resolve(request.result); };
+        request.onerror = function () { reject(request.error || new Error("بازکردن دیتابیس ناموفق بود.")); };
+      });
+    }
 
+    async function runStoreRequest(mode, handler) {
+      const database = await openJournalDatabase();
+      return new Promise(function (resolve, reject) {
+        const transaction = database.transaction(STORE_NAME, mode);
+        const store = transaction.objectStore(STORE_NAME);
+        let request;
+        try { request = handler(store); } catch (error) { database.close(); reject(error); return; }
+        request.onsuccess = function () { resolve(request.result); };
+        request.onerror = function () { reject(request.error || new Error("عملیات دیتابیس ناموفق بود.")); };
+        transaction.oncomplete = function () { database.close(); };
+        transaction.onerror = function () { database.close(); };
+        transaction.onabort = function () { database.close(); };
+      });
+    }
+
+    function addTradeToDatabase(trade) { return runStoreRequest("readwrite", function (store) { return store.add(trade); }); }
+    function updateTradeInDatabase(trade) { return runStoreRequest("readwrite", function (store) { return store.put(trade); }); }
+    function deleteTradeFromDatabase(id) { return runStoreRequest("readwrite", function (store) { return store.delete(id); }); }
+
+    async function getTradesFromDatabase() {
+      const trades = await runStoreRequest("readonly", function (store) { return store.getAll(); });
+      return Array.isArray(trades) ? trades : [];
+    }
+
+    function readAllFromLegacyStore(databaseName, storeName) {
+      return new Promise(function (resolve) {
+        const request = indexedDB.open(databaseName);
+        request.onerror = function () { resolve([]); };
         request.onsuccess = function () {
-          resolve(request.result);
+          const database = request.result;
+          if (!database.objectStoreNames.contains(storeName)) {
+            database.close();
+            resolve([]);
+            return;
+          }
+          try {
+            const transaction = database.transaction(storeName, "readonly");
+            const getAllRequest = transaction.objectStore(storeName).getAll();
+            getAllRequest.onsuccess = function () { resolve(Array.isArray(getAllRequest.result) ? getAllRequest.result : []); };
+            getAllRequest.onerror = function () { resolve([]); };
+            transaction.oncomplete = function () { database.close(); };
+            transaction.onerror = function () { database.close(); resolve([]); };
+          } catch (error) {
+            database.close();
+            resolve([]);
+          }
         };
-
-        request.onerror = function () {
-          reject(
-            request.error ||
-            new Error("بازکردن دیتابیس ژورنال ناموفق بود.")
-          );
-        };
       });
     }
 
-    function addTradeToDatabase(trade) {
-      return openJournalDatabase().then(function (database) {
-        return new Promise(function (resolve, reject) {
-          const transaction = database.transaction(
-            JOURNAL_STORE_NAME,
-            "readwrite"
-          );
+    async function migrateLegacyTradesIfNeeded() {
+      if (legacyMigrationAttempted) return;
+      legacyMigrationAttempted = true;
 
-          const store =
-            transaction.objectStore(JOURNAL_STORE_NAME);
+      const currentTrades = await getTradesFromDatabase();
+      if (currentTrades.length > 0 || typeof indexedDB.databases !== "function") return;
 
-          const request = store.add(trade);
+      const databases = await indexedDB.databases();
+      for (const databaseInfo of databases) {
+        const databaseName = databaseInfo && databaseInfo.name;
+        if (!databaseName || databaseName === DB_NAME) continue;
 
+        const storeNames = await new Promise(function (resolve) {
+          const request = indexedDB.open(databaseName);
+          request.onerror = function () { resolve([]); };
           request.onsuccess = function () {
-            resolve(request.result);
-          };
-
-          request.onerror = function () {
-            reject(
-              request.error ||
-              new Error("ذخیره معامله ناموفق بود.")
-            );
-          };
-
-          transaction.oncomplete = function () {
+            const database = request.result;
+            const names = Array.from(database.objectStoreNames);
             database.close();
+            resolve(names);
           };
         });
-      });
+
+        for (const storeName of storeNames) {
+          if (!/trade|journal/i.test(storeName)) continue;
+          const records = await readAllFromLegacyStore(databaseName, storeName);
+          const compatibleRecords = records.filter(function (record) {
+            return record && Number.isFinite(Number(record.entry)) && Number.isFinite(Number(record.stop));
+          });
+
+          if (!compatibleRecords.length) continue;
+
+          for (const record of compatibleRecords) {
+            const migrated = Object.assign({}, record);
+            delete migrated.id;
+            if (!migrated.createdAt) migrated.createdAt = Date.now();
+            if (!migrated.status) migrated.status = "open";
+            await addTradeToDatabase(migrated);
+          }
+
+          showToast("معاملات قدیمی ژورنال بازیابی شد.");
+          return;
+        }
+      }
     }
 
-    function getTradesFromDatabase() {
-      return openJournalDatabase().then(function (database) {
-        return new Promise(function (resolve, reject) {
-          const transaction = database.transaction(
-            JOURNAL_STORE_NAME,
-            "readonly"
-          );
-
-          const store =
-            transaction.objectStore(JOURNAL_STORE_NAME);
-
-          const request = store.getAll();
-
-          request.onsuccess = function () {
-            const trades = request.result || [];
-
-            trades.sort(function (firstTrade, secondTrade) {
-              return secondTrade.createdAt - firstTrade.createdAt;
-            });
-
-            resolve(trades);
-          };
-
-          request.onerror = function () {
-            reject(
-              request.error ||
-              new Error("خواندن ژورنال ناموفق بود.")
-            );
-          };
-
-          transaction.oncomplete = function () {
-            database.close();
-          };
-        });
-      });
+    async function getTradeById(id) {
+      return runStoreRequest("readonly", function (store) { return store.get(id); });
     }
-
-    function deleteTradeFromDatabase(tradeId) {
-      return openJournalDatabase().then(function (database) {
-        return new Promise(function (resolve, reject) {
-          const transaction = database.transaction(
-            JOURNAL_STORE_NAME,
-            "readwrite"
-          );
-
-          const store =
-            transaction.objectStore(JOURNAL_STORE_NAME);
-
-          const request = store.delete(tradeId);
-
-          request.onsuccess = function () {
-            resolve();
-          };
-
-          request.onerror = function () {
-            reject(
-              request.error ||
-              new Error("حذف معامله ناموفق بود.")
-            );
-          };
-
-          transaction.oncomplete = function () {
-            database.close();
-          };
-        });
-      });
-    }  
-        function updateTradeInDatabase(trade) {
-      return openJournalDatabase().then(function (database) {
-        return new Promise(function (resolve, reject) {
-          const transaction = database.transaction(
-            JOURNAL_STORE_NAME,
-            "readwrite"
-          );
-
-          const store =
-            transaction.objectStore(JOURNAL_STORE_NAME);
-
-          const request = store.put(trade);
-
-          request.onsuccess = function () {
-            resolve(request.result);
-          };
-
-          request.onerror = function () {
-            reject(
-              request.error ||
-              new Error("ویرایش نتیجه معامله ناموفق بود.")
-            );
-          };
-
-          transaction.oncomplete = function () {
-            database.close();
-          };
-
-          transaction.onabort = function () {
-            database.close();
-
-            reject(
-              transaction.error ||
-              new Error("ویرایش نتیجه معامله متوقف شد.")
-            );
-          };
-        });
-      });
-    }
-    let entryScreenshotObjectUrl = null;
 
     function previewEntryScreenshot(event) {
       const input = event.target;
       const file = input.files && input.files[0];
-
-      if (!file) {
-        return;
-      }
-
+      if (!file) return;
       if (!file.type.startsWith("image/")) {
-        alert("فایل انتخاب‌شده باید تصویر باشد.");
         input.value = "";
+        showToast("فقط فایل تصویری مجاز است.", true);
         return;
       }
-
-      const maximumSize = 10 * 1024 * 1024;
-
-      if (file.size > maximumSize) {
-        alert("حجم تصویر نباید بیشتر از ۱۰ مگابایت باشد.");
-        input.value = "";
-        return;
-      }
-
-      if (entryScreenshotObjectUrl) {
-        URL.revokeObjectURL(entryScreenshotObjectUrl);
-      }
-
+      entryScreenshotFile = file;
+      if (entryScreenshotObjectUrl) URL.revokeObjectURL(entryScreenshotObjectUrl);
       entryScreenshotObjectUrl = URL.createObjectURL(file);
-
-      const preview =
-        document.getElementById("entryScreenshotPreview");
-
-      const previewBox =
-        document.getElementById("entryScreenshotPreviewBox");
-
-      const fileName =
-        document.getElementById("entryScreenshotName");
-
-      preview.src = entryScreenshotObjectUrl;
-      previewBox.style.display = "block";
-      fileName.textContent = file.name;
+      document.getElementById("entryScreenshotPreview").src = entryScreenshotObjectUrl;
+      document.getElementById("entryScreenshotName").textContent = file.name;
+      document.getElementById("entryScreenshotPreviewBox").style.display = "block";
     }
 
     function removeEntryScreenshot() {
-      const input =
-        document.getElementById("entryScreenshotInput");
-
-      const preview =
-        document.getElementById("entryScreenshotPreview");
-
-      const previewBox =
-        document.getElementById("entryScreenshotPreviewBox");
-
-      const fileName =
-        document.getElementById("entryScreenshotName");
-
-      if (entryScreenshotObjectUrl) {
-        URL.revokeObjectURL(entryScreenshotObjectUrl);
-        entryScreenshotObjectUrl = null;
-      }
-
-      input.value = "";
-      preview.removeAttribute("src");
-      previewBox.style.display = "none";
-      fileName.textContent = "هنوز تصویری انتخاب نشده است.";
+      document.getElementById("entryScreenshotInput").value = "";
+      entryScreenshotFile = null;
+      if (entryScreenshotObjectUrl) URL.revokeObjectURL(entryScreenshotObjectUrl);
+      entryScreenshotObjectUrl = null;
+      document.getElementById("entryScreenshotPreview").removeAttribute("src");
+      document.getElementById("entryScreenshotName").textContent = "هنوز تصویری انتخاب نشده است.";
+      document.getElementById("entryScreenshotPreviewBox").style.display = "none";
     }
-     let journalImageObjectUrls = [];
 
     async function saveTradeToJournal() {
-      const entry = getNumber("entry");
-      const stop = getNumber("stop");
-      const tp1 = getNumber("tp1");
-      const tp2 = getNumber("tp2");
-      const tp3 = getNumber("tp3");
-      const capital = getNumber("capital");
-      const leverage = getNumber("leverage");
-      const riskPercent = getNumber("riskPercent");
-const symbol =
-  document.getElementById("symbol").value.trim().toUpperCase();
+      const calculation = calculateTrade();
+      const symbol = document.getElementById("symbol").value.trim().toUpperCase();
+      const tradeNote = document.getElementById("tradeNote").value.trim();
+      if (!symbol) { showToast("نماد ارز را وارد کن؛ مثلاً BTCUSDT.", true); return; }
+      if (!calculation) { showToast("ابتدا اطلاعات اصلی معامله را کامل و صحیح وارد کن.", true); return; }
 
-const tradeNote =
-  document.getElementById("tradeNote").value.trim();
-      if (symbol === "") {
-  alert("نماد ارز را وارد کن؛ مثلاً BTCUSDT.");
-  return;
-}
-      if (
-        entry === null ||
-        stop === null ||
-        capital === null ||
-        leverage === null ||
-        riskPercent === null
-      ) {
-        alert(
-          "ابتدا قیمت ورود، حد ضرر، سرمایه، اهرم و درصد ریسک را کامل وارد کن."
-        );
-        return;
-      }
-
-      if (
-        entry <= 0 ||
-        stop <= 0 ||
-        capital <= 0 ||
-        leverage < 1 ||
-        riskPercent <= 0 ||
-        riskPercent > 100
-      ) {
-        alert("مقادیر واردشده معتبر نیستند.");
-        return;
-      }
-
-      if (selectedSide === "long" && stop >= entry) {
-        alert(
-          "در معامله لانگ، حد ضرر باید پایین‌تر از قیمت ورود باشد."
-        );
-        return;
-      }
-
-      if (selectedSide === "short" && stop <= entry) {
-        alert(
-          "در معامله شورت، حد ضرر باید بالاتر از قیمت ورود باشد."
-        );
-        return;
-      }
-
-      const screenshotInput =
-        document.getElementById("entryScreenshotInput");
-
-      const screenshotFile =
-        screenshotInput.files &&
-        screenshotInput.files.length > 0
-          ? screenshotInput.files[0]
-          : null;
-
-      const riskAmount =
-        capital * (riskPercent / 100);
-
-      const stopDistance =
-        Math.abs(entry - stop);
-
-      const quantity =
-        riskAmount / stopDistance;
-
-      const positionValue =
-        quantity * entry;
-
-      const requiredMargin =
-        positionValue / leverage;
-
-      const liquidationPrice =
-        selectedSide === "long"
-          ? entry * (1 - 1 / leverage)
-          : entry * (1 + 1 / leverage);
-
-      const trade = {
-        symbol: symbol,
-tradeNote: tradeNote,
-        side: selectedSide,
-        entry: entry,
-        stop: stop,
-        tp1: tp1,
-        tp2: tp2,
-        tp3: tp3,
-        capital: capital,
-        leverage: leverage,
-        riskPercent: riskPercent,
-        riskAmount: riskAmount,
-        quantity: quantity,
-        positionValue: positionValue,
-        requiredMargin: requiredMargin,
-        liquidationPrice: liquidationPrice,
-        screenshotBlob: screenshotFile
-          ? screenshotFile.slice(
-              0,
-              screenshotFile.size,
-              screenshotFile.type
-            )
-          : null,
-        screenshotName: screenshotFile
-          ? screenshotFile.name
-          : "",
-        createdAt: Date.now()
-      };
-
-      const saveButton =
-        document.getElementById("saveTradeButton");
-
+      const saveButton = document.getElementById("saveTradeButton");
       saveButton.disabled = true;
       saveButton.textContent = "در حال ذخیره...";
 
+      const trade = {
+        symbol: symbol,
+        tradeNote: tradeNote,
+        side: selectedSide,
+        entry: calculation.entry,
+        stop: calculation.stop,
+        tp1: getNumber("tp1"),
+        tp2: getNumber("tp2"),
+        tp3: getNumber("tp3"),
+        capital: calculation.capital,
+        leverage: calculation.leverage,
+        riskPercent: calculation.riskPercent,
+        riskAmount: calculation.riskAmount,
+        quantity: calculation.quantity,
+        positionValue: calculation.positionValue,
+        requiredMargin: calculation.requiredMargin,
+        liquidationPrice: calculation.liquidationPrice,
+        screenshotBlob: entryScreenshotFile ? entryScreenshotFile.slice(0, entryScreenshotFile.size, entryScreenshotFile.type) : null,
+        screenshotName: entryScreenshotFile ? entryScreenshotFile.name : "",
+        status: "open",
+        exitPrice: null,
+        actualProfitLoss: null,
+        actualR: null,
+        actualReturnPercent: null,
+        exitNote: "",
+        exitScreenshotBlob: null,
+        exitScreenshotName: "",
+        createdAt: Date.now(),
+        closedAt: null
+      };
+
       try {
         await addTradeToDatabase(trade);
-        await renderJournalTrades();
-
         removeEntryScreenshot();
-        const newTradeDetails =
-          document.getElementById("newTradeDetails");
-
-        if (newTradeDetails) {
-          newTradeDetails.open = false;
-        }
-        alert("معامله با موفقیت در ژورنال ذخیره شد.");
+        document.getElementById("newTradeDetails").open = false;
+        await renderJournalTrades();
+        showToast("معامله در ژورنال ذخیره شد.");
       } catch (error) {
         console.error(error);
-
-        alert(
-          "ذخیره معامله انجام نشد. دوباره تلاش کن."
-        );
+        showToast("ذخیره معامله ناموفق بود.", true);
       } finally {
         saveButton.disabled = false;
-        saveButton.textContent =
-          "ذخیره معامله در ژورنال";
+        saveButton.textContent = "ذخیره معامله در ژورنال";
       }
+    }
+
+    function revokeJournalUrls() {
+      journalObjectUrls.forEach(function (url) { URL.revokeObjectURL(url); });
+      journalObjectUrls = [];
+    }
+
+    function makeImageUrl(blob) {
+      if (!blob) return "";
+      const url = URL.createObjectURL(blob);
+      journalObjectUrls.push(url);
+      return url;
+    }
+
+    function createJournalGrid(trade) {
+      const items = [
+        ["ورود", formatNumber(trade.entry, 6)],
+        ["استاپ", formatNumber(trade.stop, 6)],
+        ["هدف اول", trade.tp1 == null ? "—" : formatNumber(trade.tp1, 6)],
+        ["هدف دوم", trade.tp2 == null ? "—" : formatNumber(trade.tp2, 6)],
+        ["هدف سوم", trade.tp3 == null ? "—" : formatNumber(trade.tp3, 6)],
+        ["ریسک", formatNumber(trade.riskAmount, 2) + " $"],
+        ["حجم", formatNumber(trade.quantity, 6)],
+        ["مارجین", formatNumber(trade.requiredMargin, 2) + " $"]
+      ];
+      return '<div class="journal-grid">' + items.map(function (item) {
+        return "<div><span>" + item[0] + "</span><strong>" + item[1] + "</strong></div>";
+      }).join("") + "</div>";
     }
 
     async function renderJournalTrades() {
-      const tradesList =
-        document.getElementById("journalTradesList");
-
-      const emptyMessage =
-        document.getElementById("journalEmptyMessage");
-
-      journalImageObjectUrls.forEach(function (url) {
-        URL.revokeObjectURL(url);
-      });
-
-      journalImageObjectUrls = [];
-      tradesList.innerHTML = "";
+      const list = document.getElementById("journalTradesList");
+      const empty = document.getElementById("journalEmptyMessage");
+      revokeJournalUrls();
+      list.innerHTML = "";
 
       try {
-        const trades =
-          await getTradesFromDatabase();
-
-        if (trades.length === 0) {
-          emptyMessage.style.display = "block";
-          return;
-        }
-
-        emptyMessage.style.display = "none";
+        const trades = (await getTradesFromDatabase()).sort(function (a, b) { return (b.createdAt || 0) - (a.createdAt || 0); });
+        empty.style.display = trades.length ? "none" : "block";
 
         trades.forEach(function (trade) {
-          const card =
-            document.createElement("article");
+          const card = document.createElement("article");
+          card.className = "journal-card";
 
-          card.style.cssText = `
-            padding: 13px;
-            border: 1px solid var(--card-border);
-            border-radius: 12px;
-            background: var(--input);
-          `;
-
-          const header =
-            document.createElement("div");
-
-          header.style.cssText = `
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 12px;
-          `;
-
-          const sideTitle =
-            document.createElement("strong");
-
-         const tradeSymbol =
-  trade.symbol || "بدون نماد";
-
-sideTitle.textContent =
-  tradeSymbol +
-  " — " +
-  (
-    trade.side === "long"
-      ? "لانگ"
-      : "شورت"
-  );
-
-          sideTitle.style.color =
-            trade.side === "long"
-              ? "var(--green)"
-              : "var(--red)";
-
-          const date =
-            document.createElement("span");
-
-          date.textContent =
-            new Date(
-              trade.createdAt
-            ).toLocaleString("fa-IR");
-
-          date.style.cssText = `
-            color: var(--muted);
-            font-size: 11px;
-          `;
-
-          header.appendChild(sideTitle);
+          const header = document.createElement("div");
+          header.className = "journal-card-header";
+          const title = document.createElement("strong");
+          title.className = "journal-title";
+          title.textContent = (trade.symbol || "بدون نماد") + " — " + (trade.side === "short" ? "شورت" : "لانگ");
+          title.style.color = trade.side === "short" ? "var(--red)" : "var(--green)";
+          const date = document.createElement("span");
+          date.className = "journal-date";
+          date.textContent = new Date(trade.createdAt || Date.now()).toLocaleString("fa-IR");
+          header.appendChild(title);
           header.appendChild(date);
           card.appendChild(header);
 
-          const details =
-            document.createElement("div");
+          const gridWrap = document.createElement("div");
+          gridWrap.innerHTML = createJournalGrid(trade);
+          card.appendChild(gridWrap.firstElementChild);
 
-          details.style.cssText = `
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 8px;
-            color: var(--muted);
-            font-size: 12px;
-            line-height: 1.8;
-          `;
-
-          details.innerHTML = `
-            <div>ورود: ${formatPrice(trade.entry)}</div>
-            <div>استاپ: ${formatPrice(trade.stop)}</div>
-            <div>هدف اول: ${
-              trade.tp1 === null
-                ? "—"
-                : formatPrice(trade.tp1)
-            }</div>
-            <div>هدف دوم: ${
-              trade.tp2 === null
-                ? "—"
-                : formatPrice(trade.tp2)
-            }</div>
-            <div>هدف سوم: ${
-              trade.tp3 === null
-                ? "—"
-                : formatPrice(trade.tp3)
-            }</div>
-            <div>ریسک: $${formatNumber(
-              trade.riskAmount,
-              2
-            )}</div>
-            <div>حجم: ${formatNumber(
-              trade.quantity,
-              8
-            )}</div>
-            <div>مارجین: $${formatNumber(
-              trade.requiredMargin,
-              2
-            )}</div>
-          `;
-
-          card.appendChild(details);
           if (trade.tradeNote) {
-            const noteBox =
-              document.createElement("div");
-
-            noteBox.textContent =
-              "یادداشت: " + trade.tradeNote;
-
-            noteBox.style.cssText = `
-              margin-top: 12px;
-              padding: 10px;
-              border: 1px solid var(--card-border);
-              border-radius: 9px;
-              background: rgba(27, 58, 92, 0.6);
-              color: var(--muted);
-              font-size: 12px;
-              line-height: 1.9;
-              white-space: pre-wrap;
-              overflow-wrap: anywhere;
-            `;
-
-            card.appendChild(noteBox);
+            const note = document.createElement("div");
+            note.className = "journal-note";
+            note.textContent = "یادداشت ورود: " + trade.tradeNote;
+            card.appendChild(note);
           }
+
           if (trade.screenshotBlob) {
-            const imageUrl =
-              URL.createObjectURL(
-                trade.screenshotBlob
-              );
-
-            journalImageObjectUrls.push(imageUrl);
-
-            const image =
-              document.createElement("img");
-
-            image.src = imageUrl;
-            image.alt =
-              "اسکرین‌شات نقطه ورود";
-
-            image.style.cssText = `
-              display: block;
-              width: 100%;
-              max-height: 420px;
-              margin-top: 12px;
-              object-fit: contain;
-              border-radius: 9px;
-              border: 1px solid var(--card-border);
-            `;
-
+            const image = document.createElement("img");
+            image.className = "journal-image";
+            image.style.marginTop = "12px";
+            image.src = makeImageUrl(trade.screenshotBlob);
+            image.alt = "اسکرین‌شات نقطه ورود";
             card.appendChild(image);
           }
-                    if (trade.status) {
-            const resultBox =
-              document.createElement("div");
 
-            resultBox.style.cssText = `
-              margin-top: 12px;
-              padding: 11px;
-              border: 1px solid var(--card-border);
-              border-radius: 10px;
-              background: rgba(27, 58, 92, 0.65);
-            `;
-
-            const resultTitle =
-              document.createElement("strong");
-
-            resultTitle.textContent =
-              trade.status === "closed"
-                ? "نتیجه معامله: بسته‌شده"
-                : "نتیجه معامله: لغوشده";
-
-            resultTitle.style.cssText = `
-              display: block;
-              margin-bottom: 10px;
-              color: ${
-                trade.status === "closed"
-                  ? (
-                      trade.actualProfitLoss > 0
-                        ? "var(--green)"
-                        : trade.actualProfitLoss < 0
-                          ? "var(--red)"
-                          : "var(--muted)"
-                    )
-                  : "var(--muted)"
-              };
-            `;
-
-            resultBox.appendChild(resultTitle);
-
-            if (trade.status === "closed") {
-              const resultDetails =
-                document.createElement("div");
-
-              resultDetails.style.cssText = `
-                display: grid;
-                grid-template-columns: 1fr 1fr;
-                gap: 8px;
-                color: var(--muted);
-                font-size: 12px;
-                line-height: 1.8;
-              `;
-
-              resultDetails.innerHTML = `
-                <div>
-                  قیمت خروج:
-                  ${formatPrice(trade.exitPrice)}
-                </div>
-
-                <div>
-                  سود یا زیان:
-                  $${formatNumber(
-                    trade.actualProfitLoss,
-                    2
-                  )}
-                </div>
-
-                <div>
-                  نتیجه برحسب R:
-                  ${formatNumber(
-                    trade.actualR,
-                    2
-                  )}R
-                </div>
-
-                <div>
-                  بازده:
-                  ${formatNumber(
-                    trade.actualReturnPercent,
-                    2
-                  )}%
-                </div>
-              `;
-
-              resultBox.appendChild(resultDetails);
-            }
-
-            if (trade.exitNote) {
-              const exitNoteBox =
-                document.createElement("div");
-
-              exitNoteBox.textContent =
-                "ارزیابی بعد از معامله: " +
-                trade.exitNote;
-
-              exitNoteBox.style.cssText = `
-                margin-top: 10px;
-                padding-top: 10px;
-                border-top: 1px solid var(--line);
-                color: var(--muted);
-                font-size: 12px;
-                line-height: 1.9;
-                white-space: pre-wrap;
-                overflow-wrap: anywhere;
-              `;
-
-              resultBox.appendChild(exitNoteBox);
-            }
+          if (trade.status === "closed") {
+            const result = document.createElement("div");
+            result.className = "result-box closed" + (Number(trade.actualProfitLoss) < 0 ? " loss" : "");
+            result.innerHTML =
+              "<strong>نتیجه معامله</strong><br>" +
+              "قیمت خروج: <b dir='ltr'>" + formatNumber(trade.exitPrice, 6) + "</b><br>" +
+              "سود/زیان: <b dir='ltr' style='color:" + (Number(trade.actualProfitLoss) >= 0 ? "var(--green)" : "var(--red)") + "'>" + formatNumber(trade.actualProfitLoss, 2) + " $</b><br>" +
+              "R واقعی: <b dir='ltr'>" + formatNumber(trade.actualR, 2) + " R</b><br>" +
+              "بازده: <b dir='ltr'>" + formatNumber(trade.actualReturnPercent, 2) + "%</b>" +
+              (trade.exitNote ? "<br>یادداشت خروج: " + escapeHtml(trade.exitNote) : "");
+            card.appendChild(result);
 
             if (trade.exitScreenshotBlob) {
-              const exitImageUrl =
-                URL.createObjectURL(
-                  trade.exitScreenshotBlob
-                );
-
-              journalImageObjectUrls.push(
-                exitImageUrl
-              );
-
-              const exitImage =
-                document.createElement("img");
-
-              exitImage.src = exitImageUrl;
-              exitImage.alt =
-                "اسکرین‌شات نقطه خروج";
-
-              exitImage.style.cssText = `
-                display: block;
-                width: 100%;
-                max-height: 420px;
-                margin-top: 11px;
-                object-fit: contain;
-                border-radius: 9px;
-                border: 1px solid var(--card-border);
-              `;
-
-              resultBox.appendChild(exitImage);
+              const exitImage = document.createElement("img");
+              exitImage.className = "journal-image";
+              exitImage.style.marginTop = "12px";
+              exitImage.src = makeImageUrl(trade.exitScreenshotBlob);
+              exitImage.alt = "اسکرین‌شات نقطه خروج";
+              card.appendChild(exitImage);
             }
-
-            card.appendChild(resultBox);
           }
-          const resultButton =
-            document.createElement("button");
 
+          const actions = document.createElement("div");
+          actions.className = "journal-actions";
+          const resultButton = document.createElement("button");
           resultButton.type = "button";
-
-         resultButton.textContent =
-  trade.status
-    ? "ویرایش نتیجه معامله"
-    : "ثبت نتیجه معامله";
-
-          resultButton.style.cssText = `
-            width: 100%;
-            min-height: 42px;
-            margin-top: 12px;
-            border: 1px solid var(--blue);
-            border-radius: 9px;
-            background: rgba(90, 167, 236, 0.12);
-            color: var(--muted);
-            font-family: inherit;
-            font-weight: bold;
-            cursor: pointer;
-          `;
-
-          resultButton.addEventListener(
-            "click",
-            function () {
-              toggleTradeResultForm(
-                trade,
-                card
-              );
-            }
-          );
-
-          card.appendChild(resultButton);
-          const deleteButton =
-            document.createElement("button");
-
+          resultButton.className = "secondary-button";
+          resultButton.textContent = trade.status === "closed" ? "ویرایش نتیجه" : "ثبت نتیجه معامله";
+          resultButton.addEventListener("click", function () { toggleTradeResultForm(trade.id, card); });
+          const deleteButton = document.createElement("button");
           deleteButton.type = "button";
-          deleteButton.textContent =
-            "حذف این معامله";
-
-          deleteButton.style.cssText = `
-            width: 100%;
-            min-height: 40px;
-            margin-top: 12px;
-            border: 1px solid var(--red);
-            border-radius: 9px;
-            background: rgba(239, 51, 64, 0.12);
-            color: #ffd6da;
-            font-family: inherit;
-            cursor: pointer;
-          `;
-
-          deleteButton.addEventListener(
-            "click",
-            function () {
-              deleteSavedTrade(trade.id);
-            }
-          );
-
-          card.appendChild(deleteButton);
-          tradesList.appendChild(card);
+          deleteButton.className = "danger-button";
+          deleteButton.textContent = "حذف این معامله";
+          deleteButton.addEventListener("click", function () { deleteSavedTrade(trade.id); });
+          actions.appendChild(resultButton);
+          actions.appendChild(deleteButton);
+          card.appendChild(actions);
+          list.appendChild(card);
         });
       } catch (error) {
         console.error(error);
-
-        emptyMessage.style.display = "block";
-        emptyMessage.textContent =
-          "خواندن اطلاعات ژورنال با خطا مواجه شد.";
+        empty.style.display = "block";
+        empty.textContent = "خواندن معاملات ژورنال ناموفق بود.";
       }
     }
-    function toggleTradeResultForm(trade, card) {
-      const oldForm =
-        card.querySelector(".trade-result-form");
 
-      if (oldForm) {
-        oldForm.remove();
-        return;
-      }
-
-      const form =
-        document.createElement("div");
-
-      form.className = "trade-result-form";
-
-      form.style.cssText = `
-        margin-top: 12px;
-        padding: 12px;
-        border: 1px solid var(--blue);
-        border-radius: 10px;
-        background: rgba(90, 167, 236, 0.08);
-      `;
-
-      const title =
-        document.createElement("strong");
-
-      title.textContent = "ثبت نتیجه معامله";
-
-      title.style.cssText = `
-        display: block;
-        margin-bottom: 14px;
-        color: var(--muted);
-      `;
-
-      form.appendChild(title);
-
-      const statusLabel =
-        document.createElement("label");
-
-      statusLabel.textContent = "وضعیت معامله";
-
-      const statusSelect =
-        document.createElement("select");
-
-      statusSelect.style.cssText = `
-        width: 100%;
-        min-height: 43px;
-        margin: 7px 0 13px;
-        padding: 0 10px;
-        border: 1px solid var(--card-border);
-        border-radius: 9px;
-        background: var(--input);
-        color: #ffffff;
-        font-family: inherit;
-      `;
-
-      statusSelect.innerHTML = `
-        <option value="closed">بسته‌شده</option>
-        <option value="cancelled">لغوشده</option>
-      `;
-
-      statusSelect.value =
-        trade.status === "cancelled"
-          ? "cancelled"
-          : "closed";
-
-      form.appendChild(statusLabel);
-      form.appendChild(statusSelect);
-
-      const exitPriceLabel =
-        document.createElement("label");
-
-      exitPriceLabel.textContent = "قیمت خروج";
-
-      const exitPriceInput =
-        document.createElement("input");
-
-      exitPriceInput.type = "number";
-      exitPriceInput.step = "any";
-      exitPriceInput.min = "0";
-      exitPriceInput.placeholder =
-        "مثلاً 108";
-
-      exitPriceInput.value =
-        Number.isFinite(trade.exitPrice)
-          ? trade.exitPrice
-          : "";
-
-      exitPriceInput.style.margin =
-        "7px 0 13px";
-
-      form.appendChild(exitPriceLabel);
-      form.appendChild(exitPriceInput);
-
-      const noteLabel =
-        document.createElement("label");
-
-      noteLabel.textContent =
-        "یادداشت و ارزیابی بعد از معامله";
-
-      const noteInput =
-        document.createElement("textarea");
-
-      noteInput.rows = 4;
-      noteInput.maxLength = 1000;
-      noteInput.placeholder =
-        "نتیجه، اشتباهات، نکات مثبت و درس معامله";
-
-      noteInput.value =
-        trade.exitNote || "";
-
-      noteInput.style.cssText = `
-        width: 100%;
-        min-height: 95px;
-        margin: 7px 0 13px;
-        padding: 10px;
-        border: 1px solid var(--card-border);
-        border-radius: 9px;
-        background: var(--input);
-        color: #ffffff;
-        font-family: inherit;
-        line-height: 1.8;
-        resize: vertical;
-        outline: none;
-      `;
-
-      form.appendChild(noteLabel);
-      form.appendChild(noteInput);
-
-      const screenshotLabel =
-        document.createElement("label");
-
-      screenshotLabel.textContent =
-        "اسکرین‌شات نقطه خروج";
-
-      const screenshotInput =
-        document.createElement("input");
-
-      screenshotInput.type = "file";
-      screenshotInput.accept = "image/*";
-
-      screenshotInput.style.cssText = `
-        width: 100%;
-        margin: 8px 0 13px;
-        padding: 9px;
-        border: 1px dashed var(--blue);
-        border-radius: 9px;
-        background: var(--input);
-        color: var(--muted);
-      `;
-
-      form.appendChild(screenshotLabel);
-      form.appendChild(screenshotInput);
-
-      if (trade.exitScreenshotBlob) {
-        const savedImageNotice =
-          document.createElement("p");
-
-        savedImageNotice.textContent =
-          "اسکرین‌شات خروج قبلاً ثبت شده است. انتخاب تصویر جدید، آن را جایگزین می‌کند.";
-
-        savedImageNotice.style.cssText = `
-          margin: 0 0 12px;
-          color: var(--muted);
-          font-size: 11px;
-          line-height: 1.8;
-        `;
-
-        form.appendChild(savedImageNotice);
-      }
-
-      const buttons =
-        document.createElement("div");
-
-      buttons.style.cssText = `
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 8px;
-      `;
-
-      const saveButton =
-        document.createElement("button");
-
-      saveButton.type = "button";
-      saveButton.textContent =
-        "ذخیره نتیجه";
-
-      saveButton.style.cssText = `
-        min-height: 43px;
-        border: 1px solid var(--green);
-        border-radius: 9px;
-        background: var(--green);
-        color: #071d12;
-        font-family: inherit;
-        font-weight: bold;
-        cursor: pointer;
-      `;
-
-      const cancelButton =
-        document.createElement("button");
-
-      cancelButton.type = "button";
-      cancelButton.textContent = "انصراف";
-
-      cancelButton.style.cssText = `
-        min-height: 43px;
-        border: 1px solid var(--card-border);
-        border-radius: 9px;
-        background: var(--input);
-        color: var(--muted);
-        font-family: inherit;
-        cursor: pointer;
-      `;
-
-      cancelButton.addEventListener(
-        "click",
-        function () {
-          form.remove();
-        }
-      );
-
-      saveButton.addEventListener(
-        "click",
-        async function () {
-          const status = statusSelect.value;
-
-          const exitPriceText =
-            exitPriceInput.value.trim();
-
-          const exitPrice =
-            exitPriceText === ""
-              ? null
-              : Number(exitPriceText);
-
-          if (
-            status === "closed" &&
-            (
-              !Number.isFinite(exitPrice) ||
-              exitPrice <= 0
-            )
-          ) {
-            alert(
-              "برای معامله بسته‌شده، قیمت خروج معتبر وارد کن."
-            );
-            return;
-          }
-
-          const screenshotFile =
-            screenshotInput.files &&
-            screenshotInput.files[0]
-              ? screenshotInput.files[0]
-              : null;
-
-          if (
-            screenshotFile &&
-            !screenshotFile.type.startsWith("image/")
-          ) {
-            alert(
-              "فایل اسکرین‌شات خروج باید تصویر باشد."
-            );
-            return;
-          }
-
-          if (
-            screenshotFile &&
-            screenshotFile.size >
-              10 * 1024 * 1024
-          ) {
-            alert(
-              "حجم تصویر خروج نباید بیشتر از ۱۰ مگابایت باشد."
-            );
-            return;
-          }
-
-          let actualProfitLoss = 0;
-          let actualR = 0;
-          let actualReturnPercent = 0;
-
-          if (status === "closed") {
-            const priceDifference =
-              trade.side === "long"
-                ? exitPrice - trade.entry
-                : trade.entry - exitPrice;
-
-            actualProfitLoss =
-              trade.quantity *
-              priceDifference;
-
-            actualR =
-              trade.riskAmount > 0
-                ? actualProfitLoss /
-                  trade.riskAmount
-                : 0;
-
-            actualReturnPercent =
-              trade.capital > 0
-                ? (
-                    actualProfitLoss /
-                    trade.capital
-                  ) * 100
-                : 0;
-          }
-
-          trade.status = status;
-
-          trade.exitPrice =
-            status === "closed"
-              ? exitPrice
-              : null;
-
-          trade.actualProfitLoss =
-            actualProfitLoss;
-
-          trade.actualR =
-            actualR;
-
-          trade.actualReturnPercent =
-            actualReturnPercent;
-
-          trade.exitNote =
-            noteInput.value.trim();
-
-          trade.closedAt =
-            Date.now();
-
-          if (screenshotFile) {
-            trade.exitScreenshotBlob =
-              screenshotFile.slice(
-                0,
-                screenshotFile.size,
-                screenshotFile.type
-              );
-
-            trade.exitScreenshotName =
-              screenshotFile.name;
-          }
-
-          saveButton.disabled = true;
-          saveButton.textContent =
-            "در حال ذخیره...";
-
-          try {
-            await updateTradeInDatabase(
-              trade
-            );
-
-            await renderJournalTrades();
-
-            alert(
-              "نتیجه معامله با موفقیت ذخیره شد."
-            );
-          } catch (error) {
-            console.error(error);
-
-            alert(
-              "ذخیره نتیجه انجام نشد. دوباره تلاش کن."
-            );
-          } finally {
-            if (
-              document.body.contains(
-                saveButton
-              )
-            ) {
-              saveButton.disabled = false;
-              saveButton.textContent =
-                "ذخیره نتیجه";
-            }
-          }
-        }
-      );
-
-      buttons.appendChild(saveButton);
-      buttons.appendChild(cancelButton);
-      form.appendChild(buttons);
-
-      card.insertBefore(
-        form,
-        card.lastElementChild
-      );
-
-      form.scrollIntoView({
-        behavior: "smooth",
-        block: "nearest"
+    function escapeHtml(value) {
+      return String(value || "").replace(/[&<>'"]/g, function (char) {
+        return { "&": "&amp;", "<": "&lt;", ">": "&gt;", "'": "&#39;", '"': "&quot;" }[char];
       });
     }
+
+    async function toggleTradeResultForm(tradeId, card) {
+      const oldForm = card.querySelector(".trade-result-form");
+      if (oldForm) { oldForm.remove(); return; }
+
+      const trade = await getTradeById(tradeId);
+      if (!trade) { showToast("معامله پیدا نشد.", true); return; }
+
+      const form = document.createElement("div");
+      form.className = "trade-result-form";
+      form.innerHTML =
+        '<strong style="display:block;margin-bottom:14px;color:var(--muted);">ثبت نتیجه معامله</strong>' +
+        '<div class="field"><label>قیمت خروج</label><input data-field="exitPrice" type="number" inputmode="decimal" step="any" min="0" value="' + (trade.exitPrice ?? "") + '"></div>' +
+        '<div class="two-grid">' +
+          '<div class="field"><label>سود یا زیان واقعی ($)</label><input data-field="actualProfitLoss" type="number" inputmode="decimal" step="any" value="' + (trade.actualProfitLoss ?? "") + '"></div>' +
+          '<div class="field"><label>R واقعی</label><input data-field="actualR" type="number" inputmode="decimal" step="any" value="' + (trade.actualR ?? "") + '"></div>' +
+        '</div>' +
+        '<div class="field"><label>بازده واقعی (%)</label><input data-field="actualReturnPercent" type="number" inputmode="decimal" step="any" value="' + (trade.actualReturnPercent ?? "") + '"></div>' +
+        '<div class="field"><label>یادداشت خروج</label><textarea data-field="exitNote" maxlength="1000" placeholder="علت خروج، اشتباه، نکته آموزشی و...">' + escapeHtml(trade.exitNote || "") + '</textarea></div>' +
+        '<label class="upload-label">افزودن اسکرین‌شات نقطه خروج<input data-field="exitScreenshot" type="file" accept="image/*" style="display:none;"></label>' +
+        '<div class="journal-actions"><button type="button" class="primary-button" data-action="save">ذخیره نتیجه</button><button type="button" class="secondary-button" data-action="cancel">انصراف</button></div>';
+
+      form.querySelector('[data-action="cancel"]').addEventListener("click", function () { form.remove(); });
+      form.querySelector('[data-action="save"]').addEventListener("click", async function () {
+        const exitPrice = Number(form.querySelector('[data-field="exitPrice"]').value);
+        const actualProfitLoss = Number(form.querySelector('[data-field="actualProfitLoss"]').value);
+        const actualR = Number(form.querySelector('[data-field="actualR"]').value);
+        const actualReturnPercent = Number(form.querySelector('[data-field="actualReturnPercent"]').value);
+        const exitNote = form.querySelector('[data-field="exitNote"]').value.trim();
+        const exitFileInput = form.querySelector('[data-field="exitScreenshot"]');
+        const exitFile = exitFileInput.files && exitFileInput.files[0];
+
+        if (![exitPrice, actualProfitLoss, actualR, actualReturnPercent].every(Number.isFinite) || exitPrice <= 0) {
+          showToast("قیمت خروج، سود/زیان، R و بازده را کامل وارد کن.", true);
+          return;
+        }
+
+        trade.status = "closed";
+        trade.exitPrice = exitPrice;
+        trade.actualProfitLoss = actualProfitLoss;
+        trade.actualR = actualR;
+        trade.actualReturnPercent = actualReturnPercent;
+        trade.exitNote = exitNote;
+        trade.closedAt = Date.now();
+        if (exitFile) {
+          trade.exitScreenshotBlob = exitFile.slice(0, exitFile.size, exitFile.type);
+          trade.exitScreenshotName = exitFile.name;
+        }
+
+        try {
+          await updateTradeInDatabase(trade);
+          await renderJournalTrades();
+          showToast("نتیجه معامله ذخیره شد.");
+        } catch (error) {
+          console.error(error);
+          showToast("ذخیره نتیجه ناموفق بود.", true);
+        }
+      });
+
+      card.insertBefore(form, card.lastElementChild);
+      form.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    }
+
     async function deleteSavedTrade(tradeId) {
-      const confirmed = confirm(
-        "این معامله از ژورنال حذف شود؟"
-      );
-
-      if (!confirmed) {
-        return;
-      }
-
+      if (!confirm("این معامله از ژورنال حذف شود؟")) return;
       try {
         await deleteTradeFromDatabase(tradeId);
         await renderJournalTrades();
+        showToast("معامله حذف شد.");
       } catch (error) {
         console.error(error);
-
-        alert(
-          "حذف معامله انجام نشد. دوباره تلاش کن."
-        );
+        showToast("حذف معامله ناموفق بود.", true);
       }
-    }  
-    function showCalculator() {
-      const cards = document.querySelectorAll(".app > .card");
-
-      cards.forEach(function (card) {
-        if (card.id === "journalView") {
-          card.style.display = "none";
-        } else {
-          card.style.display = "";
-        }
-      });
-
-    document
-  .getElementById("calculatorNavButton")
-  .classList.add("active");
-
-document
-  .getElementById("journalNavButton")
-  .classList.remove("active");
-
-window.scrollTo({
-  top: 0,
-  behavior: "smooth"
-});
     }
 
-    function showJournal() {
-      const cards = document.querySelectorAll(".app > .card");
-
-      cards.forEach(function (card) {
-        if (card.id === "journalView") {
-          card.style.display = "block";
-        } else {
-          card.style.display = "none";
-        }
+    function setActiveView(viewId) {
+      ["calculatorView", "journalView", "statementView"].forEach(function (id) {
+        document.getElementById(id).hidden = id !== viewId;
       });
 
-      document
-        .getElementById("calculatorNavButton")
-        .classList.remove("active");
+      const mapping = {
+        calculatorView: "calculatorNavButton",
+        journalView: "journalNavButton",
+        statementView: "statementNavButton"
+      };
 
-      document
-        .getElementById("journalNavButton")
-        .classList.add("active");
-renderJournalTrades();
-      window.scrollTo({
-        top: 0,
-        behavior: "smooth"
+      ["calculatorNavButton", "journalNavButton", "statementNavButton"].forEach(function (id) {
+        document.getElementById(id).classList.toggle("active", id === mapping[viewId]);
       });
+
+      window.scrollTo({ top: 0, behavior: "smooth" });
     }
-    if (window.Telegram && window.Telegram.WebApp) {
-      const telegramApp = window.Telegram.WebApp;
 
-      telegramApp.ready();
-      telegramApp.expand();
+    function showCalculator() { setActiveView("calculatorView"); }
+    async function showJournal() {
+      setActiveView("journalView");
+      try { await migrateLegacyTradesIfNeeded(); } catch (error) { console.log(error); }
+      await renderJournalTrades();
+    }
+
+    async function showStatement() {
+      setActiveView("statementView");
+      try { await migrateLegacyTradesIfNeeded(); } catch (error) { console.log(error); }
+      await renderStatement();
+    }
+
+    function statementMetric(label, value, color) {
+      return '<div class="metric-card"><span>' + label + '</span><strong style="color:' + (color || "var(--text)") + '">' + value + '</strong></div>';
+    }
+
+    function statementDetail(label, value) {
+      return '<div class="statement-detail"><span>' + label + '</span><strong>' + value + '</strong></div>';
+    }
+
+    function calculateStreaks(trades) {
+      let win = 0, loss = 0, maxWin = 0, maxLoss = 0;
+      trades.forEach(function (trade) {
+        const pnl = Number(trade.actualProfitLoss);
+        if (pnl > 0) { win += 1; loss = 0; maxWin = Math.max(maxWin, win); }
+        else if (pnl < 0) { loss += 1; win = 0; maxLoss = Math.max(maxLoss, loss); }
+        else { win = 0; loss = 0; }
+      });
+      return { maxWin, maxLoss };
+    }
+
+    function drawStatementChart(canvas, cumulativeValues) {
+      const context = canvas.getContext("2d");
+      if (!context) return;
+      const ratio = window.devicePixelRatio || 1;
+      const width = Math.max(canvas.clientWidth, 280);
+      const height = 240;
+      canvas.width = Math.floor(width * ratio);
+      canvas.height = Math.floor(height * ratio);
+      context.setTransform(ratio, 0, 0, ratio, 0, 0);
+      context.clearRect(0, 0, width, height);
+
+      const values = [0].concat(cumulativeValues);
+      const min = Math.min.apply(null, values);
+      const max = Math.max.apply(null, values);
+      const range = max - min || 1;
+      const padding = { top: 18, right: 12, bottom: 28, left: 48 };
+      const chartWidth = width - padding.left - padding.right;
+      const chartHeight = height - padding.top - padding.bottom;
+      const x = function (index) { return padding.left + (index / Math.max(values.length - 1, 1)) * chartWidth; };
+      const y = function (value) { return padding.top + ((max - value) / range) * chartHeight; };
+
+      context.font = "11px sans-serif";
+      context.textAlign = "right";
+      context.textBaseline = "middle";
+
+      for (let index = 0; index <= 4; index += 1) {
+        const lineValue = max - (index / 4) * range;
+        const lineY = padding.top + (index / 4) * chartHeight;
+        context.beginPath();
+        context.strokeStyle = "#315878";
+        context.lineWidth = 1;
+        context.moveTo(padding.left, lineY);
+        context.lineTo(width - padding.right, lineY);
+        context.stroke();
+        context.fillStyle = "#87b9eb";
+        context.fillText(formatNumber(lineValue, 2), padding.left - 7, lineY);
+      }
+
+      context.beginPath();
+      values.forEach(function (value, index) {
+        if (index === 0) context.moveTo(x(index), y(value));
+        else context.lineTo(x(index), y(value));
+      });
+      context.strokeStyle = values[values.length - 1] >= 0 ? "#2ecc71" : "#ef3340";
+      context.lineWidth = 2.5;
+      context.lineJoin = "round";
+      context.lineCap = "round";
+      context.stroke();
+
+      context.fillStyle = "#87b9eb";
+      context.textAlign = "center";
+      context.textBaseline = "top";
+      context.fillText("0", padding.left, height - 21);
+      context.fillText(String(cumulativeValues.length), width - padding.right, height - 21);
+    }
+
+    async function renderStatement() {
+      const empty = document.getElementById("statementEmptyMessage");
+      const content = document.getElementById("statementContent");
+      const summary = document.getElementById("statementSummary");
+      const details = document.getElementById("statementDetails");
+      const chart = document.getElementById("statementChart");
+
+      empty.style.display = "block";
+      content.hidden = true;
+      summary.innerHTML = "";
+      details.innerHTML = "";
 
       try {
-        telegramApp.setHeaderColor("#0d2238");
-        telegramApp.setBackgroundColor("#0d2238");
+        const closed = (await getTradesFromDatabase())
+          .filter(function (trade) { return trade.status === "closed" && Number.isFinite(Number(trade.actualProfitLoss)); })
+          .sort(function (a, b) { return Number(a.closedAt || a.createdAt || 0) - Number(b.closedAt || b.createdAt || 0); });
+
+        if (!closed.length) {
+          empty.textContent = "برای نمایش استیتمنت، ابتدا نتیجه حداقل یک معامله را ثبت کن.";
+          return;
+        }
+
+        const winners = closed.filter(function (trade) { return Number(trade.actualProfitLoss) > 0; });
+        const losers = closed.filter(function (trade) { return Number(trade.actualProfitLoss) < 0; });
+        const breakeven = closed.filter(function (trade) { return Number(trade.actualProfitLoss) === 0; });
+        const longs = closed.filter(function (trade) { return trade.side === "long"; });
+        const shorts = closed.filter(function (trade) { return trade.side === "short"; });
+        const grossProfit = winners.reduce(function (sum, trade) { return sum + Number(trade.actualProfitLoss); }, 0);
+        const grossLoss = Math.abs(losers.reduce(function (sum, trade) { return sum + Number(trade.actualProfitLoss); }, 0));
+        const netProfit = closed.reduce(function (sum, trade) { return sum + Number(trade.actualProfitLoss); }, 0);
+        const winRate = winners.length / closed.length * 100;
+        const averageWin = winners.length ? grossProfit / winners.length : 0;
+        const averageLoss = losers.length ? -grossLoss / losers.length : 0;
+        const profitFactor = grossLoss ? grossProfit / grossLoss : grossProfit > 0 ? Infinity : 0;
+        const expectancy = netProfit / closed.length;
+        const rValues = closed.map(function (trade) { return Number(trade.actualR); }).filter(Number.isFinite);
+        const totalR = rValues.reduce(function (sum, value) { return sum + value; }, 0);
+        const averageR = rValues.length ? totalR / rValues.length : 0;
+        const totalReturn = closed.reduce(function (sum, trade) {
+          const value = Number(trade.actualReturnPercent);
+          return sum + (Number.isFinite(value) ? value : 0);
+        }, 0);
+        const pnlValues = closed.map(function (trade) { return Number(trade.actualProfitLoss); });
+        const best = Math.max.apply(null, pnlValues);
+        const worst = Math.min.apply(null, pnlValues);
+
+        let cumulative = 0;
+        let peak = 0;
+        let maxDrawdown = 0;
+        const cumulativeValues = closed.map(function (trade) {
+          cumulative += Number(trade.actualProfitLoss);
+          peak = Math.max(peak, cumulative);
+          maxDrawdown = Math.max(maxDrawdown, peak - cumulative);
+          return cumulative;
+        });
+
+        const streaks = calculateStreaks(closed);
+        const longWins = longs.filter(function (trade) { return Number(trade.actualProfitLoss) > 0; }).length;
+        const shortWins = shorts.filter(function (trade) { return Number(trade.actualProfitLoss) > 0; }).length;
+        const longWinRate = longs.length ? longWins / longs.length * 100 : 0;
+        const shortWinRate = shorts.length ? shortWins / shorts.length * 100 : 0;
+
+        summary.innerHTML =
+          statementMetric("سود خالص", formatNumber(netProfit, 2) + " $", netProfit >= 0 ? "var(--green)" : "var(--red)") +
+          statementMetric("نرخ برد", formatNumber(winRate, 2) + "%", winRate >= 50 ? "var(--green)" : "var(--red)") +
+          statementMetric("Profit Factor", profitFactor === Infinity ? "∞" : formatNumber(profitFactor, 2)) +
+          statementMetric("حداکثر افت", formatNumber(maxDrawdown, 2) + " $", "var(--red)") +
+          statementMetric("مجموع R", formatNumber(totalR, 2) + " R") +
+          statementMetric("تعداد معاملات", formatNumber(closed.length, 0));
+
+        details.innerHTML =
+          statementDetail("سود ناخالص", formatNumber(grossProfit, 2) + " $") +
+          statementDetail("زیان ناخالص", formatNumber(-grossLoss, 2) + " $") +
+          statementDetail("میانگین هر معامله", formatNumber(expectancy, 2) + " $") +
+          statementDetail("میانگین معامله برنده", formatNumber(averageWin, 2) + " $") +
+          statementDetail("میانگین معامله بازنده", formatNumber(averageLoss, 2) + " $") +
+          statementDetail("بهترین معامله", formatNumber(best, 2) + " $") +
+          statementDetail("بدترین معامله", formatNumber(worst, 2) + " $") +
+          statementDetail("میانگین R", formatNumber(averageR, 2) + " R") +
+          statementDetail("جمع بازده ثبت‌شده", formatNumber(totalReturn, 2) + "%") +
+          statementDetail("برنده / بازنده / سربه‌سر", winners.length + " / " + losers.length + " / " + breakeven.length) +
+          statementDetail("بیشترین برد متوالی", String(streaks.maxWin)) +
+          statementDetail("بیشترین باخت متوالی", String(streaks.maxLoss)) +
+          statementDetail("لانگ؛ تعداد و نرخ برد", longs.length + " | " + formatNumber(longWinRate, 2) + "%") +
+          statementDetail("شورت؛ تعداد و نرخ برد", shorts.length + " | " + formatNumber(shortWinRate, 2) + "%");
+
+        empty.style.display = "none";
+        content.hidden = false;
+        requestAnimationFrame(function () { drawStatementChart(chart, cumulativeValues); });
       } catch (error) {
-        console.log(error);
+        console.error(error);
+        empty.style.display = "block";
+        empty.textContent = "خواندن اطلاعات استیتمنت ناموفق بود.";
       }
     }
-  </script>
-  <nav class="bottom-nav">
-    <button
-      id="calculatorNavButton"
-      type="button"
-      class="nav-item active"
-      onclick="showCalculator()"
-    >
-      ماشین‌حساب
-    </button>
 
-    <button
-      id="journalNavButton"
-      type="button"
-      class="nav-item"
-      onclick="showJournal()"
-    >
-      ژورنال
-    </button>
-  </nav>
+    function setupTelegram() {
+      try {
+        if (window.Telegram && window.Telegram.WebApp) {
+          const app = window.Telegram.WebApp;
+          app.ready();
+          app.expand();
+          try {
+            app.setHeaderColor("#0d2238");
+            app.setBackgroundColor("#0d2238");
+          } catch (error) { console.log(error); }
+        }
+      } catch (error) { console.log(error); }
+    }
+
+    window.addEventListener("resize", function () {
+      if (!document.getElementById("statementView").hidden) renderStatement();
+    });
+
+    window.addEventListener("beforeunload", revokeJournalUrls);
+
+    setupTelegram();
+    calculateTrade();
+  </script>
+</body>
+</html>
