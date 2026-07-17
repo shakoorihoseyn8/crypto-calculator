@@ -808,6 +808,79 @@
          </div>
 </details>
     </section>
+    <section
+  id="statementView"
+  class="card"
+  style="display: none;"
+>
+  <h2 class="card-title">
+    استیتمنت معاملاتی
+  </h2>
+
+  <p
+    id="statementEmptyMessage"
+    style="
+      color: var(--muted);
+      line-height: 2;
+      text-align: center;
+    "
+  >
+    برای نمایش استیتمنت، ابتدا نتیجه معاملات بسته‌شده را ثبت کن.
+  </p>
+
+  <div
+    id="statementContent"
+    style="display: none;"
+  >
+    <div
+      id="statementSummary"
+      style="
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
+        margin-bottom: 16px;
+      "
+    ></div>
+
+    <div
+      style="
+        padding: 12px;
+        border: 1px solid var(--card-border);
+        border-radius: 12px;
+        background: var(--input);
+        margin-bottom: 16px;
+      "
+    >
+      <strong
+        style="
+          display: block;
+          margin-bottom: 12px;
+        "
+      >
+        نمودار سود تجمعی
+      </strong>
+
+      <canvas
+        id="statementChart"
+        width="700"
+        height="320"
+        style="
+          display: block;
+          width: 100%;
+          height: 240px;
+        "
+      ></canvas>
+    </div>
+
+    <div
+      id="statementDetails"
+      style="
+        display: grid;
+        gap: 8px;
+      "
+    ></div>
+  </div>
+</section>
   </main>
 
   <script>
@@ -1996,6 +2069,877 @@ sideTitle.textContent =
           "خواندن اطلاعات ژورنال با خطا مواجه شد.";
       }
     }
+    function formatStatementNumber(value, digits) {
+  const number = Number(value);
+
+  if (!Number.isFinite(number)) {
+    return "—";
+  }
+
+  return number.toLocaleString("fa-IR", {
+    minimumFractionDigits: digits || 0,
+    maximumFractionDigits: digits || 0
+  });
+}
+
+function createStatementMetric(
+  label,
+  value,
+  valueColor
+) {
+  return `
+    <div
+      style="
+        padding: 12px;
+        border: 1px solid var(--card-border);
+        border-radius: 10px;
+        background: var(--input);
+        text-align: center;
+      "
+    >
+      <span
+        style="
+          display: block;
+          margin-bottom: 7px;
+          color: var(--muted);
+          font-size: 12px;
+        "
+      >
+        ${label}
+      </span>
+
+      <strong
+        style="
+          display: block;
+          direction: ltr;
+          color: ${valueColor || "var(--text)"};
+          font-size: 15px;
+        "
+      >
+        ${value}
+      </strong>
+    </div>
+  `;
+}
+
+function createStatementDetail(label, value) {
+  return `
+    <div
+      style="
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 10px 12px;
+        border: 1px solid var(--card-border);
+        border-radius: 9px;
+        background: rgba(16, 40, 64, 0.35);
+      "
+    >
+      <span
+        style="
+          color: var(--muted);
+          font-size: 12px;
+        "
+      >
+        ${label}
+      </span>
+
+      <strong
+        style="
+          direction: ltr;
+          text-align: left;
+          font-size: 13px;
+        "
+      >
+        ${value}
+      </strong>
+    </div>
+  `;
+}
+
+function calculateStatementStreaks(trades) {
+  let currentWinStreak = 0;
+  let currentLossStreak = 0;
+  let maximumWinStreak = 0;
+  let maximumLossStreak = 0;
+
+  trades.forEach(function (trade) {
+    const profitLoss =
+      Number(trade.actualProfitLoss);
+
+    if (profitLoss > 0) {
+      currentWinStreak += 1;
+      currentLossStreak = 0;
+
+      maximumWinStreak =
+        Math.max(
+          maximumWinStreak,
+          currentWinStreak
+        );
+    } else if (profitLoss < 0) {
+      currentLossStreak += 1;
+      currentWinStreak = 0;
+
+      maximumLossStreak =
+        Math.max(
+          maximumLossStreak,
+          currentLossStreak
+        );
+    } else {
+      currentWinStreak = 0;
+      currentLossStreak = 0;
+    }
+  });
+
+  return {
+    maximumWinStreak: maximumWinStreak,
+    maximumLossStreak: maximumLossStreak
+  };
+}
+
+function drawStatementChart(
+  canvas,
+  cumulativeValues
+) {
+  if (!canvas) {
+    return;
+  }
+
+  const context =
+    canvas.getContext("2d");
+
+  if (!context) {
+    return;
+  }
+
+  const pixelRatio =
+    window.devicePixelRatio || 1;
+
+  const displayWidth =
+    Math.max(canvas.clientWidth, 280);
+
+  const displayHeight = 240;
+
+  canvas.width =
+    Math.floor(displayWidth * pixelRatio);
+
+  canvas.height =
+    Math.floor(displayHeight * pixelRatio);
+
+  context.setTransform(
+    pixelRatio,
+    0,
+    0,
+    pixelRatio,
+    0,
+    0
+  );
+
+  context.clearRect(
+    0,
+    0,
+    displayWidth,
+    displayHeight
+  );
+
+  const styles =
+    getComputedStyle(document.documentElement);
+
+  const gridColor =
+    styles
+      .getPropertyValue("--card-border")
+      .trim() || "#315878";
+
+  const mutedColor =
+    styles
+      .getPropertyValue("--muted")
+      .trim() || "#80bfff";
+
+  const positiveColor =
+    styles
+      .getPropertyValue("--green")
+      .trim() || "#2ed17d";
+
+  const negativeColor =
+    styles
+      .getPropertyValue("--red")
+      .trim() || "#ef3340";
+
+  const values =
+    [0].concat(cumulativeValues);
+
+  const minimumValue =
+    Math.min.apply(null, values);
+
+  const maximumValue =
+    Math.max.apply(null, values);
+
+  let valueRange =
+    maximumValue - minimumValue;
+
+  if (valueRange === 0) {
+    valueRange = 1;
+  }
+
+  const padding = {
+    top: 18,
+    right: 12,
+    bottom: 28,
+    left: 48
+  };
+
+  const chartWidth =
+    displayWidth -
+    padding.left -
+    padding.right;
+
+  const chartHeight =
+    displayHeight -
+    padding.top -
+    padding.bottom;
+
+  function getX(index) {
+    if (values.length <= 1) {
+      return padding.left;
+    }
+
+    return (
+      padding.left +
+      (index / (values.length - 1)) *
+        chartWidth
+    );
+  }
+
+  function getY(value) {
+    return (
+      padding.top +
+      ((maximumValue - value) /
+        valueRange) *
+        chartHeight
+    );
+  }
+
+  context.font = "11px sans-serif";
+  context.textAlign = "right";
+  context.textBaseline = "middle";
+
+  for (let lineIndex = 0; lineIndex <= 4; lineIndex += 1) {
+    const ratio =
+      lineIndex / 4;
+
+    const lineValue =
+      maximumValue -
+      ratio * valueRange;
+
+    const y =
+      padding.top +
+      ratio * chartHeight;
+
+    context.beginPath();
+    context.strokeStyle = gridColor;
+    context.lineWidth = 1;
+
+    context.moveTo(
+      padding.left,
+      y
+    );
+
+    context.lineTo(
+      displayWidth - padding.right,
+      y
+    );
+
+    context.stroke();
+
+    context.fillStyle = mutedColor;
+
+    context.fillText(
+      formatStatementNumber(
+        lineValue,
+        2
+      ),
+      padding.left - 7,
+      y
+    );
+  }
+
+  if (
+    minimumValue < 0 &&
+    maximumValue > 0
+  ) {
+    const zeroY = getY(0);
+
+    context.beginPath();
+    context.strokeStyle = mutedColor;
+    context.setLineDash([5, 4]);
+
+    context.moveTo(
+      padding.left,
+      zeroY
+    );
+
+    context.lineTo(
+      displayWidth - padding.right,
+      zeroY
+    );
+
+    context.stroke();
+    context.setLineDash([]);
+  }
+
+  context.beginPath();
+
+  values.forEach(function (
+    value,
+    index
+  ) {
+    const x = getX(index);
+    const y = getY(value);
+
+    if (index === 0) {
+      context.moveTo(x, y);
+    } else {
+      context.lineTo(x, y);
+    }
+  });
+
+  const finalValue =
+    values[values.length - 1];
+
+  context.strokeStyle =
+    finalValue >= 0
+      ? positiveColor
+      : negativeColor;
+
+  context.lineWidth = 2.5;
+  context.lineJoin = "round";
+  context.lineCap = "round";
+  context.stroke();
+
+  context.fillStyle = mutedColor;
+  context.textAlign = "center";
+  context.textBaseline = "top";
+
+  context.fillText(
+    "۰",
+    padding.left,
+    displayHeight - 21
+  );
+
+  context.fillText(
+    formatStatementNumber(
+      cumulativeValues.length,
+      0
+    ),
+    displayWidth - padding.right,
+    displayHeight - 21
+  );
+}
+
+async function renderStatement() {
+  const emptyMessage =
+    document.getElementById(
+      "statementEmptyMessage"
+    );
+
+  const content =
+    document.getElementById(
+      "statementContent"
+    );
+
+  const summary =
+    document.getElementById(
+      "statementSummary"
+    );
+
+  const details =
+    document.getElementById(
+      "statementDetails"
+    );
+
+  const chart =
+    document.getElementById(
+      "statementChart"
+    );
+
+  if (
+    !emptyMessage ||
+    !content ||
+    !summary ||
+    !details ||
+    !chart
+  ) {
+    return;
+  }
+
+  emptyMessage.style.display = "block";
+  content.style.display = "none";
+  summary.innerHTML = "";
+  details.innerHTML = "";
+
+  try {
+    const allTrades =
+      await getTradesFromDatabase();
+
+    const closedTrades =
+      allTrades
+        .filter(function (trade) {
+          return (
+            trade.status === "closed" &&
+            Number.isFinite(
+              Number(
+                trade.actualProfitLoss
+              )
+            )
+          );
+        })
+        .sort(function (firstTrade, secondTrade) {
+          const firstTime =
+            Number(
+              firstTrade.closedAt ||
+              firstTrade.createdAt ||
+              0
+            );
+
+          const secondTime =
+            Number(
+              secondTrade.closedAt ||
+              secondTrade.createdAt ||
+              0
+            );
+
+          return firstTime - secondTime;
+        });
+
+    if (closedTrades.length === 0) {
+      emptyMessage.textContent =
+        "برای نمایش استیتمنت، ابتدا نتیجه حداقل یک معامله را ثبت کن.";
+
+      return;
+    }
+
+    const winningTrades =
+      closedTrades.filter(function (trade) {
+        return (
+          Number(trade.actualProfitLoss) > 0
+        );
+      });
+
+    const losingTrades =
+      closedTrades.filter(function (trade) {
+        return (
+          Number(trade.actualProfitLoss) < 0
+        );
+      });
+
+    const breakevenTrades =
+      closedTrades.filter(function (trade) {
+        return (
+          Number(trade.actualProfitLoss) === 0
+        );
+      });
+
+    const longTrades =
+      closedTrades.filter(function (trade) {
+        return trade.side === "long";
+      });
+
+    const shortTrades =
+      closedTrades.filter(function (trade) {
+        return trade.side === "short";
+      });
+
+    const grossProfit =
+      winningTrades.reduce(function (
+        total,
+        trade
+      ) {
+        return (
+          total +
+          Number(trade.actualProfitLoss)
+        );
+      }, 0);
+
+    const grossLoss =
+      Math.abs(
+        losingTrades.reduce(function (
+          total,
+          trade
+        ) {
+          return (
+            total +
+            Number(trade.actualProfitLoss)
+          );
+        }, 0)
+      );
+
+    const netProfit =
+      closedTrades.reduce(function (
+        total,
+        trade
+      ) {
+        return (
+          total +
+          Number(trade.actualProfitLoss)
+        );
+      }, 0);
+
+    const winRate =
+      (
+        winningTrades.length /
+        closedTrades.length
+      ) * 100;
+
+    const averageWin =
+      winningTrades.length > 0
+        ? grossProfit /
+          winningTrades.length
+        : 0;
+
+    const averageLoss =
+      losingTrades.length > 0
+        ? -grossLoss /
+          losingTrades.length
+        : 0;
+
+    const profitFactor =
+      grossLoss > 0
+        ? grossProfit / grossLoss
+        : grossProfit > 0
+          ? Infinity
+          : 0;
+
+    const expectancy =
+      netProfit /
+      closedTrades.length;
+
+    const validRValues =
+      closedTrades
+        .map(function (trade) {
+          return Number(trade.actualR);
+        })
+        .filter(function (value) {
+          return Number.isFinite(value);
+        });
+
+    const totalR =
+      validRValues.reduce(function (
+        total,
+        value
+      ) {
+        return total + value;
+      }, 0);
+
+    const averageR =
+      validRValues.length > 0
+        ? totalR /
+          validRValues.length
+        : 0;
+
+    const totalReturnPercent =
+      closedTrades.reduce(function (
+        total,
+        trade
+      ) {
+        const returnPercent =
+          Number(
+            trade.actualReturnPercent
+          );
+
+        return (
+          total +
+          (
+            Number.isFinite(returnPercent)
+              ? returnPercent
+              : 0
+          )
+        );
+      }, 0);
+
+    const bestTrade =
+      Math.max.apply(
+        null,
+        closedTrades.map(function (trade) {
+          return Number(
+            trade.actualProfitLoss
+          );
+        })
+      );
+
+    const worstTrade =
+      Math.min.apply(
+        null,
+        closedTrades.map(function (trade) {
+          return Number(
+            trade.actualProfitLoss
+          );
+        })
+      );
+
+    let cumulativeProfit = 0;
+    let highestCumulativeProfit = 0;
+    let maximumDrawdown = 0;
+
+    const cumulativeValues =
+      closedTrades.map(function (trade) {
+        cumulativeProfit +=
+          Number(
+            trade.actualProfitLoss
+          );
+
+        highestCumulativeProfit =
+          Math.max(
+            highestCumulativeProfit,
+            cumulativeProfit
+          );
+
+        const currentDrawdown =
+          highestCumulativeProfit -
+          cumulativeProfit;
+
+        maximumDrawdown =
+          Math.max(
+            maximumDrawdown,
+            currentDrawdown
+          );
+
+        return cumulativeProfit;
+      });
+
+    const streaks =
+      calculateStatementStreaks(
+        closedTrades
+      );
+
+    const longWins =
+      longTrades.filter(function (trade) {
+        return (
+          Number(trade.actualProfitLoss) > 0
+        );
+      }).length;
+
+    const shortWins =
+      shortTrades.filter(function (trade) {
+        return (
+          Number(trade.actualProfitLoss) > 0
+        );
+      }).length;
+
+    const longWinRate =
+      longTrades.length > 0
+        ? (
+            longWins /
+            longTrades.length
+          ) * 100
+        : 0;
+
+    const shortWinRate =
+      shortTrades.length > 0
+        ? (
+            shortWins /
+            shortTrades.length
+          ) * 100
+        : 0;
+
+    const netProfitColor =
+      netProfit >= 0
+        ? "var(--green)"
+        : "var(--red)";
+
+    summary.innerHTML =
+      createStatementMetric(
+        "سود خالص",
+        formatStatementNumber(
+          netProfit,
+          2
+        ) + " $",
+        netProfitColor
+      ) +
+      createStatementMetric(
+        "نرخ برد",
+        formatStatementNumber(
+          winRate,
+          2
+        ) + " ٪",
+        winRate >= 50
+          ? "var(--green)"
+          : "var(--red)"
+      ) +
+      createStatementMetric(
+        "Profit Factor",
+        profitFactor === Infinity
+          ? "∞"
+          : formatStatementNumber(
+              profitFactor,
+              2
+            )
+      ) +
+      createStatementMetric(
+        "حداکثر افت",
+        formatStatementNumber(
+          maximumDrawdown,
+          2
+        ) + " $",
+        "var(--red)"
+      ) +
+      createStatementMetric(
+        "مجموع R",
+        formatStatementNumber(
+          totalR,
+          2
+        ) + " R"
+      ) +
+      createStatementMetric(
+        "تعداد معاملات",
+        formatStatementNumber(
+          closedTrades.length,
+          0
+        )
+      );
+
+    details.innerHTML =
+      createStatementDetail(
+        "سود ناخالص",
+        formatStatementNumber(
+          grossProfit,
+          2
+        ) + " $"
+      ) +
+      createStatementDetail(
+        "زیان ناخالص",
+        formatStatementNumber(
+          -grossLoss,
+          2
+        ) + " $"
+      ) +
+      createStatementDetail(
+        "میانگین هر معامله",
+        formatStatementNumber(
+          expectancy,
+          2
+        ) + " $"
+      ) +
+      createStatementDetail(
+        "میانگین معامله برنده",
+        formatStatementNumber(
+          averageWin,
+          2
+        ) + " $"
+      ) +
+      createStatementDetail(
+        "میانگین معامله بازنده",
+        formatStatementNumber(
+          averageLoss,
+          2
+        ) + " $"
+      ) +
+      createStatementDetail(
+        "بهترین معامله",
+        formatStatementNumber(
+          bestTrade,
+          2
+        ) + " $"
+      ) +
+      createStatementDetail(
+        "بدترین معامله",
+        formatStatementNumber(
+          worstTrade,
+          2
+        ) + " $"
+      ) +
+      createStatementDetail(
+        "میانگین R",
+        formatStatementNumber(
+          averageR,
+          2
+        ) + " R"
+      ) +
+      createStatementDetail(
+        "جمع بازده ثبت‌شده",
+        formatStatementNumber(
+          totalReturnPercent,
+          2
+        ) + " ٪"
+      ) +
+      createStatementDetail(
+        "معاملات برنده / بازنده / سربه‌سر",
+        formatStatementNumber(
+          winningTrades.length,
+          0
+        ) +
+        " / " +
+        formatStatementNumber(
+          losingTrades.length,
+          0
+        ) +
+        " / " +
+        formatStatementNumber(
+          breakevenTrades.length,
+          0
+        )
+      ) +
+      createStatementDetail(
+        "بیشترین برد متوالی",
+        formatStatementNumber(
+          streaks.maximumWinStreak,
+          0
+        )
+      ) +
+      createStatementDetail(
+        "بیشترین باخت متوالی",
+        formatStatementNumber(
+          streaks.maximumLossStreak,
+          0
+        )
+      ) +
+      createStatementDetail(
+        "لانگ؛ تعداد و نرخ برد",
+        formatStatementNumber(
+          longTrades.length,
+          0
+        ) +
+        " | " +
+        formatStatementNumber(
+          longWinRate,
+          2
+        ) +
+        " ٪"
+      ) +
+      createStatementDetail(
+        "شورت؛ تعداد و نرخ برد",
+        formatStatementNumber(
+          shortTrades.length,
+          0
+        ) +
+        " | " +
+        formatStatementNumber(
+          shortWinRate,
+          2
+        ) +
+        " ٪"
+      );
+
+    emptyMessage.style.display = "none";
+    content.style.display = "block";
+
+    requestAnimationFrame(function () {
+      drawStatementChart(
+        chart,
+        cumulativeValues
+      );
+    });
+  } catch (error) {
+    console.error(
+      "Statement render error:",
+      error
+    );
+
+    emptyMessage.style.display = "block";
+    emptyMessage.textContent =
+      "خواندن اطلاعات استیتمنت ناموفق بود.";
+  }
+}
     function toggleTradeResultForm(trade, card) {
       const oldForm =
         card.querySelector(".trade-result-form");
@@ -2400,85 +3344,74 @@ sideTitle.textContent =
         );
       }
     }  
-    function showCalculator() {
-      const cards = document.querySelectorAll(".app > .card");
+  function setActiveView(viewName) {
+  const cards =
+    document.querySelectorAll(".app > .card");
 
-      cards.forEach(function (card) {
-        if (card.id === "journalView") {
-          card.style.display = "none";
-        } else {
-          card.style.display = "";
-        }
-      });
+  cards.forEach(function (card) {
+    if (viewName === "calculator") {
+      const isSecondaryView =
+        card.id === "journalView" ||
+        card.id === "statementView";
 
-    document
-  .getElementById("calculatorNavButton")
-  .classList.add("active");
-
-document
-  .getElementById("journalNavButton")
-  .classList.remove("active");
-
-window.scrollTo({
-  top: 0,
-  behavior: "smooth"
-});
+      card.style.display =
+        isSecondaryView ? "none" : "";
+    } else {
+      card.style.display =
+        card.id === viewName
+          ? "block"
+          : "none";
     }
+  });
 
-    function showJournal() {
-      const cards = document.querySelectorAll(".app > .card");
+  const navButtonIds = [
+    "calculatorNavButton",
+    "journalNavButton",
+    "statementNavButton"
+  ];
 
-      cards.forEach(function (card) {
-        if (card.id === "journalView") {
-          card.style.display = "block";
-        } else {
-          card.style.display = "none";
-        }
-      });
+  navButtonIds.forEach(function (buttonId) {
+    const button =
+      document.getElementById(buttonId);
 
-      document
-        .getElementById("calculatorNavButton")
-        .classList.remove("active");
-
-      document
-        .getElementById("journalNavButton")
-        .classList.add("active");
-renderJournalTrades();
-      window.scrollTo({
-        top: 0,
-        behavior: "smooth"
-      });
+    if (button) {
+      button.classList.remove("active");
     }
-    if (window.Telegram && window.Telegram.WebApp) {
-      const telegramApp = window.Telegram.WebApp;
+  });
 
-      telegramApp.ready();
-      telegramApp.expand();
+  const activeButtonId =
+    viewName === "calculator"
+      ? "calculatorNavButton"
+      : viewName === "journalView"
+        ? "journalNavButton"
+        : "statementNavButton";
 
-      try {
-        telegramApp.setHeaderColor("#0d2238");
-        telegramApp.setBackgroundColor("#0d2238");
-      } catch (error) {
-        console.log(error);
-      }
-    }
-  </script>
-  <nav class="bottom-nav">
-    <button
-      id="calculatorNavButton"
-      type="button"
-      class="nav-item active"
-      onclick="showCalculator()"
-    >
-      ماشین‌حساب
-    </button>
+  const activeButton =
+    document.getElementById(activeButtonId);
 
-    <button
-      id="journalNavButton"
-      type="button"
-      class="nav-item"
-      onclick="showJournal()"
-    >
-      ژورنال
-    </button>
-  </nav>
+  if (activeButton) {
+    activeButton.classList.add("active");
+  }
+
+  window.scrollTo({
+    top: 0,
+    behavior: "smooth"
+  });
+}
+
+function showCalculator() {
+  setActiveView("calculator");
+}
+
+function showJournal() {
+  setActiveView("journalView");
+  renderJournalTrades();
+}
+
+function showStatement() {
+  setActiveView("statementView");
+
+  if (typeof renderStatement === "function") {
+    renderStatement();
+  }
+}
