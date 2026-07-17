@@ -640,7 +640,30 @@
         "
       ></div>
 
-      <div style="margin-top: 18px;">
+     <details
+  id="newTradeDetails"
+  style="
+    margin-top: 18px;
+    border: 1px solid var(--card-border);
+    border-radius: 12px;
+    background: rgba(16, 40, 64, 0.45);
+    overflow: hidden;
+  "
+>
+  <summary
+    style="
+      padding: 15px;
+      color: var(--muted);
+      font-size: 14px;
+      font-weight: bold;
+      cursor: pointer;
+      user-select: none;
+    "
+  >
+    ثبت معامله جدید
+  </summary>
+
+  <div style="padding: 0 12px 12px;">
         <label
           for="entryScreenshotInput"
           style="
@@ -743,6 +766,8 @@
       >
         ذخیره معامله در ژورنال
       </button>
+         </div>
+</details>
     </section>
   </main>
 
