@@ -811,7 +811,75 @@
   </main>
 
   <script>
-    let selectedSide = "long";
+    const TELEGRAM_JOURNAL_API_URL =
+  "https://bufobmvflinalnskdlcq.supabase.co/functions/v1/telegram-journal-api";
+
+const SUPABASE_PUBLISHABLE_KEY =
+  "sb_publishable_Dxs5cE4y3oxKqwEZzUcS3w_z5L_Iw60";
+let telegramJournalUser = null;
+
+async function authenticateTelegramJournalUser() {
+  const telegramApp =
+    window.Telegram &&
+    window.Telegram.WebApp
+      ? window.Telegram.WebApp
+      : null;
+
+  const initData =
+    telegramApp &&
+    typeof telegramApp.initData === "string"
+      ? telegramApp.initData
+      : "";
+
+  if (!initData) {
+    throw new Error(
+      "اطلاعات ورود تلگرام دریافت نشد. مینی‌اپ را داخل تلگرام باز کن."
+    );
+  }
+
+  const response = await fetch(
+    TELEGRAM_JOURNAL_API_URL,
+    {
+      method: "POST",
+
+      headers: {
+        "Content-Type": "application/json",
+        "apikey": SUPABASE_PUBLISHABLE_KEY
+      },
+
+      body: JSON.stringify({
+        initData: initData
+      })
+    }
+  );
+
+  let result;
+
+  try {
+    result = await response.json();
+  } catch {
+    throw new Error(
+      "پاسخ سرور قابل خواندن نیست."
+    );
+  }
+
+  if (!response.ok || !result.ok) {
+    throw new Error(
+      result.error ||
+      "احراز هویت تلگرام ناموفق بود."
+    );
+  }
+
+  telegramJournalUser = result.user;
+
+  console.log(
+    "Telegram journal user authenticated:",
+    telegramJournalUser
+  );
+
+  return telegramJournalUser;
+}
+let selectedSide = "long";
 
     const inputIds = [
       "entry",
@@ -2382,7 +2450,21 @@ renderJournalTrades();
 
       telegramApp.ready();
       telegramApp.expand();
+      authenticateTelegramJournalUser()
+        .then(function (user) {
+          alert(
+            "اتصال ابری با موفقیت برقرار شد، " +
+            user.firstName
+          );
+        })
+        .catch(function (error) {
+          console.error(
+            "Telegram cloud authentication failed:",
+            error
+          );
 
+          alert(error.message);
+        });
       try {
         telegramApp.setHeaderColor("#0d2238");
         telegramApp.setBackgroundColor("#0d2238");
