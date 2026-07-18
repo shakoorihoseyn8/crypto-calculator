@@ -670,7 +670,7 @@
       max-width: 830px;
       min-height: var(--nav-height);
       display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
+      grid-template-columns: repeat(5, minmax(0, 1fr));
       gap: 6px;
       padding: 8px 7px;
       background: rgba(13, 34, 56, 0.98);
@@ -688,11 +688,11 @@
       border-radius: 10px;
       background: transparent;
       color: var(--muted);
-      font-size: 12px;
+      font-size: 11px;
       font-weight: bold;
       cursor: pointer;
       white-space: nowrap;
-      padding: 7px 3px;
+      padding: 7px 2px;
     }
 
     .nav-item.active {
@@ -760,6 +760,204 @@
       .market-asset img, .market-fallback-icon { width: 27px; height: 27px; flex-basis: 27px; }
       .market-name, .market-price, .market-change { font-size: 11px; }
     }
+  
+
+    .fundamental-toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .fundamental-status {
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1.8;
+    }
+
+    .fundamental-refresh-button {
+      width: auto;
+      min-width: 92px;
+      min-height: 40px;
+      padding: 8px 11px;
+      flex-shrink: 0;
+    }
+
+    .fundamental-filters {
+      display: flex;
+      gap: 7px;
+      overflow-x: auto;
+      padding: 1px 0 10px;
+      margin-bottom: 5px;
+      scrollbar-width: thin;
+    }
+
+    .fundamental-filter {
+      flex: 0 0 auto;
+      min-height: 36px;
+      padding: 7px 12px;
+      border: 1px solid var(--card-border);
+      border-radius: 999px;
+      background: var(--input);
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .fundamental-filter.active {
+      background: var(--green);
+      border-color: var(--green);
+      color: #071d12;
+    }
+
+    .fundamental-loading,
+    .fundamental-error,
+    .fundamental-empty {
+      padding: 15px;
+      border: 1px solid var(--card-border);
+      border-radius: 11px;
+      background: var(--input);
+      color: var(--muted);
+      text-align: center;
+      font-size: 12px;
+      line-height: 2;
+    }
+
+    .fundamental-error {
+      border-color: rgba(239, 51, 64, 0.7);
+      color: #ffd6da;
+      background: rgba(239, 51, 64, 0.08);
+    }
+
+    .fundamental-list {
+      display: grid;
+      gap: 11px;
+    }
+
+    .fundamental-card {
+      padding: 13px;
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      background: var(--input);
+      overflow: hidden;
+    }
+
+    .fundamental-card-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 9px;
+    }
+
+    .fundamental-source-wrap {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      min-width: 0;
+    }
+
+    .fundamental-category {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 25px;
+      padding: 4px 8px;
+      border: 1px solid rgba(90, 167, 236, 0.65);
+      border-radius: 999px;
+      color: #cfe7ff;
+      background: rgba(90, 167, 236, 0.12);
+      font-size: 10px;
+      font-weight: bold;
+      white-space: nowrap;
+    }
+
+    .fundamental-source,
+    .fundamental-time {
+      color: var(--muted);
+      font-size: 10px;
+      line-height: 1.6;
+    }
+
+    .fundamental-source {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .fundamental-time {
+      direction: rtl;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .fundamental-title {
+      margin: 0 0 8px;
+      color: var(--text);
+      font-size: 14px;
+      line-height: 1.95;
+      font-weight: bold;
+    }
+
+    .fundamental-summary {
+      margin: 0 0 10px;
+      color: #d3e3f1;
+      font-size: 11px;
+      line-height: 2;
+    }
+
+    .fundamental-symbols {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 10px;
+      direction: ltr;
+      justify-content: flex-end;
+    }
+
+    .fundamental-symbol {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 24px;
+      padding: 3px 8px;
+      border-radius: 7px;
+      background: rgba(46, 204, 113, 0.12);
+      border: 1px solid rgba(46, 204, 113, 0.45);
+      color: #9ff0bd;
+      font-size: 10px;
+      font-weight: bold;
+    }
+
+    .fundamental-link-button {
+      width: 100%;
+      min-height: 39px;
+      border: 1px solid var(--card-border);
+      border-radius: 9px;
+      background: rgba(90, 167, 236, 0.12);
+      color: #d9ecff;
+      font-size: 11px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    @media (max-width: 390px) {
+      .nav-item {
+        font-size: 10px;
+        letter-spacing: -0.2px;
+      }
+
+      .fundamental-toolbar {
+        align-items: stretch;
+      }
+
+      .fundamental-refresh-button {
+        min-width: 80px;
+      }
+    }
+
   </style>
 </head>
 <body>
@@ -947,6 +1145,46 @@
       </p>
     </section>
 
+    <section id="fundamentalView" class="view card" hidden>
+      <h2 class="card-title">اخبار فاندامنتال فارسی</h2>
+
+      <div class="fundamental-toolbar">
+        <div id="fundamentalStatus" class="fundamental-status">
+          تازه‌ترین اخبار فارسی بازار رمزارزها
+        </div>
+        <button
+          id="fundamentalRefreshButton"
+          type="button"
+          class="secondary-button fundamental-refresh-button"
+          onclick="refreshFundamentalNews(true)"
+        >
+          تازه‌سازی
+        </button>
+      </div>
+
+      <div class="fundamental-filters" aria-label="فیلتر اخبار">
+        <button type="button" class="fundamental-filter active" data-news-category="all" onclick="selectFundamentalCategory('all')">همه</button>
+        <button type="button" class="fundamental-filter" data-news-category="bitcoin" onclick="selectFundamentalCategory('bitcoin')">بیت‌کوین</button>
+        <button type="button" class="fundamental-filter" data-news-category="ethereum" onclick="selectFundamentalCategory('ethereum')">اتریوم</button>
+        <button type="button" class="fundamental-filter" data-news-category="altcoin" onclick="selectFundamentalCategory('altcoin')">آلت‌کوین‌ها</button>
+        <button type="button" class="fundamental-filter" data-news-category="regulation" onclick="selectFundamentalCategory('regulation')">قوانین و ETF</button>
+        <button type="button" class="fundamental-filter" data-news-category="security" onclick="selectFundamentalCategory('security')">امنیت و هک</button>
+      </div>
+
+      <div id="fundamentalLoading" class="fundamental-loading">
+        در حال دریافت اخبار فاندامنتال...
+      </div>
+      <div id="fundamentalError" class="fundamental-error" hidden></div>
+      <div id="fundamentalEmpty" class="fundamental-empty" hidden>
+        خبری در این دسته پیدا نشد.
+      </div>
+      <div id="fundamentalList" class="fundamental-list" hidden></div>
+
+      <p class="note" style="text-align:center;margin-top:13px;line-height:2;">
+        تیتر و خلاصه‌ها از منابع فارسی دریافت می‌شوند. برای مطالعه کامل، خبر را در منبع اصلی باز کن.
+      </p>
+    </section>
+
     <section id="journalView" class="view card" hidden>
       <h2 class="card-title">ژورنال معاملات</h2>
       <p id="journalEmptyMessage" class="note" style="text-align:center;line-height:2;">هنوز معامله‌ای در ژورنال ثبت نشده است.</p>
@@ -1006,6 +1244,7 @@
   <nav class="bottom-nav" aria-label="ناوبری اصلی">
     <button id="calculatorNavButton" class="nav-item active" type="button" onclick="showCalculator()">ماشین‌حساب</button>
     <button id="marketNavButton" class="nav-item" type="button" onclick="showMarket()">بازار</button>
+    <button id="fundamentalNavButton" class="nav-item" type="button" onclick="showFundamental()">اخبار</button>
     <button id="journalNavButton" class="nav-item" type="button" onclick="showJournal()">ژورنال</button>
     <button id="statementNavButton" class="nav-item" type="button" onclick="showStatement()">استیتمنت</button>
   </nav>
@@ -1047,6 +1286,18 @@
     const MARKET_RATE_LIMIT_COOLDOWN = 15 * 60 * 1000;
     const MARKET_SOCKET_RECONNECT_DELAY = 4000;
     const BINANCE_STREAM_BASE = "wss://stream.binance.com:443/stream?streams=";
+
+
+    const FUNDAMENTAL_API_URL =
+      "https://bufobmvflinalnskdlcq.supabase.co/functions/v1/crypto-fundamental-feed";
+    const FUNDAMENTAL_CACHE_KEY = "cryptoMasterFundamentalNewsCacheV1";
+    const FUNDAMENTAL_AUTO_REFRESH_INTERVAL = 2 * 60 * 1000;
+    const FUNDAMENTAL_REQUEST_TIMEOUT = 16000;
+
+    let fundamentalRefreshTimer = null;
+    let fundamentalRequestInFlight = false;
+    let fundamentalCategory = "all";
+    let fundamentalNewsItems = [];
 
     const FALLBACK_MARKET_COINS = [
       { id: "bitcoin", name: "Bitcoin", symbol: "btc", market_cap_rank: 1 },
@@ -2507,22 +2758,24 @@
     }
 
     function setActiveView(viewId) {
-      ["calculatorView", "marketView", "journalView", "statementView"].forEach(function (id) {
+      ["calculatorView", "marketView", "fundamentalView", "journalView", "statementView"].forEach(function (id) {
         document.getElementById(id).hidden = id !== viewId;
       });
 
       const mapping = {
         calculatorView: "calculatorNavButton",
         marketView: "marketNavButton",
+        fundamentalView: "fundamentalNavButton",
         journalView: "journalNavButton",
         statementView: "statementNavButton"
       };
 
-      ["calculatorNavButton", "marketNavButton", "journalNavButton", "statementNavButton"].forEach(function (id) {
+      ["calculatorNavButton", "marketNavButton", "fundamentalNavButton", "journalNavButton", "statementNavButton"].forEach(function (id) {
         document.getElementById(id).classList.toggle("active", id === mapping[viewId]);
       });
 
       if (viewId !== "marketView") stopMarketAutoRefresh();
+      if (viewId !== "fundamentalView") stopFundamentalAutoRefresh();
       window.scrollTo({ top: 0, behavior: "smooth" });
     }
 
@@ -2535,6 +2788,13 @@
       startMarketAutoRefresh();
     }
 
+    async function showFundamental() {
+      setActiveView("fundamentalView");
+      renderCachedFundamentalNews();
+      await refreshFundamentalNews(false);
+      startFundamentalAutoRefresh();
+    }
+
     async function showJournal() {
       setActiveView("journalView");
       try { await migrateLegacyTradesIfNeeded(); } catch (error) { console.log(error); }
@@ -2545,6 +2805,322 @@
       setActiveView("statementView");
       try { await migrateLegacyTradesIfNeeded(); } catch (error) { console.log(error); }
       await renderStatement();
+    }
+
+    function getFundamentalCache() {
+      try {
+        const raw = localStorage.getItem(FUNDAMENTAL_CACHE_KEY);
+        if (!raw) return null;
+        const cache = JSON.parse(raw);
+        if (!cache || !Array.isArray(cache.items) || !cache.items.length) return null;
+        return cache;
+      } catch (error) {
+        return null;
+      }
+    }
+
+    function saveFundamentalCache(items, fetchedAt, meta) {
+      try {
+        localStorage.setItem(
+          FUNDAMENTAL_CACHE_KEY,
+          JSON.stringify({
+            items: items,
+            fetchedAt: fetchedAt,
+            meta: meta || null
+          })
+        );
+      } catch (error) {
+        console.log("ذخیره موقت اخبار ناموفق بود.", error);
+      }
+    }
+
+    function setFundamentalStatus(message) {
+      const status = document.getElementById("fundamentalStatus");
+      if (status) status.textContent = message;
+    }
+
+    function formatPersianDateTime(timestamp) {
+      const date = new Date(timestamp);
+      if (!Number.isFinite(date.getTime())) return "زمان نامشخص";
+
+      return new Intl.DateTimeFormat("fa-IR", {
+        month: "short",
+        day: "numeric",
+        hour: "2-digit",
+        minute: "2-digit"
+      }).format(date);
+    }
+
+    function formatRelativeNewsTime(timestamp) {
+      const date = new Date(timestamp);
+      if (!Number.isFinite(date.getTime())) return "زمان نامشخص";
+
+      const differenceSeconds = Math.round((date.getTime() - Date.now()) / 1000);
+      const absolute = Math.abs(differenceSeconds);
+
+      try {
+        const formatter = new Intl.RelativeTimeFormat("fa", { numeric: "auto" });
+        if (absolute < 60) return formatter.format(differenceSeconds, "second");
+        if (absolute < 3600) return formatter.format(Math.round(differenceSeconds / 60), "minute");
+        if (absolute < 86400) return formatter.format(Math.round(differenceSeconds / 3600), "hour");
+        if (absolute < 604800) return formatter.format(Math.round(differenceSeconds / 86400), "day");
+      } catch (error) {
+        // Fall through to absolute Persian date.
+      }
+
+      return formatPersianDateTime(timestamp);
+    }
+
+    function getFundamentalCategoryTitle(category) {
+      const titles = {
+        bitcoin: "بیت‌کوین",
+        ethereum: "اتریوم",
+        altcoin: "آلت‌کوین",
+        regulation: "قوانین و ETF",
+        security: "امنیت و هک",
+        market: "بازار",
+        general: "عمومی"
+      };
+      return titles[category] || "فاندامنتال";
+    }
+
+    function openFundamentalLink(url) {
+      const link = String(url || "").trim();
+      if (!/^https?:\/\//i.test(link)) return;
+
+      try {
+        if (
+          window.Telegram &&
+          window.Telegram.WebApp &&
+          typeof window.Telegram.WebApp.openLink === "function"
+        ) {
+          window.Telegram.WebApp.openLink(link);
+          return;
+        }
+      } catch (error) {
+        console.log(error);
+      }
+
+      window.open(link, "_blank", "noopener,noreferrer");
+    }
+
+    function createFundamentalCard(item) {
+      const card = document.createElement("article");
+      card.className = "fundamental-card";
+
+      const top = document.createElement("div");
+      top.className = "fundamental-card-top";
+
+      const sourceWrap = document.createElement("div");
+      sourceWrap.className = "fundamental-source-wrap";
+
+      const category = document.createElement("span");
+      category.className = "fundamental-category";
+      category.textContent = getFundamentalCategoryTitle(item.category);
+
+      const source = document.createElement("span");
+      source.className = "fundamental-source";
+      source.textContent = item.source || "منبع فارسی";
+
+      const time = document.createElement("time");
+      time.className = "fundamental-time";
+      time.dateTime = item.publishedAt || "";
+      time.textContent = formatRelativeNewsTime(item.publishedAt);
+      time.title = formatPersianDateTime(item.publishedAt);
+
+      sourceWrap.append(category, source);
+      top.append(sourceWrap, time);
+
+      const title = document.createElement("h3");
+      title.className = "fundamental-title";
+      title.textContent = item.title || "خبر بدون عنوان";
+
+      card.append(top, title);
+
+      if (item.summary) {
+        const summary = document.createElement("p");
+        summary.className = "fundamental-summary";
+        summary.textContent = item.summary;
+        card.appendChild(summary);
+      }
+
+      if (Array.isArray(item.symbols) && item.symbols.length) {
+        const symbols = document.createElement("div");
+        symbols.className = "fundamental-symbols";
+
+        item.symbols.slice(0, 6).forEach(function (symbolText) {
+          const symbol = document.createElement("span");
+          symbol.className = "fundamental-symbol";
+          symbol.textContent = String(symbolText).toUpperCase();
+          symbols.appendChild(symbol);
+        });
+
+        card.appendChild(symbols);
+      }
+
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = "fundamental-link-button";
+      button.textContent = "مشاهده خبر در منبع اصلی";
+      button.addEventListener("click", function () {
+        openFundamentalLink(item.url);
+      });
+
+      card.appendChild(button);
+      return card;
+    }
+
+    function renderFundamentalNews() {
+      const list = document.getElementById("fundamentalList");
+      const empty = document.getElementById("fundamentalEmpty");
+
+      const filtered = fundamentalNewsItems.filter(function (item) {
+        return fundamentalCategory === "all" || item.category === fundamentalCategory;
+      });
+
+      list.innerHTML = "";
+
+      document
+        .querySelectorAll("[data-news-category]")
+        .forEach(function (button) {
+          button.classList.toggle(
+            "active",
+            button.dataset.newsCategory === fundamentalCategory
+          );
+        });
+
+      if (!filtered.length) {
+        list.hidden = true;
+        empty.hidden = false;
+        return;
+      }
+
+      empty.hidden = true;
+      filtered.forEach(function (item) {
+        list.appendChild(createFundamentalCard(item));
+      });
+      list.hidden = false;
+    }
+
+    function selectFundamentalCategory(category) {
+      fundamentalCategory = category || "all";
+      renderFundamentalNews();
+    }
+
+    function renderCachedFundamentalNews() {
+      const cache = getFundamentalCache();
+      if (!cache) return false;
+
+      fundamentalNewsItems = cache.items;
+      renderFundamentalNews();
+
+      document.getElementById("fundamentalLoading").hidden = true;
+      setFundamentalStatus(
+        "نسخه ذخیره‌شده؛ " + formatPersianDateTime(cache.fetchedAt)
+      );
+      return true;
+    }
+
+    async function refreshFundamentalNews(forceRefresh) {
+      if (fundamentalRequestInFlight) return;
+
+      const loading = document.getElementById("fundamentalLoading");
+      const errorBox = document.getElementById("fundamentalError");
+      const refreshButton = document.getElementById("fundamentalRefreshButton");
+      const hasCachedData = fundamentalNewsItems.length > 0 || renderCachedFundamentalNews();
+
+      fundamentalRequestInFlight = true;
+      refreshButton.disabled = true;
+      refreshButton.textContent = "در حال دریافت";
+      errorBox.hidden = true;
+
+      if (!hasCachedData) loading.hidden = false;
+      setFundamentalStatus("در حال دریافت تازه‌ترین اخبار فارسی...");
+
+      const controller = new AbortController();
+      const timeout = setTimeout(function () {
+        controller.abort();
+      }, FUNDAMENTAL_REQUEST_TIMEOUT);
+
+      try {
+        const separator = FUNDAMENTAL_API_URL.includes("?") ? "&" : "?";
+        const url =
+          FUNDAMENTAL_API_URL +
+          separator +
+          "limit=40" +
+          (forceRefresh ? "&refresh=" + Date.now() : "");
+
+        const response = await fetch(url, {
+          method: "GET",
+          headers: { Accept: "application/json" },
+          signal: controller.signal,
+          cache: forceRefresh ? "no-store" : "default"
+        });
+
+        const payload = await response.json().catch(function () {
+          return null;
+        });
+
+        if (!response.ok || !payload || !Array.isArray(payload.items)) {
+          throw new Error(
+            payload && payload.error
+              ? payload.error
+              : "پاسخ سرویس اخبار معتبر نبود."
+          );
+        }
+
+        if (!payload.items.length) {
+          throw new Error("منابع خبری در این لحظه خبری برنگرداندند.");
+        }
+
+        fundamentalNewsItems = payload.items;
+        const fetchedAt = payload.fetchedAt || new Date().toISOString();
+        saveFundamentalCache(payload.items, fetchedAt, payload.meta || null);
+        renderFundamentalNews();
+
+        loading.hidden = true;
+        errorBox.hidden = true;
+        setFundamentalStatus(
+          "به‌روزرسانی: " +
+          formatPersianDateTime(fetchedAt) +
+          " | " +
+          payload.items.length.toLocaleString("fa-IR") +
+          " خبر"
+        );
+      } catch (error) {
+        console.error(error);
+        loading.hidden = true;
+        errorBox.hidden = false;
+        errorBox.textContent =
+          error && error.name === "AbortError"
+            ? "دریافت اخبار بیش از حد طول کشید. اتصال اینترنت یا Edge Function را بررسی کن."
+            : "دریافت اخبار ناموفق بود: " + (error.message || "خطای نامشخص");
+
+        setFundamentalStatus(
+          fundamentalNewsItems.length
+            ? "نمایش نسخه ذخیره‌شده اخبار"
+            : "سرویس اخبار در دسترس نیست"
+        );
+      } finally {
+        clearTimeout(timeout);
+        fundamentalRequestInFlight = false;
+        refreshButton.disabled = false;
+        refreshButton.textContent = "تازه‌سازی";
+      }
+    }
+
+    function startFundamentalAutoRefresh() {
+      stopFundamentalAutoRefresh();
+      fundamentalRefreshTimer = setInterval(function () {
+        refreshFundamentalNews(false);
+      }, FUNDAMENTAL_AUTO_REFRESH_INTERVAL);
+    }
+
+    function stopFundamentalAutoRefresh() {
+      if (fundamentalRefreshTimer) {
+        clearInterval(fundamentalRefreshTimer);
+        fundamentalRefreshTimer = null;
+      }
     }
 
     function formatMarketPrice(value) {
