@@ -773,7 +773,17 @@
 
     .pulse-shell {
       display: grid;
+      width: 100%;
+      min-width: 0;
       gap: 14px;
+    }
+
+    .pulse-shell > *,
+    .pulse-panel,
+    .pulse-movers-grid,
+    .pulse-mover-column {
+      min-width: 0;
+      max-width: 100%;
     }
 
     .pulse-hero {
@@ -943,44 +953,123 @@
     }
 
     .pulse-gauge {
-      --gauge-value: 0deg;
+      --needle-angle: -135deg;
       position: relative;
-      width: 126px;
-      height: 126px;
+      width: 148px;
+      height: 148px;
       display: grid;
       place-items: center;
       border-radius: 50%;
       background:
-        radial-gradient(circle at center, #0c2135 56%, transparent 58%),
-        conic-gradient(from 225deg, #ef4444 0deg, #f59e0b 90deg, #34d399 270deg, rgba(255,255,255,0.08) 270deg 360deg);
-      box-shadow: inset 0 0 28px rgba(0, 0, 0, 0.35), 0 16px 35px rgba(0, 0, 0, 0.25);
+        radial-gradient(circle at center, #0b2034 0 48%, transparent 49%),
+        conic-gradient(
+          from 225deg,
+          #ef4444 0deg 54deg,
+          #f97316 54deg 108deg,
+          #facc15 108deg 162deg,
+          #84cc16 162deg 216deg,
+          #22c55e 216deg 270deg,
+          rgba(255, 255, 255, 0.065) 270deg 360deg
+        );
+      border: 1px solid rgba(255, 255, 255, 0.13);
+      box-shadow:
+        inset 0 0 30px rgba(0, 0, 0, 0.42),
+        0 16px 36px rgba(0, 0, 0, 0.28);
+      isolation: isolate;
     }
 
-    .pulse-gauge-mask {
+    .pulse-gauge::before {
+      content: "";
       position: absolute;
-      inset: -1px;
+      inset: 15px;
       border-radius: 50%;
-      background: conic-gradient(from 225deg, transparent 0deg var(--gauge-value), rgba(7, 22, 38, 0.88) var(--gauge-value) 270deg, rgba(7,22,38,1) 270deg 360deg);
-      -webkit-mask: radial-gradient(circle, transparent 0 55%, #000 57%);
-      mask: radial-gradient(circle, transparent 0 55%, #000 57%);
-      transition: --gauge-value 0.6s ease;
+      border: 1px solid rgba(255, 255, 255, 0.07);
+      box-shadow: inset 0 0 18px rgba(0, 0, 0, 0.38);
+      pointer-events: none;
+    }
+
+    .pulse-gauge::after {
+      content: "0                            100";
+      position: absolute;
+      right: 17px;
+      left: 17px;
+      bottom: 19px;
+      color: #7591aa;
+      font-size: 8px;
+      font-weight: 800;
+      direction: ltr;
+      white-space: pre;
+      pointer-events: none;
+    }
+
+    .pulse-gauge-needle {
+      position: absolute;
+      z-index: 4;
+      left: 50%;
+      bottom: 50%;
+      width: 3px;
+      height: 48px;
+      border-radius: 999px 999px 2px 2px;
+      background: linear-gradient(to top, #ffffff, #dcecff 62%, #ffffff);
+      box-shadow: 0 0 9px rgba(255, 255, 255, 0.72);
+      transform-origin: 50% 100%;
+      transform: translateX(-50%) rotate(var(--needle-angle));
+      transition: transform 0.75s cubic-bezier(.22,.75,.2,1);
+    }
+
+    .pulse-gauge-needle::before {
+      content: "";
+      position: absolute;
+      top: -5px;
+      left: 50%;
+      width: 0;
+      height: 0;
+      transform: translateX(-50%);
+      border-right: 4px solid transparent;
+      border-left: 4px solid transparent;
+      border-bottom: 8px solid #ffffff;
+    }
+
+    .pulse-gauge-hub {
+      position: absolute;
+      z-index: 5;
+      left: 50%;
+      top: 50%;
+      width: 15px;
+      height: 15px;
+      transform: translate(-50%, -50%);
+      border: 3px solid #dcecff;
+      border-radius: 50%;
+      background: #102840;
+      box-shadow: 0 0 0 4px rgba(255,255,255,.08), 0 0 13px rgba(255,255,255,.3);
+    }
+
+    .pulse-gauge-center {
+      position: relative;
+      z-index: 3;
+      display: grid;
+      place-items: center;
+      padding-top: 28px;
+      pointer-events: none;
     }
 
     .pulse-gauge-value {
       position: relative;
-      z-index: 2;
+      z-index: 3;
       font-size: 31px;
       font-weight: 900;
+      line-height: 1;
       direction: ltr;
       color: #fff;
+      text-shadow: 0 2px 10px rgba(0,0,0,.5);
     }
 
     .pulse-gauge-caption {
       position: relative;
-      z-index: 2;
-      margin-top: -4px;
+      z-index: 3;
+      margin-top: 4px;
       color: #8ca7bf;
-      font-size: 10px;
+      font-size: 9px;
     }
 
     .pulse-fng-label {
@@ -1063,36 +1152,58 @@
 
     .pulse-dominance-row {
       display: grid;
-      grid-template-columns: 54px minmax(0, 1fr) 58px;
+      grid-template-columns: minmax(0, 1fr) auto;
+      grid-template-areas:
+        "name value"
+        "track track";
       align-items: center;
-      gap: 9px;
+      gap: 7px 10px;
+      min-width: 0;
+      padding: 2px 0;
     }
 
     .pulse-dominance-name,
     .pulse-dominance-value {
       font-size: 11px;
-      font-weight: 800;
+      font-weight: 900;
+    }
+
+    .pulse-dominance-name {
+      grid-area: name;
+      min-width: 0;
+      color: #eaf3fc;
     }
 
     .pulse-dominance-value {
+      grid-area: value;
+      min-width: 66px;
       direction: ltr;
       text-align: left;
-      color: #d9e9f7;
+      color: #ffffff;
+      font-variant-numeric: tabular-nums;
+      white-space: nowrap;
     }
 
     .pulse-dominance-track {
-      height: 8px;
+      grid-area: track;
+      position: relative;
+      width: 100%;
+      height: 10px;
       border-radius: 99px;
       overflow: hidden;
-      background: rgba(255, 255, 255, 0.07);
+      background: rgba(255, 255, 255, 0.075);
       direction: ltr;
+      box-shadow: inset 0 1px 3px rgba(0,0,0,.35);
     }
 
     .pulse-dominance-fill {
+      display: block;
       width: 0;
+      min-width: 0;
       height: 100%;
       border-radius: inherit;
-      transition: width 0.55s ease;
+      transition: width 0.65s cubic-bezier(.22,.75,.2,1);
+      box-shadow: 0 0 12px currentColor;
     }
 
     .pulse-btc-fill { background: linear-gradient(90deg, #f59e0b, #f8c15a); }
@@ -1202,10 +1313,17 @@
 
     .pulse-mover-row {
       display: grid;
-      grid-template-columns: 30px minmax(0, 1fr) auto;
+      grid-template-columns: 30px minmax(0, 1fr) minmax(72px, auto);
       align-items: center;
-      gap: 8px;
-      min-height: 36px;
+      gap: 9px;
+      min-width: 0;
+      min-height: 42px;
+      padding: 4px 2px;
+      border-bottom: 1px solid rgba(255,255,255,.045);
+    }
+
+    .pulse-mover-row:last-child {
+      border-bottom: 0;
     }
 
     .pulse-mover-logo {
@@ -1216,18 +1334,56 @@
       background: rgba(255,255,255,.06);
     }
 
+    .pulse-mover-meta {
+      min-width: 0;
+      display: grid;
+      gap: 3px;
+    }
+
     .pulse-mover-symbol {
+      overflow: hidden;
       color: #e9f3fc;
-      font-size: 10px;
+      font-size: 11px;
       font-weight: 900;
       direction: ltr;
       text-align: right;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .pulse-mover-price {
+      overflow: hidden;
+      color: #7896b0;
+      font-size: 9px;
+      direction: ltr;
+      text-align: right;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
 
     .pulse-mover-change {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 72px;
+      padding: 6px 7px;
+      border-radius: 999px;
       font-size: 10px;
       font-weight: 900;
       direction: ltr;
+      text-align: center;
+      font-variant-numeric: tabular-nums;
+      white-space: nowrap;
+    }
+
+    .pulse-mover-change.pulse-positive {
+      background: rgba(46, 204, 113, 0.12);
+      border: 1px solid rgba(46, 204, 113, 0.25);
+    }
+
+    .pulse-mover-change.pulse-negative {
+      background: rgba(239, 51, 64, 0.12);
+      border: 1px solid rgba(239, 51, 64, 0.25);
     }
 
     .pulse-loading,
@@ -1263,12 +1419,26 @@
       text-align: center;
     }
 
-    @media (max-width: 530px) {
+    @media (max-width: 680px) {
       .pulse-overview { grid-template-columns: 1fr; }
       .pulse-summary-card, .pulse-gauge-card { min-height: 155px; }
       .pulse-gauge-card { flex-direction: row; gap: 18px; text-align: right; }
-      .pulse-gauge { width: 112px; height: 112px; flex: 0 0 auto; }
+      .pulse-gauge { width: 132px; height: 132px; flex: 0 0 auto; }
       .pulse-movers-grid { grid-template-columns: 1fr; }
+      .pulse-mover-column { min-width: 0; }
+      .pulse-dominance-row { width: 100%; }
+    }
+
+    @media (max-width: 390px) {
+      .pulse-gauge-card {
+        flex-direction: column;
+        text-align: center;
+      }
+
+      .pulse-mover-row {
+        grid-template-columns: 28px minmax(0, 1fr) minmax(68px, auto);
+        gap: 7px;
+      }
     }
 
     .fundamental-toolbar {
@@ -1679,9 +1849,10 @@
             </div>
 
             <div class="pulse-gauge-card">
-              <div id="marketPulseGauge" class="pulse-gauge">
-                <div id="marketPulseGaugeMask" class="pulse-gauge-mask"></div>
-                <div>
+              <div id="marketPulseGauge" class="pulse-gauge" role="img" aria-label="شاخص ترس و طمع">
+                <div id="marketPulseGaugeNeedle" class="pulse-gauge-needle"></div>
+                <div class="pulse-gauge-hub"></div>
+                <div class="pulse-gauge-center">
                   <div id="marketPulseFearValue" class="pulse-gauge-value">—</div>
                   <div class="pulse-gauge-caption">ترس و طمع</div>
                 </div>
@@ -3519,6 +3690,30 @@
       element.textContent = pulsePercent(value, 2) + (suffix ? " " + suffix : "");
     }
 
+
+    function setPulseDominance(valueElementId, fillElementId, value) {
+      const valueElement = document.getElementById(valueElementId);
+      const fillElement = document.getElementById(fillElementId);
+      const number = Number(value);
+
+      if (!valueElement || !fillElement) return;
+
+      if (!Number.isFinite(number)) {
+        valueElement.textContent = "—";
+        fillElement.style.width = "0%";
+        fillElement.setAttribute("aria-valuenow", "0");
+        return;
+      }
+
+      const clamped = Math.max(0, Math.min(100, number));
+      valueElement.textContent = formatNumber(number, 2) + "%";
+      fillElement.style.width = clamped.toFixed(2) + "%";
+      fillElement.setAttribute("role", "progressbar");
+      fillElement.setAttribute("aria-valuemin", "0");
+      fillElement.setAttribute("aria-valuemax", "100");
+      fillElement.setAttribute("aria-valuenow", clamped.toFixed(2));
+    }
+
     function pulseFearLabelFa(classification) {
       const labels = {
         "Extreme Fear": "ترس شدید",
@@ -3545,16 +3740,31 @@
         image.referrerPolicy = "no-referrer";
         if (item.image) image.src = item.image;
 
+        const meta = document.createElement("div");
+        meta.className = "pulse-mover-meta";
+
         const symbol = document.createElement("span");
         symbol.className = "pulse-mover-symbol";
         symbol.textContent = String(item.symbol || "—").toUpperCase();
 
-        const change = document.createElement("span");
-        change.className = "pulse-mover-change " + (positive ? "pulse-positive" : "pulse-negative");
-        change.textContent = pulsePercent(item.change24h, 2);
+        const price = document.createElement("span");
+        price.className = "pulse-mover-price";
+        price.textContent = Number.isFinite(Number(item.priceUsd))
+          ? formatTradePrice(item.priceUsd, "USD")
+          : "قیمت نامشخص";
 
+        const change = document.createElement("span");
+        change.className = "pulse-mover-change " + pulseChangeClass(item.change24h);
+        change.textContent = pulsePercent(item.change24h, 2) + " / ۲۴ساعت";
+        change.setAttribute(
+          "aria-label",
+          (positive ? "رشد " : "افت ") + pulsePercent(Math.abs(Number(item.change24h)), 2) + " در ۲۴ ساعت"
+        );
+
+        meta.appendChild(symbol);
+        meta.appendChild(price);
         row.appendChild(image);
-        row.appendChild(symbol);
+        row.appendChild(meta);
         row.appendChild(change);
         container.appendChild(row);
       });
@@ -3643,9 +3853,25 @@
       document.getElementById("marketPulseScoreFill").style.width = Math.max(0, Math.min(100, Number(pulse.score) || 0)) + "%";
 
       const fearValue = Math.max(0, Math.min(100, Number(fear.value) || 0));
-      document.getElementById("marketPulseFearValue").textContent = Number.isFinite(Number(fear.value)) ? formatNumber(fear.value, 0) : "—";
-      document.getElementById("marketPulseFearLabel").textContent = pulseFearLabelFa(fear.classification);
-      document.getElementById("marketPulseGaugeMask").style.setProperty("--gauge-value", (fearValue * 2.7) + "deg");
+      const fearGauge = document.getElementById("marketPulseGauge");
+      document.getElementById("marketPulseFearValue").textContent =
+        Number.isFinite(Number(fear.value))
+          ? formatNumber(fear.value, 0)
+          : "—";
+      document.getElementById("marketPulseFearLabel").textContent =
+        pulseFearLabelFa(fear.classification);
+
+      if (fearGauge) {
+        const needleAngle = -135 + (fearValue * 2.7);
+        fearGauge.style.setProperty("--needle-angle", needleAngle + "deg");
+        fearGauge.setAttribute(
+          "aria-label",
+          "شاخص ترس و طمع: " +
+          formatNumber(fearValue, 0) +
+          " از ۱۰۰، " +
+          pulseFearLabelFa(fear.classification)
+        );
+      }
 
       const fearDiff = Number(fear.value) - Number(fear.previousValue);
       const fearChange = document.getElementById("marketPulseFearChange");
@@ -3663,15 +3889,21 @@
       setPulseChange("pulseMarketCapChange", overview.marketCapChange24h, "در ۲۴ ساعت");
       setPulseChange("pulseStablecoinChange", stable.change24h, "در ۲۴ ساعت");
 
-      const btcDominance = Number(overview.btcDominance) || 0;
-      const ethDominance = Number(overview.ethDominance) || 0;
-      const stableDominance = Number(stable.marketDominance) || 0;
-      document.getElementById("pulseBtcDominance").textContent = pulsePercent(btcDominance, 2).replace("+", "");
-      document.getElementById("pulseEthDominance").textContent = pulsePercent(ethDominance, 2).replace("+", "");
-      document.getElementById("pulseStableDominance").textContent = pulsePercent(stableDominance, 2).replace("+", "");
-      document.getElementById("pulseBtcDominanceFill").style.width = Math.min(100, btcDominance) + "%";
-      document.getElementById("pulseEthDominanceFill").style.width = Math.min(100, ethDominance) + "%";
-      document.getElementById("pulseStableDominanceFill").style.width = Math.min(100, stableDominance) + "%";
+      setPulseDominance(
+        "pulseBtcDominance",
+        "pulseBtcDominanceFill",
+        overview.btcDominance
+      );
+      setPulseDominance(
+        "pulseEthDominance",
+        "pulseEthDominanceFill",
+        overview.ethDominance
+      );
+      setPulseDominance(
+        "pulseStableDominance",
+        "pulseStableDominanceFill",
+        stable.marketDominance
+      );
 
       renderMarketPulseTrending(data.trending);
       renderPulseMoverList("marketPulseGainers", data.gainers, true);
