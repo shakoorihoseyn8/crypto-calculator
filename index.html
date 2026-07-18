@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="theme-color" content="#0d2238" />
- <title>Crypto Master Trade</title>
+  <title>Crypto Master Trade</title>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <style>
     * { box-sizing: border-box; }
@@ -58,8 +58,9 @@
     }
 
     .brand-name {
-      font-size: 25px;
+      font-size: 21px;
       font-weight: 800;
+      white-space: nowrap;
     }
 
     .brand-name .crypto { color: #fff; }
@@ -568,15 +569,10 @@
   <main class="app">
     <header class="header">
       <div class="brand">
-        <div class="brand-name">
-  <span class="crypto">Crypto </span>
-  <span class="smart">Master</span>
-  <span class="crypto"> Trade</span>
-</div>
-
-<div class="logo">M</div>
+        <div class="brand-name"><span class="crypto">Crypto </span><span class="smart">Master</span><span class="crypto"> Trade</span></div>
+        <div class="logo">M</div>
       </div>
-      <div class="subtitle">ماشین‌حساب مدیریت ریسک و پوزیشن</div>
+      <div class="subtitle">ماشین‌حساب مدیریت ریسک و ژورنال معاملات</div>
     </header>
 
     <div id="calculatorView" class="view">
@@ -675,6 +671,20 @@
       <h2 class="card-title">ژورنال معاملات</h2>
       <p id="journalEmptyMessage" class="note" style="text-align:center;line-height:2;">هنوز معامله‌ای در ژورنال ثبت نشده است.</p>
       <div id="journalTradesList" class="journal-list"></div>
+
+      <div style="margin:0 0 16px;">
+        <button
+          id="backupJournalButton"
+          type="button"
+          class="secondary-button"
+          onclick="exportFullJournalBackup()"
+        >
+          دریافت پشتیبان کامل ژورنال (JSON)
+        </button>
+        <p class="note" style="margin-top:8px;text-align:center;">
+          شامل همه معاملات، یادداشت‌ها و تصاویر ورود و خروج
+        </p>
+      </div>
 
       <details id="newTradeDetails" class="entry-details">
         <summary>ثبت معامله جدید</summary>
@@ -1477,6 +1487,176 @@
         console.error(error);
         empty.style.display = "block";
         empty.textContent = "خواندن اطلاعات استیتمنت ناموفق بود.";
+      }
+    }
+
+    function blobToBackupImage(blob, fileName) {
+      return new Promise(function (resolve, reject) {
+        if (!blob) {
+          resolve(null);
+          return;
+        }
+
+        if (!(blob instanceof Blob)) {
+          reject(new Error("فرمت تصویر ذخیره‌شده معتبر نیست."));
+          return;
+        }
+
+        const reader = new FileReader();
+
+        reader.onload = function () {
+          resolve({
+            name: fileName || "",
+            type: blob.type || "application/octet-stream",
+            size: blob.size || 0,
+            dataUrl: String(reader.result || "")
+          });
+        };
+
+        reader.onerror = function () {
+          reject(reader.error || new Error("خواندن تصویر پشتیبان ناموفق بود."));
+        };
+
+        reader.readAsDataURL(blob);
+      });
+    }
+
+    async function prepareTradeForBackup(trade) {
+      const portableTrade = Object.assign({}, trade);
+
+      portableTrade.screenshotBlob = await blobToBackupImage(
+        trade.screenshotBlob,
+        trade.screenshotName
+      );
+
+      portableTrade.exitScreenshotBlob = await blobToBackupImage(
+        trade.exitScreenshotBlob,
+        trade.exitScreenshotName
+      );
+
+      return portableTrade;
+    }
+
+    function createBackupFileName(date) {
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, "0");
+      const day = String(date.getDate()).padStart(2, "0");
+      const hour = String(date.getHours()).padStart(2, "0");
+      const minute = String(date.getMinutes()).padStart(2, "0");
+
+      return (
+        "crypto-master-trade-journal-backup-" +
+        year + "-" + month + "-" + day +
+        "-" + hour + "-" + minute +
+        ".json"
+      );
+    }
+
+    async function deliverBackupFile(jsonBlob, fileName) {
+      if (typeof File === "function") {
+        const backupFile = new File(
+          [jsonBlob],
+          fileName,
+          { type: "application/json" }
+        );
+
+        if (
+          navigator.share &&
+          navigator.canShare &&
+          navigator.canShare({ files: [backupFile] })
+        ) {
+          try {
+            await navigator.share({
+              title: "پشتیبان کامل ژورنال معاملات",
+              text: "فایل پشتیبان کامل ژورنال معاملات",
+              files: [backupFile]
+            });
+            return;
+          } catch (error) {
+            if (error && error.name === "AbortError") {
+              throw error;
+            }
+            console.log("Share fallback:", error);
+          }
+        }
+      }
+
+      const objectUrl = URL.createObjectURL(jsonBlob);
+      const link = document.createElement("a");
+      link.href = objectUrl;
+      link.download = fileName;
+      link.style.display = "none";
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+
+      setTimeout(function () {
+        URL.revokeObjectURL(objectUrl);
+      }, 3000);
+    }
+
+    async function exportFullJournalBackup() {
+      const button = document.getElementById("backupJournalButton");
+      const originalText = button ? button.textContent : "";
+
+      if (button) {
+        button.disabled = true;
+        button.textContent = "در حال ساخت پشتیبان کامل...";
+      }
+
+      try {
+        const trades = await getTradesFromDatabase();
+
+        if (!trades.length) {
+          showToast("هنوز معامله‌ای برای پشتیبان‌گیری وجود ندارد.", true);
+          return;
+        }
+
+        const portableTrades = [];
+
+        for (const trade of trades) {
+          portableTrades.push(
+            await prepareTradeForBackup(trade)
+          );
+        }
+
+        const exportedAt = new Date();
+        const backup = {
+          backupType: "crypto-master-trade-journal",
+          backupVersion: 1,
+          appName: "Crypto Master Trade",
+          exportedAt: exportedAt.toISOString(),
+          tradeCount: portableTrades.length,
+          includesImages: true,
+          imageEncoding: "data-url-base64",
+          trades: portableTrades
+        };
+
+        const jsonText = JSON.stringify(backup, null, 2);
+        const jsonBlob = new Blob(
+          [jsonText],
+          { type: "application/json;charset=utf-8" }
+        );
+
+        const fileName = createBackupFileName(exportedAt);
+        await deliverBackupFile(jsonBlob, fileName);
+
+        showToast(
+          "پشتیبان کامل " + portableTrades.length + " معامله آماده شد."
+        );
+      } catch (error) {
+        console.error("Full journal backup error:", error);
+
+        if (error && error.name === "AbortError") {
+          showToast("ارسال یا ذخیره فایل لغو شد.", true);
+        } else {
+          showToast("ساخت پشتیبان کامل ناموفق بود.", true);
+        }
+      } finally {
+        if (button) {
+          button.disabled = false;
+          button.textContent = originalText;
+        }
       }
     }
 
