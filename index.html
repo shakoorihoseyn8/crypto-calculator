@@ -184,7 +184,7 @@
 
     .three-grid {
       display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
+      grid-template-columns: repeat(4, minmax(0, 1fr));
       gap: 10px;
     }
 
@@ -475,6 +475,132 @@
     .statement-detail span { color: var(--muted); font-size: 12px; }
     .statement-detail strong { direction: ltr; text-align: left; font-size: 13px; }
 
+    .market-toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .market-status {
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1.8;
+    }
+
+    .market-refresh-button {
+      width: auto;
+      min-width: 112px;
+      min-height: 40px;
+      padding: 8px 12px;
+      flex-shrink: 0;
+    }
+
+    .market-loading,
+    .market-error {
+      padding: 14px;
+      border: 1px solid var(--card-border);
+      border-radius: 10px;
+      background: var(--input);
+      color: var(--muted);
+      text-align: center;
+      font-size: 12px;
+      line-height: 1.9;
+    }
+
+    .market-error {
+      border-color: rgba(239, 51, 64, 0.7);
+      color: #ffd6da;
+      background: rgba(239, 51, 64, 0.08);
+    }
+
+    .market-list {
+      display: grid;
+      gap: 9px;
+    }
+
+    .market-row {
+      display: grid;
+      grid-template-columns: 34px minmax(120px, 1.4fr) minmax(95px, 1fr) minmax(68px, 0.7fr);
+      align-items: center;
+      gap: 8px;
+      padding: 11px 9px;
+      border: 1px solid var(--card-border);
+      border-radius: 11px;
+      background: var(--input);
+    }
+
+    .market-rank {
+      color: var(--muted);
+      text-align: center;
+      direction: ltr;
+      font-size: 12px;
+      font-weight: bold;
+    }
+
+    .market-asset {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      min-width: 0;
+      direction: ltr;
+    }
+
+    .market-asset img {
+      width: 31px;
+      height: 31px;
+      flex: 0 0 31px;
+      border-radius: 50%;
+      background: #fff;
+      object-fit: cover;
+    }
+
+    .market-name-wrap {
+      min-width: 0;
+    }
+
+    .market-name {
+      display: block;
+      overflow: hidden;
+      color: var(--text);
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      font-size: 12px;
+      font-weight: bold;
+    }
+
+    .market-symbol {
+      display: block;
+      margin-top: 3px;
+      color: var(--muted);
+      font-size: 10px;
+      text-transform: uppercase;
+    }
+
+    .market-price,
+    .market-change {
+      direction: ltr;
+      text-align: left;
+      font-size: 12px;
+      font-weight: bold;
+      white-space: nowrap;
+    }
+
+    .market-change.positive { color: var(--green); }
+    .market-change.negative { color: var(--red); }
+    .market-change.neutral { color: var(--muted); }
+
+    .market-cap {
+      grid-column: 2 / 5;
+      padding-top: 7px;
+      border-top: 1px dashed rgba(49, 81, 111, 0.75);
+      color: var(--muted);
+      direction: ltr;
+      text-align: left;
+      font-size: 10px;
+    }
+
     .bottom-nav {
       position: fixed;
       left: 50%;
@@ -561,7 +687,17 @@
       .three-grid { gap: 7px; }
       .three-grid .field label { font-size: 11px; }
       .journal-grid { grid-template-columns: 1fr; }
-      .nav-item { font-size: 11px; }
+      .bottom-nav { gap: 4px; padding-right: 5px; padding-left: 5px; }
+      .nav-item { font-size: 10px; padding-right: 2px; padding-left: 2px; }
+      .market-row {
+        grid-template-columns: 27px minmax(102px, 1.25fr) minmax(82px, 0.85fr) minmax(58px, 0.6fr);
+        gap: 6px;
+        padding-right: 7px;
+        padding-left: 7px;
+      }
+      .market-asset { gap: 7px; }
+      .market-asset img { width: 27px; height: 27px; flex-basis: 27px; }
+      .market-name, .market-price, .market-change { font-size: 11px; }
     }
   </style>
 </head>
@@ -667,6 +803,35 @@
       </section>
     </div>
 
+    <section id="marketView" class="view card" hidden>
+      <h2 class="card-title">۱۰ ارز برتر بازار</h2>
+
+      <div class="market-toolbar">
+        <div id="marketStatus" class="market-status">
+          قیمت‌ها براساس ارزش بازار مرتب می‌شوند.
+        </div>
+        <button
+          id="marketRefreshButton"
+          type="button"
+          class="secondary-button market-refresh-button"
+          onclick="refreshMarketData(true)"
+        >
+          به‌روزرسانی
+        </button>
+      </div>
+
+      <div id="marketLoading" class="market-loading">
+        در حال دریافت قیمت‌های بازار...
+      </div>
+
+      <div id="marketError" class="market-error" hidden></div>
+      <div id="marketList" class="market-list" hidden></div>
+
+      <p class="note" style="text-align:center;">
+        منبع داده: CoinGecko — به‌روزرسانی خودکار هر ۶۰ ثانیه
+      </p>
+    </section>
+
     <section id="journalView" class="view card" hidden>
       <h2 class="card-title">ژورنال معاملات</h2>
       <p id="journalEmptyMessage" class="note" style="text-align:center;line-height:2;">هنوز معامله‌ای در ژورنال ثبت نشده است.</p>
@@ -717,6 +882,7 @@
 
   <nav class="bottom-nav" aria-label="ناوبری اصلی">
     <button id="calculatorNavButton" class="nav-item active" type="button" onclick="showCalculator()">ماشین‌حساب</button>
+    <button id="marketNavButton" class="nav-item" type="button" onclick="showMarket()">بازار</button>
     <button id="journalNavButton" class="nav-item" type="button" onclick="showJournal()">ژورنال</button>
     <button id="statementNavButton" class="nav-item" type="button" onclick="showStatement()">استیتمنت</button>
   </nav>
@@ -737,6 +903,15 @@
     let journalObjectUrls = [];
     let toastTimer = null;
     let legacyMigrationAttempted = false;
+    let marketRefreshTimer = null;
+    let marketRequestInFlight = false;
+
+    const MARKET_API_URL =
+      "https://api.coingecko.com/api/v3/coins/markets" +
+      "?vs_currency=usd&order=market_cap_desc&per_page=10&page=1" +
+      "&sparkline=false&price_change_percentage=24h";
+    const MARKET_CACHE_KEY = "cryptoMasterTopMarketCacheV1";
+    const MARKET_REFRESH_INTERVAL = 60000;
 
     const inputIds = ["entry", "stop", "tp1", "tp2", "tp3", "capital", "leverage", "riskPercent"];
 
@@ -1288,25 +1463,52 @@
       }
     }
 
+    function stopMarketAutoRefresh() {
+      if (marketRefreshTimer) {
+        clearInterval(marketRefreshTimer);
+        marketRefreshTimer = null;
+      }
+    }
+
+    function startMarketAutoRefresh() {
+      stopMarketAutoRefresh();
+      marketRefreshTimer = setInterval(function () {
+        const marketView = document.getElementById("marketView");
+        if (marketView && !marketView.hidden && document.visibilityState !== "hidden") {
+          refreshMarketData(false);
+        }
+      }, MARKET_REFRESH_INTERVAL);
+    }
+
     function setActiveView(viewId) {
-      ["calculatorView", "journalView", "statementView"].forEach(function (id) {
+      ["calculatorView", "marketView", "journalView", "statementView"].forEach(function (id) {
         document.getElementById(id).hidden = id !== viewId;
       });
 
       const mapping = {
         calculatorView: "calculatorNavButton",
+        marketView: "marketNavButton",
         journalView: "journalNavButton",
         statementView: "statementNavButton"
       };
 
-      ["calculatorNavButton", "journalNavButton", "statementNavButton"].forEach(function (id) {
+      ["calculatorNavButton", "marketNavButton", "journalNavButton", "statementNavButton"].forEach(function (id) {
         document.getElementById(id).classList.toggle("active", id === mapping[viewId]);
       });
 
+      if (viewId !== "marketView") stopMarketAutoRefresh();
       window.scrollTo({ top: 0, behavior: "smooth" });
     }
 
     function showCalculator() { setActiveView("calculatorView"); }
+
+    async function showMarket() {
+      setActiveView("marketView");
+      renderCachedMarketData();
+      await refreshMarketData(false);
+      startMarketAutoRefresh();
+    }
+
     async function showJournal() {
       setActiveView("journalView");
       try { await migrateLegacyTradesIfNeeded(); } catch (error) { console.log(error); }
@@ -1317,6 +1519,228 @@
       setActiveView("statementView");
       try { await migrateLegacyTradesIfNeeded(); } catch (error) { console.log(error); }
       await renderStatement();
+    }
+
+    function formatMarketPrice(value) {
+      const number = Number(value);
+      if (!Number.isFinite(number)) return "—";
+      let maximumFractionDigits = 2;
+      if (Math.abs(number) < 1) maximumFractionDigits = 6;
+      if (Math.abs(number) < 0.01) maximumFractionDigits = 8;
+      return number.toLocaleString("en-US", {
+        style: "currency",
+        currency: "USD",
+        minimumFractionDigits: number >= 1 ? 2 : 0,
+        maximumFractionDigits: maximumFractionDigits
+      });
+    }
+
+    function formatCompactDollar(value) {
+      const number = Number(value);
+      if (!Number.isFinite(number)) return "—";
+      const absolute = Math.abs(number);
+      if (absolute >= 1e12) return "$" + formatNumber(number / 1e12, 2) + "T";
+      if (absolute >= 1e9) return "$" + formatNumber(number / 1e9, 2) + "B";
+      if (absolute >= 1e6) return "$" + formatNumber(number / 1e6, 2) + "M";
+      return "$" + formatNumber(number, 0);
+    }
+
+    function getMarketCache() {
+      try {
+        const raw = localStorage.getItem(MARKET_CACHE_KEY);
+        if (!raw) return null;
+        const cache = JSON.parse(raw);
+        if (!cache || !Array.isArray(cache.coins) || !cache.coins.length) return null;
+        return cache;
+      } catch (error) {
+        return null;
+      }
+    }
+
+    function saveMarketCache(coins, fetchedAt) {
+      try {
+        localStorage.setItem(MARKET_CACHE_KEY, JSON.stringify({
+          fetchedAt: fetchedAt,
+          coins: coins
+        }));
+      } catch (error) {
+        console.log("ذخیره موقت قیمت‌ها ناموفق بود.", error);
+      }
+    }
+
+    function setMarketStatus(message) {
+      const status = document.getElementById("marketStatus");
+      if (status) status.textContent = message;
+    }
+
+    function renderMarketRows(coins, fetchedAt, fromCache) {
+      const list = document.getElementById("marketList");
+      const loading = document.getElementById("marketLoading");
+      const errorBox = document.getElementById("marketError");
+
+      list.innerHTML = "";
+
+      coins.slice(0, 10).forEach(function (coin, index) {
+        const row = document.createElement("article");
+        row.className = "market-row";
+
+        const rank = document.createElement("div");
+        rank.className = "market-rank";
+        rank.textContent = String(Number(coin.market_cap_rank) || index + 1);
+
+        const asset = document.createElement("div");
+        asset.className = "market-asset";
+
+        const image = document.createElement("img");
+        image.src = String(coin.image || "");
+        image.alt = String(coin.name || coin.symbol || "ارز");
+        image.loading = "lazy";
+        image.referrerPolicy = "no-referrer";
+        image.addEventListener("error", function () {
+          image.style.visibility = "hidden";
+        });
+
+        const nameWrap = document.createElement("div");
+        nameWrap.className = "market-name-wrap";
+
+        const name = document.createElement("span");
+        name.className = "market-name";
+        name.textContent = String(coin.name || "بدون نام");
+
+        const symbol = document.createElement("span");
+        symbol.className = "market-symbol";
+        symbol.textContent = String(coin.symbol || "").toUpperCase();
+
+        nameWrap.appendChild(name);
+        nameWrap.appendChild(symbol);
+        asset.appendChild(image);
+        asset.appendChild(nameWrap);
+
+        const price = document.createElement("div");
+        price.className = "market-price";
+        price.textContent = formatMarketPrice(coin.current_price);
+
+        const changeValue = Number(coin.price_change_percentage_24h);
+        const change = document.createElement("div");
+        change.className =
+          "market-change " +
+          (changeValue > 0 ? "positive" : changeValue < 0 ? "negative" : "neutral");
+        change.textContent =
+          Number.isFinite(changeValue)
+            ? (changeValue > 0 ? "+" : "") + formatNumber(changeValue, 2) + "%"
+            : "—";
+
+        const marketCap = document.createElement("div");
+        marketCap.className = "market-cap";
+        marketCap.textContent = "Market Cap: " + formatCompactDollar(coin.market_cap);
+
+        row.appendChild(rank);
+        row.appendChild(asset);
+        row.appendChild(price);
+        row.appendChild(change);
+        row.appendChild(marketCap);
+        list.appendChild(row);
+      });
+
+      const updatedAt = new Date(fetchedAt || Date.now()).toLocaleTimeString("fa-IR", {
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit"
+      });
+
+      setMarketStatus(
+        (fromCache ? "آخرین اطلاعات ذخیره‌شده — " : "آخرین به‌روزرسانی — ") +
+        updatedAt
+      );
+
+      loading.hidden = true;
+      errorBox.hidden = true;
+      list.hidden = false;
+    }
+
+    function renderCachedMarketData() {
+      const cache = getMarketCache();
+      if (cache) renderMarketRows(cache.coins, cache.fetchedAt, true);
+    }
+
+    async function refreshMarketData(manualRefresh) {
+      if (marketRequestInFlight) return;
+
+      const loading = document.getElementById("marketLoading");
+      const errorBox = document.getElementById("marketError");
+      const list = document.getElementById("marketList");
+      const button = document.getElementById("marketRefreshButton");
+      const cache = getMarketCache();
+
+      marketRequestInFlight = true;
+      button.disabled = true;
+      button.textContent = "در حال دریافت...";
+
+      if (!cache) {
+        loading.hidden = false;
+        list.hidden = true;
+      }
+
+      errorBox.hidden = true;
+      setMarketStatus("در حال اتصال به بازار...");
+
+      try {
+        const response = await fetch(MARKET_API_URL, {
+          method: "GET",
+          headers: { "Accept": "application/json" },
+          cache: "no-store"
+        });
+
+        if (!response.ok) {
+          throw new Error("HTTP " + response.status);
+        }
+
+        const coins = await response.json();
+        if (!Array.isArray(coins) || coins.length < 1) {
+          throw new Error("پاسخ بازار خالی است.");
+        }
+
+        const normalizedCoins = coins.slice(0, 10).map(function (coin, index) {
+          return {
+            id: String(coin.id || ""),
+            name: String(coin.name || ""),
+            symbol: String(coin.symbol || ""),
+            image: String(coin.image || ""),
+            market_cap_rank: Number(coin.market_cap_rank) || index + 1,
+            current_price: Number(coin.current_price),
+            market_cap: Number(coin.market_cap),
+            price_change_percentage_24h: Number(coin.price_change_percentage_24h)
+          };
+        });
+
+        const fetchedAt = Date.now();
+        saveMarketCache(normalizedCoins, fetchedAt);
+        renderMarketRows(normalizedCoins, fetchedAt, false);
+
+        if (manualRefresh) showToast("قیمت‌های بازار به‌روزرسانی شد.");
+      } catch (error) {
+        console.error("Market data error:", error);
+
+        if (cache) {
+          renderMarketRows(cache.coins, cache.fetchedAt, true);
+          errorBox.textContent =
+            "دریافت قیمت تازه ناموفق بود؛ آخرین اطلاعات ذخیره‌شده نمایش داده می‌شود.";
+          errorBox.hidden = false;
+        } else {
+          loading.hidden = true;
+          list.hidden = true;
+          errorBox.textContent =
+            "دریافت قیمت‌های بازار ناموفق بود. اتصال اینترنت را بررسی و دوباره تلاش کن.";
+          errorBox.hidden = false;
+          setMarketStatus("اتصال به بازار برقرار نشد.");
+        }
+
+        if (manualRefresh) showToast("به‌روزرسانی قیمت‌ها ناموفق بود.", true);
+      } finally {
+        marketRequestInFlight = false;
+        button.disabled = false;
+        button.textContent = "به‌روزرسانی";
+      }
     }
 
     function statementMetric(label, value, color) {
@@ -1678,7 +2102,20 @@
       if (!document.getElementById("statementView").hidden) renderStatement();
     });
 
-    window.addEventListener("beforeunload", revokeJournalUrls);
+    document.addEventListener("visibilitychange", function () {
+      const marketView = document.getElementById("marketView");
+      if (document.visibilityState === "visible" && marketView && !marketView.hidden) {
+        refreshMarketData(false);
+        startMarketAutoRefresh();
+      } else if (document.visibilityState === "hidden") {
+        stopMarketAutoRefresh();
+      }
+    });
+
+    window.addEventListener("beforeunload", function () {
+      revokeJournalUrls();
+      stopMarketAutoRefresh();
+    });
 
     setupTelegram();
     calculateTrade();
