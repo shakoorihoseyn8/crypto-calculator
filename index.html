@@ -670,7 +670,7 @@
       max-width: 830px;
       min-height: var(--nav-height);
       display: grid;
-      grid-template-columns: repeat(5, minmax(0, 1fr));
+      grid-template-columns: repeat(6, minmax(0, 1fr));
       gap: 6px;
       padding: 8px 7px;
       background: rgba(13, 34, 56, 0.98);
@@ -688,11 +688,11 @@
       border-radius: 10px;
       background: transparent;
       color: var(--muted);
-      font-size: 11px;
+      font-size: 10px;
       font-weight: bold;
       cursor: pointer;
       white-space: nowrap;
-      padding: 7px 2px;
+      padding: 7px 1px;
     }
 
     .nav-item.active {
@@ -761,6 +761,515 @@
       .market-name, .market-price, .market-change { font-size: 11px; }
     }
   
+
+
+    .pulse-view {
+      padding: 0;
+      overflow: hidden;
+      border: 0;
+      background: transparent;
+      box-shadow: none;
+    }
+
+    .pulse-shell {
+      display: grid;
+      gap: 14px;
+    }
+
+    .pulse-hero {
+      position: relative;
+      overflow: hidden;
+      padding: 20px;
+      border: 1px solid rgba(84, 169, 255, 0.30);
+      border-radius: 20px;
+      background:
+        radial-gradient(circle at 12% 0%, rgba(84, 169, 255, 0.20), transparent 40%),
+        radial-gradient(circle at 88% 100%, rgba(42, 214, 135, 0.16), transparent 42%),
+        linear-gradient(145deg, rgba(17, 45, 72, 0.98), rgba(7, 22, 38, 0.98));
+      box-shadow: 0 18px 45px rgba(0, 0, 0, 0.26);
+    }
+
+    .pulse-hero::after {
+      content: '';
+      position: absolute;
+      width: 180px;
+      height: 180px;
+      left: -85px;
+      bottom: -105px;
+      border-radius: 50%;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      box-shadow: 0 0 0 28px rgba(255, 255, 255, 0.025), 0 0 0 58px rgba(255, 255, 255, 0.018);
+      pointer-events: none;
+    }
+
+    .pulse-hero-head,
+    .pulse-section-head,
+    .pulse-toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .pulse-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      color: #9bb8d4;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .pulse-live-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--green);
+      box-shadow: 0 0 0 5px rgba(52, 211, 153, 0.10), 0 0 15px rgba(52, 211, 153, 0.85);
+      animation: pulseLive 1.8s infinite;
+    }
+
+    @keyframes pulseLive {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(0.72); opacity: 0.55; }
+    }
+
+    .pulse-title {
+      margin: 7px 0 3px;
+      font-size: clamp(24px, 6vw, 34px);
+      line-height: 1.25;
+      color: #f6fbff;
+    }
+
+    .pulse-subtitle {
+      margin: 0;
+      color: #9eb7ce;
+      font-size: 12px;
+      line-height: 1.9;
+    }
+
+    .pulse-refresh-button {
+      width: auto;
+      min-width: 92px;
+      padding: 10px 13px;
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.07);
+      border-color: rgba(255, 255, 255, 0.13);
+    }
+
+    .pulse-overview {
+      display: grid;
+      grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+      gap: 14px;
+      margin-top: 18px;
+      align-items: stretch;
+    }
+
+    .pulse-summary-card,
+    .pulse-gauge-card {
+      position: relative;
+      z-index: 1;
+      min-height: 174px;
+      padding: 15px;
+      border-radius: 17px;
+      border: 1px solid rgba(255, 255, 255, 0.09);
+      background: rgba(3, 15, 27, 0.48);
+      backdrop-filter: blur(10px);
+    }
+
+    .pulse-summary-label {
+      color: #91abc3;
+      font-size: 12px;
+    }
+
+    .pulse-summary-state {
+      margin: 9px 0 7px;
+      font-size: 23px;
+      font-weight: 900;
+      color: #fff;
+    }
+
+    .pulse-summary-text {
+      margin: 0;
+      color: #b3c7d9;
+      font-size: 12px;
+      line-height: 1.85;
+    }
+
+    .pulse-score-row {
+      display: flex;
+      align-items: flex-end;
+      gap: 7px;
+      margin-top: 16px;
+      direction: ltr;
+    }
+
+    .pulse-score-number {
+      font-size: 31px;
+      font-weight: 900;
+      color: #fff;
+      line-height: 1;
+    }
+
+    .pulse-score-caption {
+      color: #7f9bb5;
+      font-size: 11px;
+      padding-bottom: 3px;
+    }
+
+    .pulse-score-track {
+      height: 7px;
+      margin-top: 10px;
+      border-radius: 99px;
+      background: rgba(255, 255, 255, 0.09);
+      overflow: hidden;
+      direction: ltr;
+    }
+
+    .pulse-score-fill {
+      width: 0;
+      height: 100%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, #ef4444, #f59e0b 45%, #34d399);
+      transition: width 0.55s ease;
+    }
+
+    .pulse-gauge-card {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+    }
+
+    .pulse-gauge {
+      --gauge-value: 0deg;
+      position: relative;
+      width: 126px;
+      height: 126px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      background:
+        radial-gradient(circle at center, #0c2135 56%, transparent 58%),
+        conic-gradient(from 225deg, #ef4444 0deg, #f59e0b 90deg, #34d399 270deg, rgba(255,255,255,0.08) 270deg 360deg);
+      box-shadow: inset 0 0 28px rgba(0, 0, 0, 0.35), 0 16px 35px rgba(0, 0, 0, 0.25);
+    }
+
+    .pulse-gauge-mask {
+      position: absolute;
+      inset: -1px;
+      border-radius: 50%;
+      background: conic-gradient(from 225deg, transparent 0deg var(--gauge-value), rgba(7, 22, 38, 0.88) var(--gauge-value) 270deg, rgba(7,22,38,1) 270deg 360deg);
+      -webkit-mask: radial-gradient(circle, transparent 0 55%, #000 57%);
+      mask: radial-gradient(circle, transparent 0 55%, #000 57%);
+      transition: --gauge-value 0.6s ease;
+    }
+
+    .pulse-gauge-value {
+      position: relative;
+      z-index: 2;
+      font-size: 31px;
+      font-weight: 900;
+      direction: ltr;
+      color: #fff;
+    }
+
+    .pulse-gauge-caption {
+      position: relative;
+      z-index: 2;
+      margin-top: -4px;
+      color: #8ca7bf;
+      font-size: 10px;
+    }
+
+    .pulse-fng-label {
+      margin-top: 9px;
+      color: #dcecff;
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .pulse-panel {
+      padding: 16px;
+      border: 1px solid var(--card-border);
+      border-radius: 18px;
+      background: linear-gradient(155deg, rgba(17, 42, 66, 0.96), rgba(9, 28, 46, 0.96));
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.17);
+    }
+
+    .pulse-section-title {
+      margin: 0;
+      font-size: 15px;
+      color: #f2f8ff;
+    }
+
+    .pulse-section-note {
+      color: #7895af;
+      font-size: 10px;
+      white-space: nowrap;
+    }
+
+    .pulse-metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 13px;
+    }
+
+    .pulse-metric {
+      padding: 13px;
+      min-height: 92px;
+      border-radius: 14px;
+      border: 1px solid rgba(255, 255, 255, 0.07);
+      background: rgba(2, 15, 27, 0.43);
+    }
+
+    .pulse-metric-label {
+      color: #88a5be;
+      font-size: 10px;
+      line-height: 1.5;
+    }
+
+    .pulse-metric-value {
+      display: block;
+      margin-top: 8px;
+      color: #f5faff;
+      font-size: 18px;
+      font-weight: 900;
+      direction: ltr;
+      text-align: right;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .pulse-metric-change {
+      display: block;
+      margin-top: 5px;
+      font-size: 10px;
+      font-weight: 800;
+      direction: ltr;
+      text-align: right;
+    }
+
+    .pulse-positive { color: var(--green) !important; }
+    .pulse-negative { color: var(--red) !important; }
+    .pulse-neutral { color: #9bb3c8 !important; }
+
+    .pulse-dominance-list {
+      display: grid;
+      gap: 13px;
+      margin-top: 15px;
+    }
+
+    .pulse-dominance-row {
+      display: grid;
+      grid-template-columns: 54px minmax(0, 1fr) 58px;
+      align-items: center;
+      gap: 9px;
+    }
+
+    .pulse-dominance-name,
+    .pulse-dominance-value {
+      font-size: 11px;
+      font-weight: 800;
+    }
+
+    .pulse-dominance-value {
+      direction: ltr;
+      text-align: left;
+      color: #d9e9f7;
+    }
+
+    .pulse-dominance-track {
+      height: 8px;
+      border-radius: 99px;
+      overflow: hidden;
+      background: rgba(255, 255, 255, 0.07);
+      direction: ltr;
+    }
+
+    .pulse-dominance-fill {
+      width: 0;
+      height: 100%;
+      border-radius: inherit;
+      transition: width 0.55s ease;
+    }
+
+    .pulse-btc-fill { background: linear-gradient(90deg, #f59e0b, #f8c15a); }
+    .pulse-eth-fill { background: linear-gradient(90deg, #6366f1, #8b8df8); }
+    .pulse-stable-fill { background: linear-gradient(90deg, #10b981, #5ee1b3); }
+
+    .pulse-trending-list {
+      display: grid;
+      grid-auto-flow: column;
+      grid-auto-columns: minmax(155px, 0.78fr);
+      gap: 10px;
+      overflow-x: auto;
+      overscroll-behavior-inline: contain;
+      scroll-snap-type: inline mandatory;
+      padding: 13px 0 4px;
+      scrollbar-width: thin;
+    }
+
+    .pulse-trending-card {
+      scroll-snap-align: start;
+      padding: 12px;
+      border-radius: 14px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: rgba(2, 15, 27, 0.45);
+    }
+
+    .pulse-coin-head {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+    }
+
+    .pulse-coin-logo {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.07);
+      object-fit: cover;
+    }
+
+    .pulse-coin-name {
+      min-width: 0;
+      flex: 1;
+    }
+
+    .pulse-coin-name strong,
+    .pulse-coin-name span {
+      display: block;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .pulse-coin-name strong {
+      color: #f3f8ff;
+      font-size: 12px;
+    }
+
+    .pulse-coin-name span {
+      margin-top: 3px;
+      color: #7896b0;
+      font-size: 9px;
+      direction: ltr;
+      text-align: right;
+    }
+
+    .pulse-trend-rank {
+      margin-top: 10px;
+      color: #89a4bc;
+      font-size: 9px;
+    }
+
+    .pulse-trend-price {
+      margin-top: 4px;
+      color: #eaf4ff;
+      font-size: 14px;
+      font-weight: 900;
+      direction: ltr;
+      text-align: right;
+    }
+
+    .pulse-movers-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 11px;
+      margin-top: 13px;
+    }
+
+    .pulse-mover-column {
+      padding: 12px;
+      border-radius: 14px;
+      border: 1px solid rgba(255, 255, 255, 0.07);
+      background: rgba(2, 15, 27, 0.40);
+    }
+
+    .pulse-mover-title {
+      margin-bottom: 10px;
+      color: #a9bfd2;
+      font-size: 11px;
+      font-weight: 900;
+    }
+
+    .pulse-mover-list {
+      display: grid;
+      gap: 8px;
+    }
+
+    .pulse-mover-row {
+      display: grid;
+      grid-template-columns: 30px minmax(0, 1fr) auto;
+      align-items: center;
+      gap: 8px;
+      min-height: 36px;
+    }
+
+    .pulse-mover-logo {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      object-fit: cover;
+      background: rgba(255,255,255,.06);
+    }
+
+    .pulse-mover-symbol {
+      color: #e9f3fc;
+      font-size: 10px;
+      font-weight: 900;
+      direction: ltr;
+      text-align: right;
+    }
+
+    .pulse-mover-change {
+      font-size: 10px;
+      font-weight: 900;
+      direction: ltr;
+    }
+
+    .pulse-loading,
+    .pulse-error {
+      padding: 18px 14px;
+      border-radius: 15px;
+      text-align: center;
+      line-height: 1.9;
+      font-size: 12px;
+    }
+
+    .pulse-loading {
+      color: #9db5ca;
+      border: 1px dashed rgba(157, 181, 202, 0.25);
+      background: rgba(4, 18, 31, 0.5);
+    }
+
+    .pulse-error {
+      color: #ffc4c4;
+      border: 1px solid rgba(239, 68, 68, 0.26);
+      background: rgba(127, 29, 29, 0.20);
+    }
+
+    .pulse-source-note {
+      margin: 0;
+      padding: 11px 13px;
+      border-radius: 13px;
+      color: #738ea7;
+      background: rgba(4, 18, 31, 0.52);
+      border: 1px solid rgba(255, 255, 255, 0.055);
+      font-size: 10px;
+      line-height: 1.8;
+      text-align: center;
+    }
+
+    @media (max-width: 530px) {
+      .pulse-overview { grid-template-columns: 1fr; }
+      .pulse-summary-card, .pulse-gauge-card { min-height: 155px; }
+      .pulse-gauge-card { flex-direction: row; gap: 18px; text-align: right; }
+      .pulse-gauge { width: 112px; height: 112px; flex: 0 0 auto; }
+      .pulse-movers-grid { grid-template-columns: 1fr; }
+    }
 
     .fundamental-toolbar {
       display: flex;
@@ -1145,6 +1654,133 @@
       </p>
     </section>
 
+    <section id="marketPulseView" class="view pulse-view" hidden>
+      <div class="pulse-shell">
+        <section class="pulse-hero">
+          <div class="pulse-hero-head">
+            <div>
+              <div class="pulse-eyebrow"><span class="pulse-live-dot"></span> داده آنلاین بازار</div>
+              <h2 class="pulse-title">نبض بازار</h2>
+              <p id="marketPulseStatus" class="pulse-subtitle">نمای سریع از احساسات، نقدینگی و جهت حرکت بازار</p>
+            </div>
+            <button id="marketPulseRefreshButton" class="secondary-button pulse-refresh-button" type="button" onclick="refreshMarketPulse(true)">تازه‌سازی</button>
+          </div>
+
+          <div class="pulse-overview">
+            <div class="pulse-summary-card">
+              <div class="pulse-summary-label">وضعیت ترکیبی بازار</div>
+              <div id="marketPulseState" class="pulse-summary-state">در حال بررسی...</div>
+              <p id="marketPulseSummary" class="pulse-summary-text">داده‌های لحظه‌ای بازار در حال جمع‌آوری است.</p>
+              <div class="pulse-score-row">
+                <span id="marketPulseScore" class="pulse-score-number">—</span>
+                <span class="pulse-score-caption">از ۱۰۰</span>
+              </div>
+              <div class="pulse-score-track"><div id="marketPulseScoreFill" class="pulse-score-fill"></div></div>
+            </div>
+
+            <div class="pulse-gauge-card">
+              <div id="marketPulseGauge" class="pulse-gauge">
+                <div id="marketPulseGaugeMask" class="pulse-gauge-mask"></div>
+                <div>
+                  <div id="marketPulseFearValue" class="pulse-gauge-value">—</div>
+                  <div class="pulse-gauge-caption">ترس و طمع</div>
+                </div>
+              </div>
+              <div>
+                <div id="marketPulseFearLabel" class="pulse-fng-label">در حال دریافت</div>
+                <div id="marketPulseFearChange" class="pulse-section-note" style="margin-top:5px;">مقایسه با روز قبل</div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <div id="marketPulseLoading" class="pulse-loading">در حال دریافت شاخص‌های بازار...</div>
+        <div id="marketPulseError" class="pulse-error" hidden></div>
+
+        <div id="marketPulseContent" class="pulse-shell" hidden>
+          <section class="pulse-panel">
+            <div class="pulse-section-head">
+              <h3 class="pulse-section-title">نمای کلی بازار</h3>
+              <span id="marketPulseUpdatedAt" class="pulse-section-note">—</span>
+            </div>
+            <div class="pulse-metrics-grid">
+              <div class="pulse-metric">
+                <span class="pulse-metric-label">ارزش کل بازار</span>
+                <strong id="pulseTotalMarketCap" class="pulse-metric-value">—</strong>
+                <span id="pulseMarketCapChange" class="pulse-metric-change">—</span>
+              </div>
+              <div class="pulse-metric">
+                <span class="pulse-metric-label">حجم معاملات ۲۴ ساعته</span>
+                <strong id="pulseTotalVolume" class="pulse-metric-value">—</strong>
+                <span class="pulse-metric-change pulse-neutral">گردش روزانه بازار</span>
+              </div>
+              <div class="pulse-metric">
+                <span class="pulse-metric-label">ارزش استیبل‌کوین‌ها</span>
+                <strong id="pulseStablecoinCap" class="pulse-metric-value">—</strong>
+                <span id="pulseStablecoinChange" class="pulse-metric-change">—</span>
+              </div>
+              <div class="pulse-metric">
+                <span class="pulse-metric-label">تعداد ارزهای فعال</span>
+                <strong id="pulseActiveCoins" class="pulse-metric-value">—</strong>
+                <span class="pulse-metric-change pulse-neutral">داده بازار جهانی</span>
+              </div>
+            </div>
+          </section>
+
+          <section class="pulse-panel">
+            <div class="pulse-section-head">
+              <h3 class="pulse-section-title">دامیننس بازار</h3>
+              <span class="pulse-section-note">سهم از ارزش کل</span>
+            </div>
+            <div class="pulse-dominance-list">
+              <div class="pulse-dominance-row">
+                <span class="pulse-dominance-name">BTC</span>
+                <div class="pulse-dominance-track"><div id="pulseBtcDominanceFill" class="pulse-dominance-fill pulse-btc-fill"></div></div>
+                <span id="pulseBtcDominance" class="pulse-dominance-value">—</span>
+              </div>
+              <div class="pulse-dominance-row">
+                <span class="pulse-dominance-name">ETH</span>
+                <div class="pulse-dominance-track"><div id="pulseEthDominanceFill" class="pulse-dominance-fill pulse-eth-fill"></div></div>
+                <span id="pulseEthDominance" class="pulse-dominance-value">—</span>
+              </div>
+              <div class="pulse-dominance-row">
+                <span class="pulse-dominance-name">Stable</span>
+                <div class="pulse-dominance-track"><div id="pulseStableDominanceFill" class="pulse-dominance-fill pulse-stable-fill"></div></div>
+                <span id="pulseStableDominance" class="pulse-dominance-value">—</span>
+              </div>
+            </div>
+          </section>
+
+          <section class="pulse-panel">
+            <div class="pulse-section-head">
+              <h3 class="pulse-section-title">ارزهای ترند</h3>
+              <span class="pulse-section-note">جست‌وجوی کاربران</span>
+            </div>
+            <div id="marketPulseTrendingList" class="pulse-trending-list"></div>
+          </section>
+
+          <section class="pulse-panel">
+            <div class="pulse-section-head">
+              <h3 class="pulse-section-title">حرکت‌های برجسته ۲۴ ساعت</h3>
+              <span class="pulse-section-note">بین ارزهای بزرگ بازار</span>
+            </div>
+            <div class="pulse-movers-grid">
+              <div class="pulse-mover-column">
+                <div class="pulse-mover-title pulse-positive">بیشترین رشد</div>
+                <div id="marketPulseGainers" class="pulse-mover-list"></div>
+              </div>
+              <div class="pulse-mover-column">
+                <div class="pulse-mover-title pulse-negative">بیشترین افت</div>
+                <div id="marketPulseLosers" class="pulse-mover-list"></div>
+              </div>
+            </div>
+          </section>
+
+          <p class="pulse-source-note">این صفحه توصیف وضعیت فعلی بازار است و سیگنال خرید یا فروش محسوب نمی‌شود. داده‌ها ممکن است با چند دقیقه تأخیر به‌روزرسانی شوند.</p>
+        </div>
+      </div>
+    </section>
+
     <section id="fundamentalView" class="view card" hidden>
       <h2 class="card-title">اخبار فاندامنتال فارسی</h2>
 
@@ -1244,6 +1880,7 @@
   <nav class="bottom-nav" aria-label="ناوبری اصلی">
     <button id="calculatorNavButton" class="nav-item active" type="button" onclick="showCalculator()">ماشین‌حساب</button>
     <button id="marketNavButton" class="nav-item" type="button" onclick="showMarket()">بازار</button>
+    <button id="marketPulseNavButton" class="nav-item" type="button" onclick="showMarketPulse()">نبض</button>
     <button id="fundamentalNavButton" class="nav-item" type="button" onclick="showFundamental()">اخبار</button>
     <button id="journalNavButton" class="nav-item" type="button" onclick="showJournal()">ژورنال</button>
     <button id="statementNavButton" class="nav-item" type="button" onclick="showStatement()">استیتمنت</button>
@@ -1288,11 +1925,21 @@
     const BINANCE_STREAM_BASE = "wss://stream.binance.com:443/stream?streams=";
 
 
+    const MARKET_PULSE_API_URL =
+      "https://bufobmvflinalnskdlcq.supabase.co/functions/v1/crypto-market-pulse";
+    const MARKET_PULSE_CACHE_KEY = "cryptoMasterMarketPulseCacheV1";
+    const MARKET_PULSE_AUTO_REFRESH_INTERVAL = 5 * 60 * 1000;
+    const MARKET_PULSE_REQUEST_TIMEOUT = 18000;
+
     const FUNDAMENTAL_API_URL =
       "https://bufobmvflinalnskdlcq.supabase.co/functions/v1/crypto-fundamental-feed";
     const FUNDAMENTAL_CACHE_KEY = "cryptoMasterFundamentalNewsCacheV1";
     const FUNDAMENTAL_AUTO_REFRESH_INTERVAL = 2 * 60 * 1000;
     const FUNDAMENTAL_REQUEST_TIMEOUT = 16000;
+
+    let marketPulseRefreshTimer = null;
+    let marketPulseRequestInFlight = false;
+    let marketPulseLastData = null;
 
     let fundamentalRefreshTimer = null;
     let fundamentalRequestInFlight = false;
@@ -2758,23 +3405,25 @@
     }
 
     function setActiveView(viewId) {
-      ["calculatorView", "marketView", "fundamentalView", "journalView", "statementView"].forEach(function (id) {
+      ["calculatorView", "marketView", "marketPulseView", "fundamentalView", "journalView", "statementView"].forEach(function (id) {
         document.getElementById(id).hidden = id !== viewId;
       });
 
       const mapping = {
         calculatorView: "calculatorNavButton",
         marketView: "marketNavButton",
+        marketPulseView: "marketPulseNavButton",
         fundamentalView: "fundamentalNavButton",
         journalView: "journalNavButton",
         statementView: "statementNavButton"
       };
 
-      ["calculatorNavButton", "marketNavButton", "fundamentalNavButton", "journalNavButton", "statementNavButton"].forEach(function (id) {
+      ["calculatorNavButton", "marketNavButton", "marketPulseNavButton", "fundamentalNavButton", "journalNavButton", "statementNavButton"].forEach(function (id) {
         document.getElementById(id).classList.toggle("active", id === mapping[viewId]);
       });
 
       if (viewId !== "marketView") stopMarketAutoRefresh();
+      if (viewId !== "marketPulseView") stopMarketPulseAutoRefresh();
       if (viewId !== "fundamentalView") stopFundamentalAutoRefresh();
       window.scrollTo({ top: 0, behavior: "smooth" });
     }
@@ -2786,6 +3435,13 @@
       renderCachedMarketData();
       await refreshMarketData();
       startMarketAutoRefresh();
+    }
+
+    async function showMarketPulse() {
+      setActiveView("marketPulseView");
+      renderCachedMarketPulse();
+      await refreshMarketPulse(false);
+      startMarketPulseAutoRefresh();
     }
 
     async function showFundamental() {
@@ -2805,6 +3461,303 @@
       setActiveView("statementView");
       try { await migrateLegacyTradesIfNeeded(); } catch (error) { console.log(error); }
       await renderStatement();
+    }
+
+    function getMarketPulseCache() {
+      try {
+        const raw = localStorage.getItem(MARKET_PULSE_CACHE_KEY);
+        if (!raw) return null;
+        const cache = JSON.parse(raw);
+        if (!cache || !cache.data) return null;
+        return cache;
+      } catch (error) {
+        return null;
+      }
+    }
+
+    function saveMarketPulseCache(data) {
+      try {
+        localStorage.setItem(
+          MARKET_PULSE_CACHE_KEY,
+          JSON.stringify({ data: data, savedAt: Date.now() })
+        );
+      } catch (error) {
+        console.log("ذخیره موقت نبض بازار ناموفق بود.", error);
+      }
+    }
+
+    function compactUsd(value) {
+      const number = Number(value);
+      if (!Number.isFinite(number)) return "—";
+
+      const abs = Math.abs(number);
+      if (abs >= 1e12) return "$" + formatNumber(number / 1e12, 2) + "T";
+      if (abs >= 1e9) return "$" + formatNumber(number / 1e9, 2) + "B";
+      if (abs >= 1e6) return "$" + formatNumber(number / 1e6, 2) + "M";
+      if (abs >= 1e3) return "$" + formatNumber(number / 1e3, 2) + "K";
+      return "$" + formatNumber(number, 2);
+    }
+
+    function pulsePercent(value, digits) {
+      const number = Number(value);
+      if (!Number.isFinite(number)) return "—";
+      const sign = number > 0 ? "+" : "";
+      return sign + formatNumber(number, digits ?? 2) + "%";
+    }
+
+    function pulseChangeClass(value) {
+      const number = Number(value);
+      if (!Number.isFinite(number) || number === 0) return "pulse-neutral";
+      return number > 0 ? "pulse-positive" : "pulse-negative";
+    }
+
+    function setPulseChange(elementId, value, suffix) {
+      const element = document.getElementById(elementId);
+      if (!element) return;
+      element.classList.remove("pulse-positive", "pulse-negative", "pulse-neutral");
+      element.classList.add(pulseChangeClass(value));
+      element.textContent = pulsePercent(value, 2) + (suffix ? " " + suffix : "");
+    }
+
+    function pulseFearLabelFa(classification) {
+      const labels = {
+        "Extreme Fear": "ترس شدید",
+        Fear: "ترس",
+        Neutral: "خنثی",
+        Greed: "طمع",
+        "Extreme Greed": "طمع شدید"
+      };
+      return labels[classification] || classification || "نامشخص";
+    }
+
+    function renderPulseMoverList(elementId, items, positive) {
+      const container = document.getElementById(elementId);
+      container.innerHTML = "";
+
+      (Array.isArray(items) ? items : []).slice(0, 5).forEach(function (item) {
+        const row = document.createElement("div");
+        row.className = "pulse-mover-row";
+
+        const image = document.createElement("img");
+        image.className = "pulse-mover-logo";
+        image.alt = item.symbol || "";
+        image.loading = "lazy";
+        image.referrerPolicy = "no-referrer";
+        if (item.image) image.src = item.image;
+
+        const symbol = document.createElement("span");
+        symbol.className = "pulse-mover-symbol";
+        symbol.textContent = String(item.symbol || "—").toUpperCase();
+
+        const change = document.createElement("span");
+        change.className = "pulse-mover-change " + (positive ? "pulse-positive" : "pulse-negative");
+        change.textContent = pulsePercent(item.change24h, 2);
+
+        row.appendChild(image);
+        row.appendChild(symbol);
+        row.appendChild(change);
+        container.appendChild(row);
+      });
+
+      if (!container.children.length) {
+        container.innerHTML = '<span class="pulse-section-note">داده‌ای موجود نیست.</span>';
+      }
+    }
+
+    function renderMarketPulseTrending(items) {
+      const container = document.getElementById("marketPulseTrendingList");
+      container.innerHTML = "";
+
+      (Array.isArray(items) ? items : []).slice(0, 8).forEach(function (item) {
+        const card = document.createElement("div");
+        card.className = "pulse-trending-card";
+
+        const head = document.createElement("div");
+        head.className = "pulse-coin-head";
+
+        const image = document.createElement("img");
+        image.className = "pulse-coin-logo";
+        image.alt = item.symbol || "";
+        image.loading = "lazy";
+        image.referrerPolicy = "no-referrer";
+        if (item.image) image.src = item.image;
+
+        const name = document.createElement("div");
+        name.className = "pulse-coin-name";
+
+        const strong = document.createElement("strong");
+        strong.textContent = item.name || item.symbol || "—";
+
+        const symbol = document.createElement("span");
+        symbol.textContent = String(item.symbol || "—").toUpperCase();
+
+        name.appendChild(strong);
+        name.appendChild(symbol);
+        head.appendChild(image);
+        head.appendChild(name);
+
+        const rank = document.createElement("div");
+        rank.className = "pulse-trend-rank";
+        rank.textContent = Number.isFinite(Number(item.marketCapRank))
+          ? "رتبه بازار: " + formatNumber(item.marketCapRank, 0)
+          : "ترند بازار";
+
+        const price = document.createElement("div");
+        price.className = "pulse-trend-price";
+        price.textContent = Number.isFinite(Number(item.priceUsd))
+          ? formatTradePrice(item.priceUsd, "USD")
+          : "—";
+
+        const change = document.createElement("div");
+        change.className = "pulse-metric-change " + pulseChangeClass(item.change24h);
+        change.textContent = pulsePercent(item.change24h, 2) + " در ۲۴ ساعت";
+
+        card.appendChild(head);
+        card.appendChild(rank);
+        card.appendChild(price);
+        card.appendChild(change);
+        container.appendChild(card);
+      });
+
+      if (!container.children.length) {
+        container.innerHTML = '<div class="pulse-loading" style="grid-column:1/-1;">فهرست ترندها در دسترس نیست.</div>';
+      }
+    }
+
+    function renderMarketPulse(data, fromCache) {
+      if (!data) return;
+      marketPulseLastData = data;
+
+      const overview = data.overview || {};
+      const fear = data.fearGreed || {};
+      const stable = data.stablecoins || {};
+      const pulse = data.pulse || {};
+
+      document.getElementById("marketPulseLoading").hidden = true;
+      document.getElementById("marketPulseError").hidden = true;
+      document.getElementById("marketPulseContent").hidden = false;
+
+      document.getElementById("marketPulseState").textContent = pulse.labelFa || "وضعیت نامشخص";
+      document.getElementById("marketPulseSummary").textContent = pulse.summaryFa || "شاخص‌های بازار دریافت شدند.";
+      document.getElementById("marketPulseScore").textContent = Number.isFinite(Number(pulse.score)) ? formatNumber(pulse.score, 0) : "—";
+      document.getElementById("marketPulseScoreFill").style.width = Math.max(0, Math.min(100, Number(pulse.score) || 0)) + "%";
+
+      const fearValue = Math.max(0, Math.min(100, Number(fear.value) || 0));
+      document.getElementById("marketPulseFearValue").textContent = Number.isFinite(Number(fear.value)) ? formatNumber(fear.value, 0) : "—";
+      document.getElementById("marketPulseFearLabel").textContent = pulseFearLabelFa(fear.classification);
+      document.getElementById("marketPulseGaugeMask").style.setProperty("--gauge-value", (fearValue * 2.7) + "deg");
+
+      const fearDiff = Number(fear.value) - Number(fear.previousValue);
+      const fearChange = document.getElementById("marketPulseFearChange");
+      if (Number.isFinite(fearDiff)) {
+        fearChange.textContent = (fearDiff > 0 ? "+" : "") + formatNumber(fearDiff, 0) + " واحد نسبت به دیروز";
+        fearChange.className = "pulse-section-note " + pulseChangeClass(fearDiff);
+      } else {
+        fearChange.textContent = "مقایسه با روز قبل در دسترس نیست";
+      }
+
+      document.getElementById("pulseTotalMarketCap").textContent = compactUsd(overview.totalMarketCapUsd);
+      document.getElementById("pulseTotalVolume").textContent = compactUsd(overview.totalVolumeUsd);
+      document.getElementById("pulseStablecoinCap").textContent = compactUsd(stable.totalMarketCapUsd);
+      document.getElementById("pulseActiveCoins").textContent = Number.isFinite(Number(overview.activeCryptocurrencies)) ? formatNumber(overview.activeCryptocurrencies, 0) : "—";
+      setPulseChange("pulseMarketCapChange", overview.marketCapChange24h, "در ۲۴ ساعت");
+      setPulseChange("pulseStablecoinChange", stable.change24h, "در ۲۴ ساعت");
+
+      const btcDominance = Number(overview.btcDominance) || 0;
+      const ethDominance = Number(overview.ethDominance) || 0;
+      const stableDominance = Number(stable.marketDominance) || 0;
+      document.getElementById("pulseBtcDominance").textContent = pulsePercent(btcDominance, 2).replace("+", "");
+      document.getElementById("pulseEthDominance").textContent = pulsePercent(ethDominance, 2).replace("+", "");
+      document.getElementById("pulseStableDominance").textContent = pulsePercent(stableDominance, 2).replace("+", "");
+      document.getElementById("pulseBtcDominanceFill").style.width = Math.min(100, btcDominance) + "%";
+      document.getElementById("pulseEthDominanceFill").style.width = Math.min(100, ethDominance) + "%";
+      document.getElementById("pulseStableDominanceFill").style.width = Math.min(100, stableDominance) + "%";
+
+      renderMarketPulseTrending(data.trending);
+      renderPulseMoverList("marketPulseGainers", data.gainers, true);
+      renderPulseMoverList("marketPulseLosers", data.losers, false);
+
+      const fetchedAt = data.fetchedAt ? new Date(data.fetchedAt) : new Date();
+      document.getElementById("marketPulseUpdatedAt").textContent = "به‌روزرسانی: " + fetchedAt.toLocaleTimeString("fa-IR", { hour: "2-digit", minute: "2-digit" });
+      document.getElementById("marketPulseStatus").textContent = fromCache
+        ? "نمایش آخرین داده ذخیره‌شده؛ در حال بررسی نسخه جدید"
+        : "اطلاعات بازار با موفقیت به‌روزرسانی شد";
+    }
+
+    function renderCachedMarketPulse() {
+      const cache = getMarketPulseCache();
+      if (!cache || !cache.data) return false;
+      renderMarketPulse(cache.data, true);
+      return true;
+    }
+
+    async function refreshMarketPulse(manual) {
+      if (marketPulseRequestInFlight) return;
+      marketPulseRequestInFlight = true;
+
+      const button = document.getElementById("marketPulseRefreshButton");
+      const loading = document.getElementById("marketPulseLoading");
+      const errorBox = document.getElementById("marketPulseError");
+      const hasCache = Boolean(marketPulseLastData || getMarketPulseCache());
+
+      if (button) {
+        button.disabled = true;
+        button.textContent = "در حال دریافت...";
+      }
+      if (!hasCache) loading.hidden = false;
+      errorBox.hidden = true;
+
+      const controller = new AbortController();
+      const timeout = setTimeout(function () { controller.abort(); }, MARKET_PULSE_REQUEST_TIMEOUT);
+
+      try {
+        const response = await fetch(MARKET_PULSE_API_URL + "?t=" + Date.now(), {
+          method: "GET",
+          cache: "no-store",
+          signal: controller.signal
+        });
+
+        if (!response.ok) throw new Error("HTTP " + response.status);
+        const payload = await response.json();
+        if (!payload || payload.ok !== true || !payload.data) throw new Error("پاسخ سرویس نامعتبر است.");
+
+        saveMarketPulseCache(payload.data);
+        renderMarketPulse(payload.data, false);
+        if (manual) showToast("نبض بازار به‌روزرسانی شد.");
+      } catch (error) {
+        console.error(error);
+        loading.hidden = true;
+        if (!hasCache) {
+          errorBox.textContent = "دریافت نبض بازار ناموفق بود. اتصال اینترنت یا Edge Function را بررسی کن.";
+          errorBox.hidden = false;
+        } else {
+          document.getElementById("marketPulseStatus").textContent = "نمایش آخرین داده ذخیره‌شده؛ دریافت نسخه جدید ناموفق بود";
+          if (manual) showToast("دریافت داده جدید ناموفق بود؛ نسخه ذخیره‌شده نمایش داده می‌شود.", true);
+        }
+      } finally {
+        clearTimeout(timeout);
+        marketPulseRequestInFlight = false;
+        if (button) {
+          button.disabled = false;
+          button.textContent = "تازه‌سازی";
+        }
+      }
+    }
+
+    function startMarketPulseAutoRefresh() {
+      stopMarketPulseAutoRefresh();
+      marketPulseRefreshTimer = setInterval(function () {
+        if (!document.getElementById("marketPulseView").hidden) {
+          refreshMarketPulse(false);
+        }
+      }, MARKET_PULSE_AUTO_REFRESH_INTERVAL);
+    }
+
+    function stopMarketPulseAutoRefresh() {
+      if (marketPulseRefreshTimer) {
+        clearInterval(marketPulseRefreshTimer);
+        marketPulseRefreshTimer = null;
+      }
     }
 
     function getFundamentalCache() {
