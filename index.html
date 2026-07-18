@@ -2066,12 +2066,13 @@
 
           <div class="pulse-overview">
             <div class="pulse-summary-card">
-              <div class="pulse-summary-label">وضعیت ترکیبی بازار</div>
+              <div class="pulse-summary-label">امتیاز ترکیبی داخلی برنامه</div>
               <div id="marketPulseState" class="pulse-summary-state">در حال بررسی...</div>
               <p id="marketPulseSummary" class="pulse-summary-text">داده‌های لحظه‌ای بازار در حال جمع‌آوری است.</p>
+              <p id="marketPulseMethodology" class="pulse-section-note" style="margin-top:7px;">این امتیاز شاخص رسمی CMC نیست.</p>
               <div class="pulse-score-row">
                 <span id="marketPulseScore" class="pulse-score-number">—</span>
-                <span class="pulse-score-caption">از ۱۰۰</span>
+                <span class="pulse-score-caption">از ۱۰۰ — غیررسمی</span>
               </div>
               <div class="pulse-score-track"><div id="marketPulseScoreFill" class="pulse-score-fill"></div></div>
             </div>
@@ -2111,17 +2112,17 @@
               <div class="pulse-metric">
                 <span class="pulse-metric-label">حجم معاملات ۲۴ ساعته</span>
                 <strong id="pulseTotalVolume" class="pulse-metric-value">—</strong>
-                <span class="pulse-metric-change pulse-neutral">گردش روزانه بازار</span>
+                <span id="pulseVolumeChange" class="pulse-metric-change pulse-neutral">گردش روزانه بازار</span>
               </div>
               <div class="pulse-metric">
-                <span class="pulse-metric-label">ارزش استیبل‌کوین‌ها</span>
+                <span class="pulse-metric-label">ارزش استیبل‌کوین‌های CMC</span>
                 <strong id="pulseStablecoinCap" class="pulse-metric-value">—</strong>
                 <span id="pulseStablecoinChange" class="pulse-metric-change">—</span>
               </div>
               <div class="pulse-metric">
                 <span class="pulse-metric-label">تعداد ارزهای فعال</span>
                 <strong id="pulseActiveCoins" class="pulse-metric-value">—</strong>
-                <span class="pulse-metric-change pulse-neutral">داده بازار جهانی</span>
+                <span class="pulse-metric-change pulse-neutral">Global Metrics CMC</span>
               </div>
             </div>
           </section>
@@ -2152,8 +2153,8 @@
 
           <section class="pulse-panel">
             <div class="pulse-section-head">
-              <h3 class="pulse-section-title">ارزهای ترند</h3>
-              <span class="pulse-section-note">جست‌وجوی کاربران</span>
+              <h3 class="pulse-section-title">پرحجم‌ترین ارزها</h3>
+              <span class="pulse-section-note">میان ۲۰۰ ارز برتر CoinMarketCap</span>
             </div>
             <div id="marketPulseTrendingList" class="pulse-trending-list"></div>
           </section>
@@ -2161,7 +2162,7 @@
           <section class="pulse-panel">
             <div class="pulse-section-head">
               <h3 class="pulse-section-title">حرکت‌های برجسته ۲۴ ساعت</h3>
-              <span class="pulse-section-note">بین ارزهای بزرگ بازار</span>
+              <span class="pulse-section-note">میان ۲۰۰ ارز برتر CoinMarketCap</span>
             </div>
             <div class="pulse-movers-grid">
               <div class="pulse-mover-column">
@@ -2175,7 +2176,7 @@
             </div>
           </section>
 
-          <p class="pulse-source-note">این صفحه توصیف وضعیت فعلی بازار است و سیگنال خرید یا فروش محسوب نمی‌شود. داده‌ها ممکن است با چند دقیقه تأخیر به‌روزرسانی شوند.</p>
+          <p class="pulse-source-note"><strong>منبع همه داده‌های بازار: CoinMarketCap Public API.</strong> امتیاز ترکیبی، محاسبه داخلی برنامه است و شاخص رسمی CoinMarketCap نیست. فهرست استیبل‌کوین‌ها، پرحجم‌ها و حرکت‌های ۲۴ساعته از میان ۲۰۰ ارز برتر CMC محاسبه می‌شود.</p>
         </div>
       </div>
     </section>
@@ -4038,7 +4039,7 @@
         rank.className = "pulse-trend-rank";
         rank.textContent = Number.isFinite(Number(item.marketCapRank))
           ? "رتبه بازار: " + formatNumber(item.marketCapRank, 0)
-          : "ترند بازار";
+          : "پرحجم بازار";
 
         const price = document.createElement("div");
         price.className = "pulse-trend-price";
@@ -4058,7 +4059,7 @@
       });
 
       if (!container.children.length) {
-        container.innerHTML = '<div class="pulse-loading" style="grid-column:1/-1;">فهرست ترندها در دسترس نیست.</div>';
+        container.innerHTML = '<div class="pulse-loading" style="grid-column:1/-1;">فهرست پرحجم‌ها در دسترس نیست.</div>';
       }
     }
 
@@ -4077,6 +4078,8 @@
 
       document.getElementById("marketPulseState").textContent = pulse.labelFa || "وضعیت نامشخص";
       document.getElementById("marketPulseSummary").textContent = pulse.summaryFa || "شاخص‌های بازار دریافت شدند.";
+      document.getElementById("marketPulseMethodology").textContent =
+        pulse.methodologyFa || "امتیاز داخلی برنامه؛ شاخص رسمی CoinMarketCap نیست.";
       document.getElementById("marketPulseScore").textContent = Number.isFinite(Number(pulse.score)) ? formatNumber(pulse.score, 0) : "—";
       document.getElementById("marketPulseScoreFill").style.width = Math.max(0, Math.min(100, Number(pulse.score) || 0)) + "%";
 
@@ -4115,6 +4118,7 @@
       document.getElementById("pulseStablecoinCap").textContent = compactUsd(stable.totalMarketCapUsd);
       document.getElementById("pulseActiveCoins").textContent = Number.isFinite(Number(overview.activeCryptocurrencies)) ? formatNumber(overview.activeCryptocurrencies, 0) : "—";
       setPulseChange("pulseMarketCapChange", overview.marketCapChange24h, "در ۲۴ ساعت");
+      setPulseChange("pulseVolumeChange", overview.volumeChange24h, "نسبت به دیروز");
       setPulseChange("pulseStablecoinChange", stable.change24h, "در ۲۴ ساعت");
 
       setPulseDominance(
@@ -4139,9 +4143,12 @@
 
       const fetchedAt = data.fetchedAt ? new Date(data.fetchedAt) : new Date();
       document.getElementById("marketPulseUpdatedAt").textContent = "به‌روزرسانی: " + fetchedAt.toLocaleTimeString("fa-IR", { hour: "2-digit", minute: "2-digit" });
+      const sourceName = data.source && data.source.name
+        ? data.source.name
+        : "CoinMarketCap";
       document.getElementById("marketPulseStatus").textContent = fromCache
-        ? "نمایش آخرین داده ذخیره‌شده؛ در حال بررسی نسخه جدید"
-        : "اطلاعات بازار با موفقیت به‌روزرسانی شد";
+        ? "نمایش آخرین داده ذخیره‌شده " + sourceName + "؛ در حال بررسی نسخه جدید"
+        : "داده‌های " + sourceName + " با موفقیت به‌روزرسانی شد";
     }
 
     function renderCachedMarketPulse() {
