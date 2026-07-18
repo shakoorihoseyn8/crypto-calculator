@@ -202,6 +202,19 @@
     }
 
     input { min-height: 43px; }
+
+    input[data-formatted-number="true"] {
+      direction: ltr;
+      text-align: left;
+      font-variant-numeric: tabular-nums;
+      letter-spacing: 0.15px;
+    }
+
+    input[data-formatted-number="true"]::placeholder {
+      direction: rtl;
+      text-align: right;
+    }
+
     textarea { min-height: 95px; line-height: 1.8; resize: vertical; }
 
     input:focus, textarea:focus, select:focus {
@@ -801,28 +814,40 @@
           <textarea id="tradeNote" maxlength="1000" placeholder="مثلاً پولبک به حمایت و شکست ساختار"></textarea>
         </div>
 
-        <div class="field">
+        <div id="standardEntryField" class="field">
           <label id="entryLabel" for="entry">قیمت ورود</label>
-          <input id="entry" type="number" inputmode="decimal" step="any" min="0" placeholder="مثلاً 0.408" />
+          <input id="entry" data-formatted-number="true" type="text" inputmode="decimal" placeholder="مثلاً 0.408" />
+        </div>
+
+        <div id="spotEntryFields" class="mode-fields" hidden>
+          <div class="field">
+            <label for="spotEntryUsd">قیمت خرید دلاری / تتری</label>
+            <input
+              id="spotEntryUsd" data-formatted-number="true"
+              type="text"
+              inputmode="decimal"
+              placeholder="مثلاً 68000"
+            />
+          </div>
         </div>
 
         <div class="field">
           <label id="stopLabel" for="stop">حد ضرر (Stop)</label>
-          <input id="stop" type="number" inputmode="decimal" step="any" min="0" placeholder="مثلاً 0.385" />
+          <input id="stop" data-formatted-number="true" type="text" inputmode="decimal" placeholder="مثلاً 0.385" />
         </div>
 
         <div class="three-grid">
           <div class="field">
             <label for="tp1">هدف اول (TP1)</label>
-            <input id="tp1" type="number" inputmode="decimal" step="any" min="0" />
+            <input id="tp1" data-formatted-number="true" type="text" inputmode="decimal" />
           </div>
           <div class="field">
             <label for="tp2">هدف دوم (TP2)</label>
-            <input id="tp2" type="number" inputmode="decimal" step="any" min="0" />
+            <input id="tp2" data-formatted-number="true" type="text" inputmode="decimal" />
           </div>
           <div class="field">
             <label for="tp3">هدف سوم (TP3)</label>
-            <input id="tp3" type="number" inputmode="decimal" step="any" min="0" />
+            <input id="tp3" data-formatted-number="true" type="text" inputmode="decimal" />
           </div>
         </div>
       </section>
@@ -830,19 +855,9 @@
       <section class="card">
         <h2 id="capitalCardTitle" class="card-title">سرمایه و ریسک</h2>
 
-        <div id="spotCurrencyFields" class="mode-fields" hidden>
-          <div class="field">
-            <label for="spotCurrency">واحد پول معامله اسپات</label>
-            <select id="spotCurrency">
-              <option value="IRT" selected>تومان</option>
-              <option value="USD">دلار / تتر</option>
-            </select>
-          </div>
-        </div>
-
         <div class="field">
           <label id="capitalLabel" for="capital">سرمایه کل (دلار)</label>
-          <input id="capital" type="number" inputmode="decimal" step="any" min="0" placeholder="مثلاً 1000" />
+          <input id="capital" data-formatted-number="true" type="text" inputmode="decimal" placeholder="مثلاً 1000" />
         </div>
 
         <div id="futuresRiskFields" class="two-grid mode-fields">
@@ -860,16 +875,14 @@
           <div class="field">
             <label id="spotInvestmentLabel" for="spotInvestment">مبلغ خرید اسپات</label>
             <input
-              id="spotInvestment"
-              type="number"
+              id="spotInvestment" data-formatted-number="true"
+              type="text"
               inputmode="decimal"
-              step="any"
-              min="0"
               placeholder="مثلاً 3000000"
             />
           </div>
           <p class="note" style="margin-top:-3px;">
-            در اسپات می‌توانی تمام یا بخشی از سرمایه را وارد کنی. درصد ریسک و اهرم اجباری نیست.
+            در اسپات می‌توانی تمام یا بخشی از سرمایه را وارد کنی. اهرم و درصد ریسک ورودی وجود ندارد، اما حد ضرر اجباری است.
           </p>
         </div>
 
@@ -975,7 +988,6 @@
         <label for="statementCurrencyFilter">واحد محاسبه استیتمنت</label>
         <select id="statementCurrencyFilter" onchange="renderStatement()">
           <option value="USD">دلار / تتر</option>
-          <option value="IRT">تومان</option>
         </select>
       </div>
 
@@ -1049,15 +1061,86 @@
       { id: "tron", name: "TRON", symbol: "trx", market_cap_rank: 10 }
     ];
 
-    const inputIds = ["entry", "stop", "tp1", "tp2", "tp3", "capital", "leverage", "riskPercent", "spotInvestment"];
+    const inputIds = ["entry", "spotEntryUsd", "stop", "tp1", "tp2", "tp3", "capital", "leverage", "riskPercent", "spotInvestment"];
+
+    function normalizeNumericText(value) {
+      return String(value ?? "")
+        .trim()
+        .replace(/[۰-۹]/g, function (digit) {
+          return String("۰۱۲۳۴۵۶۷۸۹".indexOf(digit));
+        })
+        .replace(/[٠-٩]/g, function (digit) {
+          return String("٠١٢٣٤٥٦٧٨٩".indexOf(digit));
+        })
+        .replace(/[٬،,\s]/g, "")
+        .replace(/٫/g, ".");
+    }
+
+    function parseNumericValue(value) {
+      const normalized = normalizeNumericText(value);
+      if (!normalized || normalized === "." || normalized === "-" || normalized === "-.") return null;
+      const number = Number(normalized);
+      return Number.isFinite(number) ? number : null;
+    }
+
+    function formatNumericInputValue(rawValue) {
+      const raw = String(rawValue ?? "");
+      const normalized = normalizeNumericText(raw).replace(/[^0-9.\-]/g, "");
+      if (!normalized) return "";
+
+      const isNegative = normalized.startsWith("-");
+      const unsigned = normalized.replace(/-/g, "");
+      const firstDotIndex = unsigned.indexOf(".");
+      let integerPart = firstDotIndex === -1 ? unsigned : unsigned.slice(0, firstDotIndex);
+      const decimalPart = firstDotIndex === -1 ? "" : unsigned.slice(firstDotIndex + 1).replace(/\./g, "");
+
+      integerPart = integerPart.replace(/^0+(?=\d)/, "");
+      if (!integerPart) integerPart = "0";
+
+      const groupedInteger = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+      const hasDecimalPoint = firstDotIndex !== -1 || /[.٫]\s*$/.test(raw);
+      return (isNegative ? "-" : "") + groupedInteger + (hasDecimalPoint ? "." + decimalPart : "");
+    }
+
+    function attachFormattedNumberInput(element) {
+      if (!element || element.dataset.numberFormatterAttached === "true") return;
+      element.dataset.numberFormatterAttached = "true";
+      element.dataset.formattedNumber = "true";
+      element.type = "text";
+      element.inputMode = "decimal";
+      element.autocomplete = "off";
+
+      element.addEventListener("input", function () {
+        const oldValue = element.value;
+        const oldCursor = element.selectionStart ?? oldValue.length;
+        const digitsAfterCursor = oldValue.length - oldCursor;
+        const formatted = formatNumericInputValue(oldValue);
+
+        if (formatted !== oldValue) {
+          element.value = formatted;
+          const newCursor = Math.max(0, formatted.length - digitsAfterCursor);
+          try { element.setSelectionRange(newCursor, newCursor); } catch (error) {}
+        }
+      });
+
+      element.addEventListener("blur", function () {
+        if (element.value) element.value = formatNumericInputValue(element.value);
+      });
+
+      if (element.value) element.value = formatNumericInputValue(element.value);
+    }
+
+    function initializeFormattedNumberInputs(root) {
+      const scope = root || document;
+      scope.querySelectorAll('input[data-formatted-number="true"]').forEach(attachFormattedNumberInput);
+    }
 
     inputIds.forEach(function (id) {
       const element = document.getElementById(id);
-      if (element) element.addEventListener("input", calculateTrade);
-    });
-
-    document.getElementById("spotCurrency").addEventListener("change", function () {
-      updateTradeModeUI();
+      if (element) {
+        if (element.dataset.formattedNumber === "true") attachFormattedNumberInput(element);
+        element.addEventListener("input", calculateTrade);
+      }
     });
 
     function showToast(message, isError) {
@@ -1082,10 +1165,12 @@
     function getNumber(id) {
       const element = document.getElementById(id);
       if (!element) return null;
-      const value = element.value.trim();
-      if (value === "") return null;
-      const number = Number(value);
-      return Number.isFinite(number) ? number : null;
+      return parseNumericValue(element.value);
+    }
+
+    function getNumberFromElement(element) {
+      if (!element) return null;
+      return parseNumericValue(element.value);
     }
 
     function normalizeTradeType(trade) {
@@ -1097,9 +1182,7 @@
     }
 
     function getCurrentCurrency() {
-      return selectedTradeType === "spot"
-        ? document.getElementById("spotCurrency").value
-        : "USD";
+      return "USD";
     }
 
     function getCurrencyTitle(currency) {
@@ -1161,8 +1244,8 @@
 
     function updateTradeModeUI() {
       const isSpot = selectedTradeType === "spot";
-      const currency = getCurrentCurrency();
-      const currencyTitle = getCurrencyTitle(currency);
+      const currency = "USD";
+      const currencyTitle = "دلار / تتر";
 
       document.getElementById("futuresTypeButton")
         .classList.toggle("active-futures", !isSpot);
@@ -1173,18 +1256,22 @@
       document.getElementById("futuresSideSelector").hidden = isSpot;
       document.getElementById("futuresRiskFields").hidden = isSpot;
       document.getElementById("spotInvestmentFields").hidden = !isSpot;
-      document.getElementById("spotCurrencyFields").hidden = !isSpot;
+      document.getElementById("standardEntryField").hidden = isSpot;
+      document.getElementById("spotEntryFields").hidden = !isSpot;
+
+      document.getElementById("spotEntryUsd").required = isSpot;
+      document.getElementById("stop").required = isSpot;
 
       document.getElementById("capitalCardTitle").textContent =
         isSpot ? "سرمایه و مبلغ خرید" : "سرمایه و ریسک";
 
       document.getElementById("capitalLabel").textContent =
         isSpot
-          ? "کل سرمایه یا ارزش سبد (" + currencyTitle + ")"
+          ? "کل سرمایه یا ارزش سبد (دلار / تتر)"
           : "سرمایه کل (دلار)";
 
       document.getElementById("spotInvestmentLabel").textContent =
-        "مبلغ خرید اسپات (" + currencyTitle + ")";
+        "مبلغ خرید اسپات (دلار / تتر)";
 
       document.getElementById("entryLabel").textContent =
         isSpot
@@ -1193,26 +1280,28 @@
 
       document.getElementById("stopLabel").textContent =
         isSpot
-          ? "حد ضرر اختیاری (" + currencyTitle + ")"
+          ? "حد ضرر اجباری (دلار / تتر)"
           : "حد ضرر (Stop)";
 
       document.getElementById("symbol").placeholder =
         isSpot ? "مثلاً BTC یا BTCUSDT" : "مثلاً BTCUSDT";
 
       document.getElementById("entry").placeholder =
-        isSpot && currency === "IRT"
-          ? "مثلاً 4200000000"
-          : "مثلاً 0.408";
+        "مثلاً 0.408";
+
+      document.getElementById("spotEntryUsd").placeholder =
+        "مثلاً 68000";
+
+      document.getElementById("stop").placeholder =
+        isSpot
+          ? "مثلاً 63000"
+          : "مثلاً 0.385";
 
       document.getElementById("capital").placeholder =
-        isSpot && currency === "IRT"
-          ? "مثلاً 3000000"
-          : "مثلاً 1000";
+        "مثلاً 1000";
 
       document.getElementById("spotInvestment").placeholder =
-        currency === "IRT"
-          ? "مثلاً 3000000"
-          : "مثلاً 500";
+        "مثلاً 500";
 
       document.getElementById("quantityLabel").textContent =
         isSpot ? "مقدار دارایی خریداری‌شده" : "حجم پوزیشن";
@@ -1230,7 +1319,7 @@
         isSpot ? "ریسک تا حد ضرر از کل سرمایه" : "قیمت لیکویید (تقریبی)";
 
       document.getElementById("profitCurrencyHeader").textContent =
-        "سود (" + (currency === "IRT" ? "تومان" : "$") + ")";
+        "سود ($)";
 
       document.getElementById("steppedProfitLabel").textContent =
         isSpot
@@ -1244,7 +1333,7 @@
 
       document.getElementById("calculationNote").textContent =
         isSpot
-          ? "در اسپات، درصد ریسک ورودی اجباری نیست. اگر حد ضرر وارد شود، زیان احتمالی و R:R به‌صورت خودکار محاسبه می‌شود."
+          ? "در اسپات، قیمت خرید، مبلغ خرید و حد ضرر همگی بر اساس دلار یا تتر ثبت می‌شوند. حد ضرر اجباری است."
           : "قیمت لیکویید تقریبی است و کارمزد صرافی، نرخ مارجین نگهداری و نوع مارجین را در نظر نمی‌گیرد.";
 
       const longButton = document.getElementById("longButton");
@@ -1458,23 +1547,31 @@
     }
 
     function calculateSpotTrade() {
-      const entry = getNumber("entry");
+      const entryUsd = getNumber("spotEntryUsd");
       const stop = getNumber("stop");
       const capital = getNumber("capital");
       const investedAmount = getNumber("spotInvestment");
-      const currency = getCurrentCurrency();
+      const currency = "USD";
+      const entry = entryUsd;
 
       if (
-        [entry, capital, investedAmount]
+        [entryUsd, stop, capital, investedAmount]
           .some(function (value) { return value === null; })
       ) {
         clearResults();
         return null;
       }
 
-      if (entry <= 0 || capital <= 0 || investedAmount <= 0) {
+      if (
+        entryUsd <= 0 ||
+        stop <= 0 ||
+        capital <= 0 ||
+        investedAmount <= 0
+      ) {
         clearResults();
-        setError("قیمت خرید، کل سرمایه و مبلغ خرید باید بزرگ‌تر از صفر باشند.");
+        setError(
+          "قیمت خرید، حد ضرر، کل سرمایه و مبلغ خرید باید بزرگ‌تر از صفر باشند."
+        );
         return null;
       }
 
@@ -1484,35 +1581,19 @@
         return null;
       }
 
-      if (stop !== null && stop <= 0) {
+      if (stop >= entry) {
         clearResults();
-        setError("حد ضرر اسپات باید بزرگ‌تر از صفر باشد یا خالی بماند.");
-        return null;
-      }
-
-      if (stop !== null && stop >= entry) {
-        clearResults();
-        setError("در خرید اسپات، حد ضرر باید پایین‌تر از قیمت خرید باشد.");
+        setError(
+          "در خرید اسپات، حد ضرر باید پایین‌تر از قیمت خرید باشد."
+        );
         return null;
       }
 
       const quantity = investedAmount / entry;
       const allocationPercent = (investedAmount / capital) * 100;
-
-      const riskDistance =
-        stop !== null
-          ? entry - stop
-          : null;
-
-      const riskAmount =
-        Number.isFinite(riskDistance)
-          ? riskDistance * quantity
-          : null;
-
-      const riskPercent =
-        Number.isFinite(riskAmount)
-          ? (riskAmount / capital) * 100
-          : null;
+      const riskDistance = entry - stop;
+      const riskAmount = riskDistance * quantity;
+      const riskPercent = (riskAmount / capital) * 100;
 
       document.getElementById("quantityResult").textContent =
         formatNumber(quantity, 8);
@@ -1524,20 +1605,17 @@
         formatNumber(allocationPercent, 2) + "%";
 
       document.getElementById("riskAmountResult").textContent =
-        Number.isFinite(riskAmount)
-          ? formatMoney(riskAmount, currency)
-          : "تعیین نشده";
+        formatMoney(riskAmount, currency);
 
       document.getElementById("liquidationResult").textContent =
-        Number.isFinite(riskPercent)
-          ? formatNumber(riskPercent, 2) + "%"
-          : "تعیین نشده";
+        formatNumber(riskPercent, 2) + "%";
 
       const calculation = {
         tradeType: "spot",
-        currency: currency,
+        currency: "USD",
         side: "long",
         entry: entry,
+        entryUsd: entryUsd,
         stop: stop,
         capital: capital,
         leverage: 1,
@@ -1731,7 +1809,7 @@
       if (!calculation) {
         showToast(
           selectedTradeType === "spot"
-            ? "قیمت خرید، کل سرمایه و مبلغ خرید را کامل و صحیح وارد کن."
+            ? "قیمت خرید، حد ضرر، کل سرمایه و مبلغ خرید را کامل و صحیح وارد کن."
             : "اطلاعات اصلی معامله فیوچرز را کامل و صحیح وارد کن.",
           true
         );
@@ -1749,6 +1827,7 @@
         tradeNote: tradeNote,
         side: calculation.side,
         entry: calculation.entry,
+        entryUsd: calculation.entryUsd ?? null,
         stop: calculation.stop,
         tp1: getNumber("tp1"),
         tp2: getNumber("tp2"),
@@ -1841,8 +1920,18 @@
                   : NaN
               );
 
+        const spotEntryUsd =
+          Number.isFinite(Number(trade.entryUsd))
+            ? Number(trade.entryUsd)
+            : Number(trade.entry);
+
         items = [
-          ["قیمت خرید", formatTradePrice(trade.entry, currency)],
+          [
+            "قیمت خرید",
+            Number.isFinite(spotEntryUsd)
+              ? formatTradePrice(spotEntryUsd, "USD")
+              : "—"
+          ],
           ["مبلغ خرید", formatMoney(investedAmount, currency)],
           ["مقدار دارایی", formatNumber(trade.quantity, 8)],
           [
@@ -1854,7 +1943,7 @@
           [
             "حد ضرر",
             trade.stop == null
-              ? "ثبت نشده"
+              ? "—"
               : formatTradePrice(trade.stop, currency)
           ],
           [
@@ -2102,8 +2191,8 @@
       if (tradeType === "spot") {
         form.innerHTML =
           '<strong style="display:block;margin-bottom:14px;color:var(--muted);">ثبت نتیجه خرید اسپات</strong>' +
-          '<div class="field"><label>قیمت فروش کامل</label><input data-field="exitPrice" type="number" inputmode="decimal" step="any" min="0" value="' + (trade.exitPrice ?? "") + '"></div>' +
-          '<div class="field"><label>کل کارمزد خرید و فروش (' + getCurrencyTitle(currency) + ')</label><input data-field="totalFees" type="number" inputmode="decimal" step="any" min="0" value="' + (trade.totalFees ?? 0) + '"></div>' +
+          '<div class="field"><label>قیمت فروش کامل</label><input data-field="exitPrice" data-formatted-number="true" type="text" inputmode="decimal" value="' + (trade.exitPrice ?? "") + '"></div>' +
+          '<div class="field"><label>کل کارمزد خرید و فروش (' + getCurrencyTitle(currency) + ')</label><input data-field="totalFees" data-formatted-number="true" type="text" inputmode="decimal" value="' + (trade.totalFees ?? 0) + '"></div>' +
           '<div class="two-grid">' +
             '<div class="field"><label>سود یا زیان محاسبه‌شده</label><input data-field="actualProfitLoss" type="text" readonly></div>' +
             '<div class="field"><label>R واقعی</label><input data-field="actualR" type="text" readonly></div>' +
@@ -2112,6 +2201,8 @@
           '<div class="field"><label>یادداشت خروج</label><textarea data-field="exitNote" maxlength="1000" placeholder="علت فروش، نکته آموزشی و...">' + escapeHtml(trade.exitNote || "") + '</textarea></div>' +
           '<label class="upload-label">افزودن اسکرین‌شات نقطه فروش<input data-field="exitScreenshot" type="file" accept="image/*" style="display:none;"></label>' +
           '<div class="journal-actions"><button type="button" class="primary-button" data-action="save">ذخیره نتیجه</button><button type="button" class="secondary-button" data-action="cancel">انصراف</button></div>';
+
+        initializeFormattedNumberInputs(form);
 
         const exitPriceInput =
           form.querySelector('[data-field="exitPrice"]');
@@ -2129,8 +2220,8 @@
           form.querySelector('[data-field="actualReturnPercent"]');
 
         function calculateSpotOutcome() {
-          const exitPrice = Number(exitPriceInput.value);
-          const totalFees = Number(totalFeesInput.value || 0);
+          const exitPrice = getNumberFromElement(exitPriceInput);
+          const totalFees = getNumberFromElement(totalFeesInput) ?? 0;
           const quantity = Number(trade.quantity);
 
           const investedAmount =
@@ -2251,9 +2342,9 @@
       } else {
         form.innerHTML =
           '<strong style="display:block;margin-bottom:14px;color:var(--muted);">ثبت نتیجه معامله فیوچرز</strong>' +
-          '<div class="field"><label>قیمت خروج</label><input data-field="exitPrice" type="number" inputmode="decimal" step="any" min="0" value="' + (trade.exitPrice ?? "") + '"></div>' +
+          '<div class="field"><label>قیمت خروج</label><input data-field="exitPrice" data-formatted-number="true" type="text" inputmode="decimal" value="' + (trade.exitPrice ?? "") + '"></div>' +
           '<div class="two-grid">' +
-            '<div class="field"><label>سود یا زیان واقعی ($)</label><input data-field="actualProfitLoss" type="number" inputmode="decimal" step="any" value="' + (trade.actualProfitLoss ?? "") + '"></div>' +
+            '<div class="field"><label>سود یا زیان واقعی ($)</label><input data-field="actualProfitLoss" data-formatted-number="true" type="text" inputmode="decimal" value="' + (trade.actualProfitLoss ?? "") + '"></div>' +
             '<div class="field"><label>R واقعی</label><input data-field="actualR" type="number" inputmode="decimal" step="any" value="' + (trade.actualR ?? "") + '"></div>' +
           '</div>' +
           '<div class="field"><label>بازده واقعی (%)</label><input data-field="actualReturnPercent" type="number" inputmode="decimal" step="any" value="' + (trade.actualReturnPercent ?? "") + '"></div>' +
@@ -2261,26 +2352,28 @@
           '<label class="upload-label">افزودن اسکرین‌شات نقطه خروج<input data-field="exitScreenshot" type="file" accept="image/*" style="display:none;"></label>' +
           '<div class="journal-actions"><button type="button" class="primary-button" data-action="save">ذخیره نتیجه</button><button type="button" class="secondary-button" data-action="cancel">انصراف</button></div>';
 
+        initializeFormattedNumberInputs(form);
+
         form.querySelector('[data-action="save"]')
           .addEventListener("click", async function () {
             const exitPrice =
-              Number(
-                form.querySelector('[data-field="exitPrice"]').value
+              getNumberFromElement(
+                form.querySelector('[data-field="exitPrice"]')
               );
 
             const actualProfitLoss =
-              Number(
-                form.querySelector('[data-field="actualProfitLoss"]').value
+              getNumberFromElement(
+                form.querySelector('[data-field="actualProfitLoss"]')
               );
 
             const actualR =
-              Number(
-                form.querySelector('[data-field="actualR"]').value
+              getNumberFromElement(
+                form.querySelector('[data-field="actualR"]')
               );
 
             const actualReturnPercent =
-              Number(
-                form.querySelector('[data-field="actualReturnPercent"]').value
+              getNumberFromElement(
+                form.querySelector('[data-field="actualReturnPercent"]')
               );
 
             const exitNote =
@@ -3032,28 +3125,8 @@
           return;
         }
 
-        const availableCurrencies =
-          new Set(
-            allClosed.map(function (trade) {
-              return getTradeCurrency(trade);
-            })
-          );
-
-        Array.from(currencyFilter.options)
-          .forEach(function (option) {
-            option.disabled =
-              !availableCurrencies.has(option.value);
-          });
-
-        if (
-          !availableCurrencies.has(currencyFilter.value)
-        ) {
-          currencyFilter.value =
-            Array.from(availableCurrencies)[0] || "USD";
-        }
-
-        const selectedCurrency =
-          currencyFilter.value;
+        const selectedCurrency = "USD";
+        currencyFilter.value = "USD";
 
         const closed =
           allClosed.filter(function (trade) {
@@ -3617,6 +3690,7 @@
     });
 
     setupTelegram();
+    initializeFormattedNumberInputs(document);
     updateTradeModeUI();
   </script>
 </body>
