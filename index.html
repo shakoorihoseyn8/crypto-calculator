@@ -103,6 +103,41 @@
       font-weight: bold;
     }
 
+    .trade-type-selector {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+
+    .trade-type-button {
+      min-height: 46px;
+      border: 1px solid var(--card-border);
+      border-radius: 10px;
+      background: transparent;
+      color: var(--muted);
+      font-size: 14px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .trade-type-button.active-futures {
+      border-color: var(--blue);
+      background: rgba(90, 167, 236, 0.18);
+      color: #d9ecff;
+    }
+
+    .trade-type-button.active-spot {
+      border-color: #f2b84b;
+      background: rgba(242, 184, 75, 0.16);
+      color: #ffe3a3;
+    }
+
+    .mode-fields[hidden],
+    .side-selector[hidden] {
+      display: none !important;
+    }
+
     .side-selector {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -727,7 +762,27 @@
     <div id="calculatorView" class="view">
       <section class="card">
         <h2 class="card-title">مشخصات معامله</h2>
-        <div class="side-selector">
+
+        <div class="trade-type-selector" aria-label="نوع معامله">
+          <button
+            id="futuresTypeButton"
+            class="trade-type-button active-futures"
+            type="button"
+            onclick="selectTradeType('futures')"
+          >
+            فیوچرز
+          </button>
+          <button
+            id="spotTypeButton"
+            class="trade-type-button"
+            type="button"
+            onclick="selectTradeType('spot')"
+          >
+            اسپات
+          </button>
+        </div>
+
+        <div id="futuresSideSelector" class="side-selector">
           <button id="longButton" class="side-button active-long" type="button" onclick="selectSide('long')">
             <span class="dot green-dot"></span> لانگ
           </button>
@@ -737,7 +792,7 @@
         </div>
 
         <div class="field">
-          <label for="symbol">نماد ارز</label>
+          <label id="symbolLabel" for="symbol">نماد ارز</label>
           <input id="symbol" type="text" maxlength="30" placeholder="مثلاً BTCUSDT" autocomplete="off" />
         </div>
 
@@ -747,12 +802,12 @@
         </div>
 
         <div class="field">
-          <label for="entry">قیمت ورود</label>
+          <label id="entryLabel" for="entry">قیمت ورود</label>
           <input id="entry" type="number" inputmode="decimal" step="any" min="0" placeholder="مثلاً 0.408" />
         </div>
 
         <div class="field">
-          <label for="stop">حد ضرر (Stop)</label>
+          <label id="stopLabel" for="stop">حد ضرر (Stop)</label>
           <input id="stop" type="number" inputmode="decimal" step="any" min="0" placeholder="مثلاً 0.385" />
         </div>
 
@@ -773,12 +828,24 @@
       </section>
 
       <section class="card">
-        <h2 class="card-title">سرمایه و ریسک</h2>
+        <h2 id="capitalCardTitle" class="card-title">سرمایه و ریسک</h2>
+
+        <div id="spotCurrencyFields" class="mode-fields" hidden>
+          <div class="field">
+            <label for="spotCurrency">واحد پول معامله اسپات</label>
+            <select id="spotCurrency">
+              <option value="IRT" selected>تومان</option>
+              <option value="USD">دلار / تتر</option>
+            </select>
+          </div>
+        </div>
+
         <div class="field">
-          <label for="capital">سرمایه کل (دلار)</label>
+          <label id="capitalLabel" for="capital">سرمایه کل (دلار)</label>
           <input id="capital" type="number" inputmode="decimal" step="any" min="0" placeholder="مثلاً 1000" />
         </div>
-        <div class="two-grid">
+
+        <div id="futuresRiskFields" class="two-grid mode-fields">
           <div class="field">
             <label for="leverage">اهرم (Leverage)</label>
             <input id="leverage" type="number" inputmode="decimal" step="any" min="1" placeholder="مثلاً 10" />
@@ -788,31 +855,49 @@
             <input id="riskPercent" type="number" inputmode="decimal" step="any" min="0" max="100" placeholder="مثلاً 2" />
           </div>
         </div>
+
+        <div id="spotInvestmentFields" class="mode-fields" hidden>
+          <div class="field">
+            <label id="spotInvestmentLabel" for="spotInvestment">مبلغ خرید اسپات</label>
+            <input
+              id="spotInvestment"
+              type="number"
+              inputmode="decimal"
+              step="any"
+              min="0"
+              placeholder="مثلاً 3000000"
+            />
+          </div>
+          <p class="note" style="margin-top:-3px;">
+            در اسپات می‌توانی تمام یا بخشی از سرمایه را وارد کنی. درصد ریسک و اهرم اجباری نیست.
+          </p>
+        </div>
+
         <div id="errorBox" class="error-box"></div>
       </section>
 
       <section class="card">
         <h2 class="card-title">نتیجه</h2>
-        <div class="result-row"><span class="result-label">حجم پوزیشن</span><span id="quantityResult" class="result-value">—</span></div>
-        <div class="result-row"><span class="result-label">ارزش پوزیشن</span><span id="positionValueResult" class="result-value">—</span></div>
-        <div class="result-row"><span class="result-label">مارجین لازم</span><span id="marginResult" class="result-value">—</span></div>
-        <div class="result-row"><span class="result-label">مبلغ در معرض ریسک</span><span id="riskAmountResult" class="result-value">—</span></div>
-        <div class="result-row"><span class="result-label">قیمت لیکویید (تقریبی)</span><span id="liquidationResult" class="result-value">—</span></div>
+        <div class="result-row"><span id="quantityLabel" class="result-label">حجم پوزیشن</span><span id="quantityResult" class="result-value">—</span></div>
+        <div class="result-row"><span id="positionValueLabel" class="result-label">ارزش پوزیشن</span><span id="positionValueResult" class="result-value">—</span></div>
+        <div class="result-row"><span id="marginLabel" class="result-label">مارجین لازم</span><span id="marginResult" class="result-value">—</span></div>
+        <div class="result-row"><span id="riskAmountLabel" class="result-label">مبلغ در معرض ریسک</span><span id="riskAmountResult" class="result-value">—</span></div>
+        <div class="result-row"><span id="liquidationLabel" class="result-label">قیمت لیکویید (تقریبی)</span><span id="liquidationResult" class="result-value">—</span></div>
       </section>
 
       <section class="card">
         <h2 class="card-title">اهداف سود</h2>
         <table class="profit-table">
-          <thead><tr><th>هدف</th><th>R:R</th><th>سود ($)</th><th>بازده (%)</th></tr></thead>
+          <thead><tr><th>هدف</th><th>R:R</th><th id="profitCurrencyHeader">سود ($)</th><th>بازده (%)</th></tr></thead>
           <tbody>
             <tr><td>TP1</td><td id="tp1RR">—</td><td id="tp1Profit">—</td><td id="tp1Return">—</td></tr>
             <tr><td>TP2</td><td id="tp2RR">—</td><td id="tp2Profit">—</td><td id="tp2Return">—</td></tr>
             <tr><td>TP3</td><td id="tp3RR">—</td><td id="tp3Profit">—</td><td id="tp3Return">—</td></tr>
           </tbody>
         </table>
-        <div class="summary-row"><span class="summary-label">سود کل طبق پلن پله‌ای (۳۰٪ / ۳۰٪ / ۴۰٪)</span><span id="steppedProfitResult" class="summary-value">—</span></div>
-        <div class="summary-row"><span class="summary-label">R:R کلی پوزیشن</span><span id="totalRRResult" class="summary-value">—</span></div>
-        <p class="note">قیمت لیکویید تقریبی است و کارمزد صرافی، نرخ مارجین نگهداری و نوع مارجین را در نظر نمی‌گیرد.</p>
+        <div class="summary-row"><span id="steppedProfitLabel" class="summary-label">سود کل طبق پلن پله‌ای (۳۰٪ / ۳۰٪ / ۴۰٪)</span><span id="steppedProfitResult" class="summary-value">—</span></div>
+        <div class="summary-row"><span id="totalRRLabel" class="summary-label">R:R کلی پوزیشن</span><span id="totalRRResult" class="summary-value">—</span></div>
+        <p id="calculationNote" class="note">قیمت لیکویید تقریبی است و کارمزد صرافی، نرخ مارجین نگهداری و نوع مارجین را در نظر نمی‌گیرد.</p>
       </section>
     </div>
 
@@ -885,6 +970,15 @@
 
     <section id="statementView" class="view card" hidden>
       <h2 class="card-title">استیتمنت معاملاتی</h2>
+
+      <div class="field">
+        <label for="statementCurrencyFilter">واحد محاسبه استیتمنت</label>
+        <select id="statementCurrencyFilter" onchange="renderStatement()">
+          <option value="USD">دلار / تتر</option>
+          <option value="IRT">تومان</option>
+        </select>
+      </div>
+
       <p id="statementEmptyMessage" class="note" style="text-align:center;line-height:2;">برای نمایش استیتمنت، ابتدا نتیجه معاملات بسته‌شده را ثبت کن.</p>
       <div id="statementContent" hidden>
         <div id="statementSummary" class="statement-summary"></div>
@@ -914,6 +1008,7 @@
     const DB_VERSION = 1;
     const STORE_NAME = "trades";
 
+    let selectedTradeType = "futures";
     let selectedSide = "long";
     let entryScreenshotFile = null;
     let entryScreenshotObjectUrl = null;
@@ -954,11 +1049,15 @@
       { id: "tron", name: "TRON", symbol: "trx", market_cap_rank: 10 }
     ];
 
-    const inputIds = ["entry", "stop", "tp1", "tp2", "tp3", "capital", "leverage", "riskPercent"];
+    const inputIds = ["entry", "stop", "tp1", "tp2", "tp3", "capital", "leverage", "riskPercent", "spotInvestment"];
 
     inputIds.forEach(function (id) {
       const element = document.getElementById(id);
       if (element) element.addEventListener("input", calculateTrade);
+    });
+
+    document.getElementById("spotCurrency").addEventListener("change", function () {
+      updateTradeModeUI();
     });
 
     function showToast(message, isError) {
@@ -989,83 +1088,217 @@
       return Number.isFinite(number) ? number : null;
     }
 
+    function normalizeTradeType(trade) {
+      return trade && trade.tradeType === "spot" ? "spot" : "futures";
+    }
+
+    function getTradeCurrency(trade) {
+      return trade && trade.currency === "IRT" ? "IRT" : "USD";
+    }
+
+    function getCurrentCurrency() {
+      return selectedTradeType === "spot"
+        ? document.getElementById("spotCurrency").value
+        : "USD";
+    }
+
+    function getCurrencyTitle(currency) {
+      return currency === "IRT" ? "تومان" : "دلار";
+    }
+
+    function formatMoney(value, currency) {
+      const number = Number(value);
+      if (!Number.isFinite(number)) return "—";
+
+      if (currency === "IRT") {
+        return formatNumber(number, 0) + " تومان";
+      }
+
+      return formatNumber(number, 2) + " $";
+    }
+
+    function formatTradePrice(value, currency) {
+      const number = Number(value);
+      if (!Number.isFinite(number)) return "—";
+
+      if (currency === "IRT") {
+        return formatNumber(number, 0) + " تومان";
+      }
+
+      let digits = 2;
+      if (Math.abs(number) < 1) digits = 6;
+      if (Math.abs(number) < 0.01) digits = 8;
+
+      return formatNumber(number, digits) + " $";
+    }
+
+    function selectTradeType(type) {
+      selectedTradeType = type === "spot" ? "spot" : "futures";
+
+      if (selectedTradeType === "spot") {
+        selectedSide = "long";
+      }
+
+      updateTradeModeUI();
+    }
+
     function selectSide(side) {
+      if (selectedTradeType === "spot") {
+        selectedSide = "long";
+        return;
+      }
+
       selectedSide = side === "short" ? "short" : "long";
+
       const longButton = document.getElementById("longButton");
       const shortButton = document.getElementById("shortButton");
+
       longButton.classList.toggle("active-long", selectedSide === "long");
       shortButton.classList.toggle("active-short", selectedSide === "short");
+
+      calculateTrade();
+    }
+
+    function updateTradeModeUI() {
+      const isSpot = selectedTradeType === "spot";
+      const currency = getCurrentCurrency();
+      const currencyTitle = getCurrencyTitle(currency);
+
+      document.getElementById("futuresTypeButton")
+        .classList.toggle("active-futures", !isSpot);
+
+      document.getElementById("spotTypeButton")
+        .classList.toggle("active-spot", isSpot);
+
+      document.getElementById("futuresSideSelector").hidden = isSpot;
+      document.getElementById("futuresRiskFields").hidden = isSpot;
+      document.getElementById("spotInvestmentFields").hidden = !isSpot;
+      document.getElementById("spotCurrencyFields").hidden = !isSpot;
+
+      document.getElementById("capitalCardTitle").textContent =
+        isSpot ? "سرمایه و مبلغ خرید" : "سرمایه و ریسک";
+
+      document.getElementById("capitalLabel").textContent =
+        isSpot
+          ? "کل سرمایه یا ارزش سبد (" + currencyTitle + ")"
+          : "سرمایه کل (دلار)";
+
+      document.getElementById("spotInvestmentLabel").textContent =
+        "مبلغ خرید اسپات (" + currencyTitle + ")";
+
+      document.getElementById("entryLabel").textContent =
+        isSpot
+          ? "قیمت خرید (" + currencyTitle + ")"
+          : "قیمت ورود";
+
+      document.getElementById("stopLabel").textContent =
+        isSpot
+          ? "حد ضرر اختیاری (" + currencyTitle + ")"
+          : "حد ضرر (Stop)";
+
+      document.getElementById("symbol").placeholder =
+        isSpot ? "مثلاً BTC یا BTCUSDT" : "مثلاً BTCUSDT";
+
+      document.getElementById("entry").placeholder =
+        isSpot && currency === "IRT"
+          ? "مثلاً 4200000000"
+          : "مثلاً 0.408";
+
+      document.getElementById("capital").placeholder =
+        isSpot && currency === "IRT"
+          ? "مثلاً 3000000"
+          : "مثلاً 1000";
+
+      document.getElementById("spotInvestment").placeholder =
+        currency === "IRT"
+          ? "مثلاً 3000000"
+          : "مثلاً 500";
+
+      document.getElementById("quantityLabel").textContent =
+        isSpot ? "مقدار دارایی خریداری‌شده" : "حجم پوزیشن";
+
+      document.getElementById("positionValueLabel").textContent =
+        isSpot ? "مبلغ خرید" : "ارزش پوزیشن";
+
+      document.getElementById("marginLabel").textContent =
+        isSpot ? "درصد تخصیص از سرمایه" : "مارجین لازم";
+
+      document.getElementById("riskAmountLabel").textContent =
+        isSpot ? "زیان احتمالی تا حد ضرر" : "مبلغ در معرض ریسک";
+
+      document.getElementById("liquidationLabel").textContent =
+        isSpot ? "ریسک تا حد ضرر از کل سرمایه" : "قیمت لیکویید (تقریبی)";
+
+      document.getElementById("profitCurrencyHeader").textContent =
+        "سود (" + (currency === "IRT" ? "تومان" : "$") + ")";
+
+      document.getElementById("steppedProfitLabel").textContent =
+        isSpot
+          ? "سود کل فروش پله‌ای (۳۰٪ / ۳۰٪ / ۴۰٪)"
+          : "سود کل طبق پلن پله‌ای (۳۰٪ / ۳۰٪ / ۴۰٪)";
+
+      document.getElementById("totalRRLabel").textContent =
+        isSpot
+          ? "R:R کلی در صورت ثبت حد ضرر"
+          : "R:R کلی پوزیشن";
+
+      document.getElementById("calculationNote").textContent =
+        isSpot
+          ? "در اسپات، درصد ریسک ورودی اجباری نیست. اگر حد ضرر وارد شود، زیان احتمالی و R:R به‌صورت خودکار محاسبه می‌شود."
+          : "قیمت لیکویید تقریبی است و کارمزد صرافی، نرخ مارجین نگهداری و نوع مارجین را در نظر نمی‌گیرد.";
+
+      const longButton = document.getElementById("longButton");
+      const shortButton = document.getElementById("shortButton");
+
+      longButton.classList.toggle("active-long", selectedSide === "long");
+      shortButton.classList.toggle("active-short", selectedSide === "short");
+
+      setError("");
       calculateTrade();
     }
 
     function clearResults() {
-      ["quantityResult", "positionValueResult", "marginResult", "riskAmountResult", "liquidationResult",
-       "tp1RR", "tp1Profit", "tp1Return", "tp2RR", "tp2Profit", "tp2Return",
-       "tp3RR", "tp3Profit", "tp3Return", "steppedProfitResult", "totalRRResult"]
-        .forEach(function (id) { document.getElementById(id).textContent = "—"; });
+      [
+        "quantityResult",
+        "positionValueResult",
+        "marginResult",
+        "riskAmountResult",
+        "liquidationResult",
+        "tp1RR",
+        "tp1Profit",
+        "tp1Return",
+        "tp2RR",
+        "tp2Profit",
+        "tp2Return",
+        "tp3RR",
+        "tp3Profit",
+        "tp3Return",
+        "steppedProfitResult",
+        "totalRRResult"
+      ].forEach(function (id) {
+        document.getElementById(id).textContent = "—";
+      });
     }
 
     function setError(message) {
       const box = document.getElementById("errorBox");
+
       if (!message) {
         box.style.display = "none";
         box.textContent = "";
         return;
       }
+
       box.textContent = message;
       box.style.display = "block";
     }
 
-    function calculateTrade() {
-      const entry = getNumber("entry");
-      const stop = getNumber("stop");
-      const capital = getNumber("capital");
-      const leverage = getNumber("leverage");
-      const riskPercent = getNumber("riskPercent");
-
-      setError("");
-
-      if ([entry, stop, capital, leverage, riskPercent].some(function (value) { return value === null; })) {
-        clearResults();
-        return null;
-      }
-
-      if (entry <= 0 || stop <= 0 || capital <= 0 || leverage <= 0 || riskPercent <= 0) {
-        clearResults();
-        setError("همه مقادیر اصلی باید بزرگ‌تر از صفر باشند.");
-        return null;
-      }
-
-      if (entry === stop) {
-        clearResults();
-        setError("قیمت ورود و حد ضرر نمی‌توانند برابر باشند.");
-        return null;
-      }
-
-      const stopIsValid = selectedSide === "long" ? stop < entry : stop > entry;
-      if (!stopIsValid) {
-        clearResults();
-        setError(selectedSide === "long" ? "در معامله لانگ، حد ضرر باید پایین‌تر از ورود باشد." : "در معامله شورت، حد ضرر باید بالاتر از ورود باشد.");
-        return null;
-      }
-
-      const riskDistance = Math.abs(entry - stop);
-      const riskAmount = capital * (riskPercent / 100);
-      const quantity = riskAmount / riskDistance;
-      const positionValue = quantity * entry;
-      const requiredMargin = positionValue / leverage;
-      const liquidationPrice = selectedSide === "long" ? entry * (1 - 1 / leverage) : entry * (1 + 1 / leverage);
-
-      document.getElementById("quantityResult").textContent = formatNumber(quantity, 6);
-      document.getElementById("positionValueResult").textContent = formatNumber(positionValue, 2) + " $";
-      document.getElementById("marginResult").textContent = formatNumber(requiredMargin, 2) + " $";
-      document.getElementById("riskAmountResult").textContent = formatNumber(riskAmount, 2) + " $";
-      document.getElementById("liquidationResult").textContent = formatNumber(Math.max(liquidationPrice, 0), 6);
-
+    function renderTargetCalculations(calculation) {
       const weights = [0.3, 0.3, 0.4];
       let steppedProfit = 0;
       let steppedRR = 0;
-      let usedWeight = 0;
+      let usedProfitWeight = 0;
+      let usedRRWeight = 0;
 
       ["tp1", "tp2", "tp3"].forEach(function (id, index) {
         const target = getNumber(id);
@@ -1080,27 +1313,256 @@
           return;
         }
 
-        const directionalDistance = selectedSide === "long" ? target - entry : entry - target;
-        const profit = directionalDistance * quantity;
-        const rr = directionalDistance / riskDistance;
-        const returnPercent = (profit / capital) * 100;
+        const directionalDistance =
+          calculation.side === "short"
+            ? calculation.entry - target
+            : target - calculation.entry;
 
-        rrElement.textContent = formatNumber(rr, 2);
-        profitElement.textContent = formatNumber(profit, 2);
-        returnElement.textContent = formatNumber(returnPercent, 2) + "%";
+        const profit = directionalDistance * calculation.quantity;
+        const returnPercent =
+          calculation.returnBase > 0
+            ? (profit / calculation.returnBase) * 100
+            : 0;
+
+        const rr =
+          Number.isFinite(calculation.riskDistance) &&
+          calculation.riskDistance > 0
+            ? directionalDistance / calculation.riskDistance
+            : null;
+
+        rrElement.textContent =
+          Number.isFinite(rr) ? formatNumber(rr, 2) : "—";
+
+        profitElement.textContent =
+          formatMoney(profit, calculation.currency);
+
+        returnElement.textContent =
+          formatNumber(returnPercent, 2) + "%";
 
         steppedProfit += profit * weights[index];
-        steppedRR += rr * weights[index];
-        usedWeight += weights[index];
+        usedProfitWeight += weights[index];
+
+        if (Number.isFinite(rr)) {
+          steppedRR += rr * weights[index];
+          usedRRWeight += weights[index];
+        }
       });
 
-      document.getElementById("steppedProfitResult").textContent = usedWeight > 0 ? formatNumber(steppedProfit, 2) + " $" : "—";
-      document.getElementById("totalRRResult").textContent = usedWeight > 0 ? formatNumber(steppedRR, 2) : "—";
+      document.getElementById("steppedProfitResult").textContent =
+        usedProfitWeight > 0
+          ? formatMoney(steppedProfit, calculation.currency)
+          : "—";
 
-      return {
-        entry, stop, capital, leverage, riskPercent, riskAmount, quantity, positionValue, requiredMargin,
-        liquidationPrice: Math.max(liquidationPrice, 0)
+      document.getElementById("totalRRResult").textContent =
+        usedRRWeight > 0
+          ? formatNumber(steppedRR, 2)
+          : "—";
+    }
+
+    function calculateFuturesTrade() {
+      const entry = getNumber("entry");
+      const stop = getNumber("stop");
+      const capital = getNumber("capital");
+      const leverage = getNumber("leverage");
+      const riskPercent = getNumber("riskPercent");
+
+      if (
+        [entry, stop, capital, leverage, riskPercent]
+          .some(function (value) { return value === null; })
+      ) {
+        clearResults();
+        return null;
+      }
+
+      if (
+        entry <= 0 ||
+        stop <= 0 ||
+        capital <= 0 ||
+        leverage <= 0 ||
+        riskPercent <= 0
+      ) {
+        clearResults();
+        setError("همه مقادیر اصلی فیوچرز باید بزرگ‌تر از صفر باشند.");
+        return null;
+      }
+
+      if (entry === stop) {
+        clearResults();
+        setError("قیمت ورود و حد ضرر نمی‌توانند برابر باشند.");
+        return null;
+      }
+
+      const stopIsValid =
+        selectedSide === "long"
+          ? stop < entry
+          : stop > entry;
+
+      if (!stopIsValid) {
+        clearResults();
+        setError(
+          selectedSide === "long"
+            ? "در معامله لانگ، حد ضرر باید پایین‌تر از ورود باشد."
+            : "در معامله شورت، حد ضرر باید بالاتر از ورود باشد."
+        );
+        return null;
+      }
+
+      const riskDistance = Math.abs(entry - stop);
+      const riskAmount = capital * (riskPercent / 100);
+      const quantity = riskAmount / riskDistance;
+      const positionValue = quantity * entry;
+      const requiredMargin = positionValue / leverage;
+
+      const liquidationPrice =
+        selectedSide === "long"
+          ? entry * (1 - 1 / leverage)
+          : entry * (1 + 1 / leverage);
+
+      document.getElementById("quantityResult").textContent =
+        formatNumber(quantity, 6);
+
+      document.getElementById("positionValueResult").textContent =
+        formatMoney(positionValue, "USD");
+
+      document.getElementById("marginResult").textContent =
+        formatMoney(requiredMargin, "USD");
+
+      document.getElementById("riskAmountResult").textContent =
+        formatMoney(riskAmount, "USD");
+
+      document.getElementById("liquidationResult").textContent =
+        formatTradePrice(Math.max(liquidationPrice, 0), "USD");
+
+      const calculation = {
+        tradeType: "futures",
+        currency: "USD",
+        side: selectedSide,
+        entry: entry,
+        stop: stop,
+        capital: capital,
+        leverage: leverage,
+        riskPercent: riskPercent,
+        riskAmount: riskAmount,
+        riskDistance: riskDistance,
+        quantity: quantity,
+        positionValue: positionValue,
+        requiredMargin: requiredMargin,
+        liquidationPrice: Math.max(liquidationPrice, 0),
+        investedAmount: requiredMargin,
+        allocationPercent: (requiredMargin / capital) * 100,
+        returnBase: capital
       };
+
+      renderTargetCalculations(calculation);
+      return calculation;
+    }
+
+    function calculateSpotTrade() {
+      const entry = getNumber("entry");
+      const stop = getNumber("stop");
+      const capital = getNumber("capital");
+      const investedAmount = getNumber("spotInvestment");
+      const currency = getCurrentCurrency();
+
+      if (
+        [entry, capital, investedAmount]
+          .some(function (value) { return value === null; })
+      ) {
+        clearResults();
+        return null;
+      }
+
+      if (entry <= 0 || capital <= 0 || investedAmount <= 0) {
+        clearResults();
+        setError("قیمت خرید، کل سرمایه و مبلغ خرید باید بزرگ‌تر از صفر باشند.");
+        return null;
+      }
+
+      if (investedAmount > capital) {
+        clearResults();
+        setError("مبلغ خرید نمی‌تواند بیشتر از کل سرمایه واردشده باشد.");
+        return null;
+      }
+
+      if (stop !== null && stop <= 0) {
+        clearResults();
+        setError("حد ضرر اسپات باید بزرگ‌تر از صفر باشد یا خالی بماند.");
+        return null;
+      }
+
+      if (stop !== null && stop >= entry) {
+        clearResults();
+        setError("در خرید اسپات، حد ضرر باید پایین‌تر از قیمت خرید باشد.");
+        return null;
+      }
+
+      const quantity = investedAmount / entry;
+      const allocationPercent = (investedAmount / capital) * 100;
+
+      const riskDistance =
+        stop !== null
+          ? entry - stop
+          : null;
+
+      const riskAmount =
+        Number.isFinite(riskDistance)
+          ? riskDistance * quantity
+          : null;
+
+      const riskPercent =
+        Number.isFinite(riskAmount)
+          ? (riskAmount / capital) * 100
+          : null;
+
+      document.getElementById("quantityResult").textContent =
+        formatNumber(quantity, 8);
+
+      document.getElementById("positionValueResult").textContent =
+        formatMoney(investedAmount, currency);
+
+      document.getElementById("marginResult").textContent =
+        formatNumber(allocationPercent, 2) + "%";
+
+      document.getElementById("riskAmountResult").textContent =
+        Number.isFinite(riskAmount)
+          ? formatMoney(riskAmount, currency)
+          : "تعیین نشده";
+
+      document.getElementById("liquidationResult").textContent =
+        Number.isFinite(riskPercent)
+          ? formatNumber(riskPercent, 2) + "%"
+          : "تعیین نشده";
+
+      const calculation = {
+        tradeType: "spot",
+        currency: currency,
+        side: "long",
+        entry: entry,
+        stop: stop,
+        capital: capital,
+        leverage: 1,
+        riskPercent: riskPercent,
+        riskAmount: riskAmount,
+        riskDistance: riskDistance,
+        quantity: quantity,
+        positionValue: investedAmount,
+        requiredMargin: null,
+        liquidationPrice: null,
+        investedAmount: investedAmount,
+        allocationPercent: allocationPercent,
+        returnBase: investedAmount
+      };
+
+      renderTargetCalculations(calculation);
+      return calculation;
+    }
+
+    function calculateTrade() {
+      setError("");
+
+      return selectedTradeType === "spot"
+        ? calculateSpotTrade()
+        : calculateFuturesTrade();
     }
 
     function openJournalDatabase() {
@@ -1248,19 +1710,44 @@
 
     async function saveTradeToJournal() {
       const calculation = calculateTrade();
-      const symbol = document.getElementById("symbol").value.trim().toUpperCase();
-      const tradeNote = document.getElementById("tradeNote").value.trim();
-      if (!symbol) { showToast("نماد ارز را وارد کن؛ مثلاً BTCUSDT.", true); return; }
-      if (!calculation) { showToast("ابتدا اطلاعات اصلی معامله را کامل و صحیح وارد کن.", true); return; }
+      const symbol =
+        document.getElementById("symbol").value
+          .trim()
+          .toUpperCase();
+
+      const tradeNote =
+        document.getElementById("tradeNote").value.trim();
+
+      if (!symbol) {
+        showToast(
+          selectedTradeType === "spot"
+            ? "نماد ارز را وارد کن؛ مثلاً BTC."
+            : "نماد ارز را وارد کن؛ مثلاً BTCUSDT.",
+          true
+        );
+        return;
+      }
+
+      if (!calculation) {
+        showToast(
+          selectedTradeType === "spot"
+            ? "قیمت خرید، کل سرمایه و مبلغ خرید را کامل و صحیح وارد کن."
+            : "اطلاعات اصلی معامله فیوچرز را کامل و صحیح وارد کن.",
+          true
+        );
+        return;
+      }
 
       const saveButton = document.getElementById("saveTradeButton");
       saveButton.disabled = true;
       saveButton.textContent = "در حال ذخیره...";
 
       const trade = {
+        tradeType: calculation.tradeType,
+        currency: calculation.currency,
         symbol: symbol,
         tradeNote: tradeNote,
-        side: selectedSide,
+        side: calculation.side,
         entry: calculation.entry,
         stop: calculation.stop,
         tp1: getNumber("tp1"),
@@ -1274,10 +1761,23 @@
         positionValue: calculation.positionValue,
         requiredMargin: calculation.requiredMargin,
         liquidationPrice: calculation.liquidationPrice,
-        screenshotBlob: entryScreenshotFile ? entryScreenshotFile.slice(0, entryScreenshotFile.size, entryScreenshotFile.type) : null,
-        screenshotName: entryScreenshotFile ? entryScreenshotFile.name : "",
+        investedAmount: calculation.investedAmount,
+        allocationPercent: calculation.allocationPercent,
+        screenshotBlob:
+          entryScreenshotFile
+            ? entryScreenshotFile.slice(
+                0,
+                entryScreenshotFile.size,
+                entryScreenshotFile.type
+              )
+            : null,
+        screenshotName:
+          entryScreenshotFile
+            ? entryScreenshotFile.name
+            : "",
         status: "open",
         exitPrice: null,
+        totalFees: null,
         actualProfitLoss: null,
         actualR: null,
         actualReturnPercent: null,
@@ -1293,7 +1793,12 @@
         removeEntryScreenshot();
         document.getElementById("newTradeDetails").open = false;
         await renderJournalTrades();
-        showToast("معامله در ژورنال ذخیره شد.");
+
+        showToast(
+          calculation.tradeType === "spot"
+            ? "خرید اسپات در ژورنال ذخیره شد."
+            : "معامله فیوچرز در ژورنال ذخیره شد."
+        );
       } catch (error) {
         console.error(error);
         showToast("ذخیره معامله ناموفق بود.", true);
@@ -1316,19 +1821,108 @@
     }
 
     function createJournalGrid(trade) {
-      const items = [
-        ["ورود", formatNumber(trade.entry, 6)],
-        ["استاپ", formatNumber(trade.stop, 6)],
-        ["هدف اول", trade.tp1 == null ? "—" : formatNumber(trade.tp1, 6)],
-        ["هدف دوم", trade.tp2 == null ? "—" : formatNumber(trade.tp2, 6)],
-        ["هدف سوم", trade.tp3 == null ? "—" : formatNumber(trade.tp3, 6)],
-        ["ریسک", formatNumber(trade.riskAmount, 2) + " $"],
-        ["حجم", formatNumber(trade.quantity, 6)],
-        ["مارجین", formatNumber(trade.requiredMargin, 2) + " $"]
-      ];
-      return '<div class="journal-grid">' + items.map(function (item) {
-        return "<div><span>" + item[0] + "</span><strong>" + item[1] + "</strong></div>";
-      }).join("") + "</div>";
+      const tradeType = normalizeTradeType(trade);
+      const currency = getTradeCurrency(trade);
+
+      let items;
+
+      if (tradeType === "spot") {
+        const investedAmount =
+          Number.isFinite(Number(trade.investedAmount))
+            ? Number(trade.investedAmount)
+            : Number(trade.positionValue);
+
+        const allocationPercent =
+          Number.isFinite(Number(trade.allocationPercent))
+            ? Number(trade.allocationPercent)
+            : (
+                Number(trade.capital) > 0
+                  ? (investedAmount / Number(trade.capital)) * 100
+                  : NaN
+              );
+
+        items = [
+          ["قیمت خرید", formatTradePrice(trade.entry, currency)],
+          ["مبلغ خرید", formatMoney(investedAmount, currency)],
+          ["مقدار دارایی", formatNumber(trade.quantity, 8)],
+          [
+            "تخصیص سرمایه",
+            Number.isFinite(allocationPercent)
+              ? formatNumber(allocationPercent, 2) + "%"
+              : "—"
+          ],
+          [
+            "حد ضرر",
+            trade.stop == null
+              ? "ثبت نشده"
+              : formatTradePrice(trade.stop, currency)
+          ],
+          [
+            "ریسک تا استاپ",
+            trade.riskAmount == null
+              ? "تعیین نشده"
+              : formatMoney(trade.riskAmount, currency)
+          ],
+          [
+            "هدف اول",
+            trade.tp1 == null
+              ? "—"
+              : formatTradePrice(trade.tp1, currency)
+          ],
+          [
+            "هدف دوم",
+            trade.tp2 == null
+              ? "—"
+              : formatTradePrice(trade.tp2, currency)
+          ],
+          [
+            "هدف سوم",
+            trade.tp3 == null
+              ? "—"
+              : formatTradePrice(trade.tp3, currency)
+          ]
+        ];
+      } else {
+        items = [
+          ["ورود", formatTradePrice(trade.entry, "USD")],
+          ["استاپ", formatTradePrice(trade.stop, "USD")],
+          [
+            "هدف اول",
+            trade.tp1 == null
+              ? "—"
+              : formatTradePrice(trade.tp1, "USD")
+          ],
+          [
+            "هدف دوم",
+            trade.tp2 == null
+              ? "—"
+              : formatTradePrice(trade.tp2, "USD")
+          ],
+          [
+            "هدف سوم",
+            trade.tp3 == null
+              ? "—"
+              : formatTradePrice(trade.tp3, "USD")
+          ],
+          ["ریسک", formatMoney(trade.riskAmount, "USD")],
+          ["حجم", formatNumber(trade.quantity, 6)],
+          ["مارجین", formatMoney(trade.requiredMargin, "USD")]
+        ];
+      }
+
+      return (
+        '<div class="journal-grid">' +
+        items.map(function (item) {
+          return (
+            "<div><span>" +
+            item[0] +
+            "</span><strong>" +
+            item[1] +
+            "</strong></div>"
+          );
+        }).join("") +
+        "</div>"
+      );
     }
 
     async function renderJournalTrades() {
@@ -1349,8 +1943,27 @@
           header.className = "journal-card-header";
           const title = document.createElement("strong");
           title.className = "journal-title";
-          title.textContent = (trade.symbol || "بدون نماد") + " — " + (trade.side === "short" ? "شورت" : "لانگ");
-          title.style.color = trade.side === "short" ? "var(--red)" : "var(--green)";
+
+          const tradeType = normalizeTradeType(trade);
+          const tradeCurrency = getTradeCurrency(trade);
+
+          title.textContent =
+            (trade.symbol || "بدون نماد") +
+            " — " +
+            (
+              tradeType === "spot"
+                ? "اسپات"
+                : trade.side === "short"
+                  ? "فیوچرز شورت"
+                  : "فیوچرز لانگ"
+            );
+
+          title.style.color =
+            tradeType === "spot"
+              ? "#f2b84b"
+              : trade.side === "short"
+                ? "var(--red)"
+                : "var(--green)";
           const date = document.createElement("span");
           date.className = "journal-date";
           date.textContent = new Date(trade.createdAt || Date.now()).toLocaleString("fa-IR");
@@ -1381,13 +1994,48 @@
           if (trade.status === "closed") {
             const result = document.createElement("div");
             result.className = "result-box closed" + (Number(trade.actualProfitLoss) < 0 ? " loss" : "");
+            const resultR =
+              trade.actualR == null ||
+              trade.actualR === "" ||
+              !Number.isFinite(Number(trade.actualR))
+                ? "تعریف نشده"
+                : formatNumber(trade.actualR, 2) + " R";
+
             result.innerHTML =
               "<strong>نتیجه معامله</strong><br>" +
-              "قیمت خروج: <b dir='ltr'>" + formatNumber(trade.exitPrice, 6) + "</b><br>" +
-              "سود/زیان: <b dir='ltr' style='color:" + (Number(trade.actualProfitLoss) >= 0 ? "var(--green)" : "var(--red)") + "'>" + formatNumber(trade.actualProfitLoss, 2) + " $</b><br>" +
-              "R واقعی: <b dir='ltr'>" + formatNumber(trade.actualR, 2) + " R</b><br>" +
-              "بازده: <b dir='ltr'>" + formatNumber(trade.actualReturnPercent, 2) + "%</b>" +
-              (trade.exitNote ? "<br>یادداشت خروج: " + escapeHtml(trade.exitNote) : "");
+              "قیمت خروج: <b dir='ltr'>" +
+              formatTradePrice(trade.exitPrice, tradeCurrency) +
+              "</b><br>" +
+              "سود/زیان: <b dir='ltr' style='color:" +
+              (
+                Number(trade.actualProfitLoss) >= 0
+                  ? "var(--green)"
+                  : "var(--red)"
+              ) +
+              "'>" +
+              formatMoney(trade.actualProfitLoss, tradeCurrency) +
+              "</b><br>" +
+              "R واقعی: <b dir='ltr'>" +
+              resultR +
+              "</b><br>" +
+              "بازده: <b dir='ltr'>" +
+              formatNumber(trade.actualReturnPercent, 2) +
+              "%</b>" +
+              (
+                trade.totalFees != null &&
+                Number.isFinite(Number(trade.totalFees)) &&
+                Number(trade.totalFees) > 0
+                  ? "<br>کل کارمزد: <b dir='ltr'>" +
+                    formatMoney(trade.totalFees, tradeCurrency) +
+                    "</b>"
+                  : ""
+              ) +
+              (
+                trade.exitNote
+                  ? "<br>یادداشت خروج: " +
+                    escapeHtml(trade.exitNote)
+                  : ""
+              );
             card.appendChild(result);
 
             if (trade.exitScreenshotBlob) {
@@ -1432,64 +2080,278 @@
 
     async function toggleTradeResultForm(tradeId, card) {
       const oldForm = card.querySelector(".trade-result-form");
-      if (oldForm) { oldForm.remove(); return; }
+
+      if (oldForm) {
+        oldForm.remove();
+        return;
+      }
 
       const trade = await getTradeById(tradeId);
-      if (!trade) { showToast("معامله پیدا نشد.", true); return; }
 
+      if (!trade) {
+        showToast("معامله پیدا نشد.", true);
+        return;
+      }
+
+      const tradeType = normalizeTradeType(trade);
+      const currency = getTradeCurrency(trade);
       const form = document.createElement("div");
+
       form.className = "trade-result-form";
-      form.innerHTML =
-        '<strong style="display:block;margin-bottom:14px;color:var(--muted);">ثبت نتیجه معامله</strong>' +
-        '<div class="field"><label>قیمت خروج</label><input data-field="exitPrice" type="number" inputmode="decimal" step="any" min="0" value="' + (trade.exitPrice ?? "") + '"></div>' +
-        '<div class="two-grid">' +
-          '<div class="field"><label>سود یا زیان واقعی ($)</label><input data-field="actualProfitLoss" type="number" inputmode="decimal" step="any" value="' + (trade.actualProfitLoss ?? "") + '"></div>' +
-          '<div class="field"><label>R واقعی</label><input data-field="actualR" type="number" inputmode="decimal" step="any" value="' + (trade.actualR ?? "") + '"></div>' +
-        '</div>' +
-        '<div class="field"><label>بازده واقعی (%)</label><input data-field="actualReturnPercent" type="number" inputmode="decimal" step="any" value="' + (trade.actualReturnPercent ?? "") + '"></div>' +
-        '<div class="field"><label>یادداشت خروج</label><textarea data-field="exitNote" maxlength="1000" placeholder="علت خروج، اشتباه، نکته آموزشی و...">' + escapeHtml(trade.exitNote || "") + '</textarea></div>' +
-        '<label class="upload-label">افزودن اسکرین‌شات نقطه خروج<input data-field="exitScreenshot" type="file" accept="image/*" style="display:none;"></label>' +
-        '<div class="journal-actions"><button type="button" class="primary-button" data-action="save">ذخیره نتیجه</button><button type="button" class="secondary-button" data-action="cancel">انصراف</button></div>';
 
-      form.querySelector('[data-action="cancel"]').addEventListener("click", function () { form.remove(); });
-      form.querySelector('[data-action="save"]').addEventListener("click", async function () {
-        const exitPrice = Number(form.querySelector('[data-field="exitPrice"]').value);
-        const actualProfitLoss = Number(form.querySelector('[data-field="actualProfitLoss"]').value);
-        const actualR = Number(form.querySelector('[data-field="actualR"]').value);
-        const actualReturnPercent = Number(form.querySelector('[data-field="actualReturnPercent"]').value);
-        const exitNote = form.querySelector('[data-field="exitNote"]').value.trim();
-        const exitFileInput = form.querySelector('[data-field="exitScreenshot"]');
-        const exitFile = exitFileInput.files && exitFileInput.files[0];
+      if (tradeType === "spot") {
+        form.innerHTML =
+          '<strong style="display:block;margin-bottom:14px;color:var(--muted);">ثبت نتیجه خرید اسپات</strong>' +
+          '<div class="field"><label>قیمت فروش کامل</label><input data-field="exitPrice" type="number" inputmode="decimal" step="any" min="0" value="' + (trade.exitPrice ?? "") + '"></div>' +
+          '<div class="field"><label>کل کارمزد خرید و فروش (' + getCurrencyTitle(currency) + ')</label><input data-field="totalFees" type="number" inputmode="decimal" step="any" min="0" value="' + (trade.totalFees ?? 0) + '"></div>' +
+          '<div class="two-grid">' +
+            '<div class="field"><label>سود یا زیان محاسبه‌شده</label><input data-field="actualProfitLoss" type="text" readonly></div>' +
+            '<div class="field"><label>R واقعی</label><input data-field="actualR" type="text" readonly></div>' +
+          '</div>' +
+          '<div class="field"><label>بازده واقعی</label><input data-field="actualReturnPercent" type="text" readonly></div>' +
+          '<div class="field"><label>یادداشت خروج</label><textarea data-field="exitNote" maxlength="1000" placeholder="علت فروش، نکته آموزشی و...">' + escapeHtml(trade.exitNote || "") + '</textarea></div>' +
+          '<label class="upload-label">افزودن اسکرین‌شات نقطه فروش<input data-field="exitScreenshot" type="file" accept="image/*" style="display:none;"></label>' +
+          '<div class="journal-actions"><button type="button" class="primary-button" data-action="save">ذخیره نتیجه</button><button type="button" class="secondary-button" data-action="cancel">انصراف</button></div>';
 
-        if (![exitPrice, actualProfitLoss, actualR, actualReturnPercent].every(Number.isFinite) || exitPrice <= 0) {
-          showToast("قیمت خروج، سود/زیان، R و بازده را کامل وارد کن.", true);
-          return;
+        const exitPriceInput =
+          form.querySelector('[data-field="exitPrice"]');
+
+        const totalFeesInput =
+          form.querySelector('[data-field="totalFees"]');
+
+        const pnlInput =
+          form.querySelector('[data-field="actualProfitLoss"]');
+
+        const rInput =
+          form.querySelector('[data-field="actualR"]');
+
+        const returnInput =
+          form.querySelector('[data-field="actualReturnPercent"]');
+
+        function calculateSpotOutcome() {
+          const exitPrice = Number(exitPriceInput.value);
+          const totalFees = Number(totalFeesInput.value || 0);
+          const quantity = Number(trade.quantity);
+
+          const investedAmount =
+            Number.isFinite(Number(trade.investedAmount))
+              ? Number(trade.investedAmount)
+              : Number(trade.positionValue);
+
+          if (
+            !Number.isFinite(exitPrice) ||
+            exitPrice <= 0 ||
+            !Number.isFinite(totalFees) ||
+            totalFees < 0 ||
+            !Number.isFinite(quantity) ||
+            quantity <= 0 ||
+            !Number.isFinite(investedAmount) ||
+            investedAmount <= 0
+          ) {
+            pnlInput.value = "";
+            rInput.value = "";
+            returnInput.value = "";
+            return null;
+          }
+
+          const actualProfitLoss =
+            (exitPrice - Number(trade.entry)) * quantity -
+            totalFees;
+
+          const actualReturnPercent =
+            (actualProfitLoss / investedAmount) * 100;
+
+          const riskAmount = Number(trade.riskAmount);
+
+          const actualR =
+            trade.riskAmount != null &&
+            Number.isFinite(riskAmount) &&
+            riskAmount > 0
+              ? actualProfitLoss / riskAmount
+              : null;
+
+          pnlInput.value =
+            formatMoney(actualProfitLoss, currency);
+
+          rInput.value =
+            Number.isFinite(actualR)
+              ? formatNumber(actualR, 2) + " R"
+              : "بدون حد ضرر؛ تعریف نشده";
+
+          returnInput.value =
+            formatNumber(actualReturnPercent, 2) + "%";
+
+          return {
+            exitPrice: exitPrice,
+            totalFees: totalFees,
+            actualProfitLoss: actualProfitLoss,
+            actualR: actualR,
+            actualReturnPercent: actualReturnPercent
+          };
         }
 
-        trade.status = "closed";
-        trade.exitPrice = exitPrice;
-        trade.actualProfitLoss = actualProfitLoss;
-        trade.actualR = actualR;
-        trade.actualReturnPercent = actualReturnPercent;
-        trade.exitNote = exitNote;
-        trade.closedAt = Date.now();
-        if (exitFile) {
-          trade.exitScreenshotBlob = exitFile.slice(0, exitFile.size, exitFile.type);
-          trade.exitScreenshotName = exitFile.name;
-        }
+        exitPriceInput.addEventListener("input", calculateSpotOutcome);
+        totalFeesInput.addEventListener("input", calculateSpotOutcome);
+        calculateSpotOutcome();
 
-        try {
-          await updateTradeInDatabase(trade);
-          await renderJournalTrades();
-          showToast("نتیجه معامله ذخیره شد.");
-        } catch (error) {
-          console.error(error);
-          showToast("ذخیره نتیجه ناموفق بود.", true);
-        }
-      });
+        form.querySelector('[data-action="save"]')
+          .addEventListener("click", async function () {
+            const outcome = calculateSpotOutcome();
+
+            if (!outcome) {
+              showToast(
+                "قیمت فروش را صحیح وارد کن. کارمزد می‌تواند صفر باشد.",
+                true
+              );
+              return;
+            }
+
+            const exitNote =
+              form.querySelector('[data-field="exitNote"]')
+                .value
+                .trim();
+
+            const exitFileInput =
+              form.querySelector('[data-field="exitScreenshot"]');
+
+            const exitFile =
+              exitFileInput.files &&
+              exitFileInput.files[0];
+
+            trade.status = "closed";
+            trade.exitPrice = outcome.exitPrice;
+            trade.totalFees = outcome.totalFees;
+            trade.actualProfitLoss = outcome.actualProfitLoss;
+            trade.actualR = outcome.actualR;
+            trade.actualReturnPercent =
+              outcome.actualReturnPercent;
+            trade.exitNote = exitNote;
+            trade.closedAt = Date.now();
+
+            if (exitFile) {
+              trade.exitScreenshotBlob =
+                exitFile.slice(
+                  0,
+                  exitFile.size,
+                  exitFile.type
+                );
+
+              trade.exitScreenshotName = exitFile.name;
+            }
+
+            try {
+              await updateTradeInDatabase(trade);
+              await renderJournalTrades();
+              showToast("نتیجه خرید اسپات ذخیره شد.");
+            } catch (error) {
+              console.error(error);
+              showToast("ذخیره نتیجه ناموفق بود.", true);
+            }
+          });
+      } else {
+        form.innerHTML =
+          '<strong style="display:block;margin-bottom:14px;color:var(--muted);">ثبت نتیجه معامله فیوچرز</strong>' +
+          '<div class="field"><label>قیمت خروج</label><input data-field="exitPrice" type="number" inputmode="decimal" step="any" min="0" value="' + (trade.exitPrice ?? "") + '"></div>' +
+          '<div class="two-grid">' +
+            '<div class="field"><label>سود یا زیان واقعی ($)</label><input data-field="actualProfitLoss" type="number" inputmode="decimal" step="any" value="' + (trade.actualProfitLoss ?? "") + '"></div>' +
+            '<div class="field"><label>R واقعی</label><input data-field="actualR" type="number" inputmode="decimal" step="any" value="' + (trade.actualR ?? "") + '"></div>' +
+          '</div>' +
+          '<div class="field"><label>بازده واقعی (%)</label><input data-field="actualReturnPercent" type="number" inputmode="decimal" step="any" value="' + (trade.actualReturnPercent ?? "") + '"></div>' +
+          '<div class="field"><label>یادداشت خروج</label><textarea data-field="exitNote" maxlength="1000" placeholder="علت خروج، اشتباه، نکته آموزشی و...">' + escapeHtml(trade.exitNote || "") + '</textarea></div>' +
+          '<label class="upload-label">افزودن اسکرین‌شات نقطه خروج<input data-field="exitScreenshot" type="file" accept="image/*" style="display:none;"></label>' +
+          '<div class="journal-actions"><button type="button" class="primary-button" data-action="save">ذخیره نتیجه</button><button type="button" class="secondary-button" data-action="cancel">انصراف</button></div>';
+
+        form.querySelector('[data-action="save"]')
+          .addEventListener("click", async function () {
+            const exitPrice =
+              Number(
+                form.querySelector('[data-field="exitPrice"]').value
+              );
+
+            const actualProfitLoss =
+              Number(
+                form.querySelector('[data-field="actualProfitLoss"]').value
+              );
+
+            const actualR =
+              Number(
+                form.querySelector('[data-field="actualR"]').value
+              );
+
+            const actualReturnPercent =
+              Number(
+                form.querySelector('[data-field="actualReturnPercent"]').value
+              );
+
+            const exitNote =
+              form.querySelector('[data-field="exitNote"]')
+                .value
+                .trim();
+
+            const exitFileInput =
+              form.querySelector('[data-field="exitScreenshot"]');
+
+            const exitFile =
+              exitFileInput.files &&
+              exitFileInput.files[0];
+
+            if (
+              ![
+                exitPrice,
+                actualProfitLoss,
+                actualR,
+                actualReturnPercent
+              ].every(Number.isFinite) ||
+              exitPrice <= 0
+            ) {
+              showToast(
+                "قیمت خروج، سود/زیان، R و بازده را کامل وارد کن.",
+                true
+              );
+              return;
+            }
+
+            trade.status = "closed";
+            trade.exitPrice = exitPrice;
+            trade.actualProfitLoss = actualProfitLoss;
+            trade.actualR = actualR;
+            trade.actualReturnPercent =
+              actualReturnPercent;
+            trade.exitNote = exitNote;
+            trade.closedAt = Date.now();
+
+            if (exitFile) {
+              trade.exitScreenshotBlob =
+                exitFile.slice(
+                  0,
+                  exitFile.size,
+                  exitFile.type
+                );
+
+              trade.exitScreenshotName = exitFile.name;
+            }
+
+            try {
+              await updateTradeInDatabase(trade);
+              await renderJournalTrades();
+              showToast("نتیجه معامله فیوچرز ذخیره شد.");
+            } catch (error) {
+              console.error(error);
+              showToast("ذخیره نتیجه ناموفق بود.", true);
+            }
+          });
+      }
+
+      form.querySelector('[data-action="cancel"]')
+        .addEventListener("click", function () {
+          form.remove();
+        });
 
       card.insertBefore(form, card.lastElementChild);
-      form.scrollIntoView({ behavior: "smooth", block: "nearest" });
+      form.scrollIntoView({
+        behavior: "smooth",
+        block: "nearest"
+      });
     }
 
     async function deleteSavedTrade(tradeId) {
@@ -2122,11 +2984,23 @@
     }
 
     async function renderStatement() {
-      const empty = document.getElementById("statementEmptyMessage");
-      const content = document.getElementById("statementContent");
-      const summary = document.getElementById("statementSummary");
-      const details = document.getElementById("statementDetails");
-      const chart = document.getElementById("statementChart");
+      const empty =
+        document.getElementById("statementEmptyMessage");
+
+      const content =
+        document.getElementById("statementContent");
+
+      const summary =
+        document.getElementById("statementSummary");
+
+      const details =
+        document.getElementById("statementDetails");
+
+      const chart =
+        document.getElementById("statementChart");
+
+      const currencyFilter =
+        document.getElementById("statementCurrencyFilter");
 
       empty.style.display = "block";
       content.hidden = true;
@@ -2134,86 +3008,408 @@
       details.innerHTML = "";
 
       try {
-        const closed = (await getTradesFromDatabase())
-          .filter(function (trade) { return trade.status === "closed" && Number.isFinite(Number(trade.actualProfitLoss)); })
-          .sort(function (a, b) { return Number(a.closedAt || a.createdAt || 0) - Number(b.closedAt || b.createdAt || 0); });
+        const allClosed =
+          (await getTradesFromDatabase())
+            .filter(function (trade) {
+              return (
+                trade.status === "closed" &&
+                trade.actualProfitLoss != null &&
+                Number.isFinite(
+                  Number(trade.actualProfitLoss)
+                )
+              );
+            })
+            .sort(function (a, b) {
+              return (
+                Number(a.closedAt || a.createdAt || 0) -
+                Number(b.closedAt || b.createdAt || 0)
+              );
+            });
 
-        if (!closed.length) {
-          empty.textContent = "برای نمایش استیتمنت، ابتدا نتیجه حداقل یک معامله را ثبت کن.";
+        if (!allClosed.length) {
+          empty.textContent =
+            "برای نمایش استیتمنت، ابتدا نتیجه حداقل یک معامله را ثبت کن.";
           return;
         }
 
-        const winners = closed.filter(function (trade) { return Number(trade.actualProfitLoss) > 0; });
-        const losers = closed.filter(function (trade) { return Number(trade.actualProfitLoss) < 0; });
-        const breakeven = closed.filter(function (trade) { return Number(trade.actualProfitLoss) === 0; });
-        const longs = closed.filter(function (trade) { return trade.side === "long"; });
-        const shorts = closed.filter(function (trade) { return trade.side === "short"; });
-        const grossProfit = winners.reduce(function (sum, trade) { return sum + Number(trade.actualProfitLoss); }, 0);
-        const grossLoss = Math.abs(losers.reduce(function (sum, trade) { return sum + Number(trade.actualProfitLoss); }, 0));
-        const netProfit = closed.reduce(function (sum, trade) { return sum + Number(trade.actualProfitLoss); }, 0);
-        const winRate = winners.length / closed.length * 100;
-        const averageWin = winners.length ? grossProfit / winners.length : 0;
-        const averageLoss = losers.length ? -grossLoss / losers.length : 0;
-        const profitFactor = grossLoss ? grossProfit / grossLoss : grossProfit > 0 ? Infinity : 0;
-        const expectancy = netProfit / closed.length;
-        const rValues = closed.map(function (trade) { return Number(trade.actualR); }).filter(Number.isFinite);
-        const totalR = rValues.reduce(function (sum, value) { return sum + value; }, 0);
-        const averageR = rValues.length ? totalR / rValues.length : 0;
-        const totalReturn = closed.reduce(function (sum, trade) {
-          const value = Number(trade.actualReturnPercent);
-          return sum + (Number.isFinite(value) ? value : 0);
-        }, 0);
-        const pnlValues = closed.map(function (trade) { return Number(trade.actualProfitLoss); });
-        const best = Math.max.apply(null, pnlValues);
-        const worst = Math.min.apply(null, pnlValues);
+        const availableCurrencies =
+          new Set(
+            allClosed.map(function (trade) {
+              return getTradeCurrency(trade);
+            })
+          );
+
+        Array.from(currencyFilter.options)
+          .forEach(function (option) {
+            option.disabled =
+              !availableCurrencies.has(option.value);
+          });
+
+        if (
+          !availableCurrencies.has(currencyFilter.value)
+        ) {
+          currencyFilter.value =
+            Array.from(availableCurrencies)[0] || "USD";
+        }
+
+        const selectedCurrency =
+          currencyFilter.value;
+
+        const closed =
+          allClosed.filter(function (trade) {
+            return (
+              getTradeCurrency(trade) ===
+              selectedCurrency
+            );
+          });
+
+        if (!closed.length) {
+          empty.textContent =
+            "در واحد پول انتخاب‌شده، معامله بسته‌شده‌ای وجود ندارد.";
+          return;
+        }
+
+        const winners =
+          closed.filter(function (trade) {
+            return Number(trade.actualProfitLoss) > 0;
+          });
+
+        const losers =
+          closed.filter(function (trade) {
+            return Number(trade.actualProfitLoss) < 0;
+          });
+
+        const breakeven =
+          closed.filter(function (trade) {
+            return Number(trade.actualProfitLoss) === 0;
+          });
+
+        const futuresLongs =
+          closed.filter(function (trade) {
+            return (
+              normalizeTradeType(trade) === "futures" &&
+              trade.side !== "short"
+            );
+          });
+
+        const futuresShorts =
+          closed.filter(function (trade) {
+            return (
+              normalizeTradeType(trade) === "futures" &&
+              trade.side === "short"
+            );
+          });
+
+        const spotTrades =
+          closed.filter(function (trade) {
+            return normalizeTradeType(trade) === "spot";
+          });
+
+        const grossProfit =
+          winners.reduce(function (sum, trade) {
+            return (
+              sum +
+              Number(trade.actualProfitLoss)
+            );
+          }, 0);
+
+        const grossLoss =
+          Math.abs(
+            losers.reduce(function (sum, trade) {
+              return (
+                sum +
+                Number(trade.actualProfitLoss)
+              );
+            }, 0)
+          );
+
+        const netProfit =
+          closed.reduce(function (sum, trade) {
+            return (
+              sum +
+              Number(trade.actualProfitLoss)
+            );
+          }, 0);
+
+        const winRate =
+          (winners.length / closed.length) * 100;
+
+        const averageWin =
+          winners.length
+            ? grossProfit / winners.length
+            : 0;
+
+        const averageLoss =
+          losers.length
+            ? -grossLoss / losers.length
+            : 0;
+
+        const profitFactor =
+          grossLoss
+            ? grossProfit / grossLoss
+            : grossProfit > 0
+              ? Infinity
+              : 0;
+
+        const expectancy =
+          netProfit / closed.length;
+
+        const rValues =
+          closed
+            .filter(function (trade) {
+              return (
+                trade.actualR != null &&
+                trade.actualR !== "" &&
+                Number.isFinite(
+                  Number(trade.actualR)
+                )
+              );
+            })
+            .map(function (trade) {
+              return Number(trade.actualR);
+            });
+
+        const totalR =
+          rValues.reduce(function (sum, value) {
+            return sum + value;
+          }, 0);
+
+        const averageR =
+          rValues.length
+            ? totalR / rValues.length
+            : 0;
+
+        const totalReturn =
+          closed.reduce(function (sum, trade) {
+            const value =
+              Number(trade.actualReturnPercent);
+
+            return (
+              sum +
+              (
+                Number.isFinite(value)
+                  ? value
+                  : 0
+              )
+            );
+          }, 0);
+
+        const pnlValues =
+          closed.map(function (trade) {
+            return Number(trade.actualProfitLoss);
+          });
+
+        const best =
+          Math.max.apply(null, pnlValues);
+
+        const worst =
+          Math.min.apply(null, pnlValues);
 
         let cumulative = 0;
         let peak = 0;
         let maxDrawdown = 0;
-        const cumulativeValues = closed.map(function (trade) {
-          cumulative += Number(trade.actualProfitLoss);
-          peak = Math.max(peak, cumulative);
-          maxDrawdown = Math.max(maxDrawdown, peak - cumulative);
-          return cumulative;
-        });
 
-        const streaks = calculateStreaks(closed);
-        const longWins = longs.filter(function (trade) { return Number(trade.actualProfitLoss) > 0; }).length;
-        const shortWins = shorts.filter(function (trade) { return Number(trade.actualProfitLoss) > 0; }).length;
-        const longWinRate = longs.length ? longWins / longs.length * 100 : 0;
-        const shortWinRate = shorts.length ? shortWins / shorts.length * 100 : 0;
+        const cumulativeValues =
+          closed.map(function (trade) {
+            cumulative +=
+              Number(trade.actualProfitLoss);
+
+            peak =
+              Math.max(peak, cumulative);
+
+            maxDrawdown =
+              Math.max(
+                maxDrawdown,
+                peak - cumulative
+              );
+
+            return cumulative;
+          });
+
+        const streaks =
+          calculateStreaks(closed);
+
+        function groupWinRate(group) {
+          if (!group.length) return 0;
+
+          const wins =
+            group.filter(function (trade) {
+              return (
+                Number(trade.actualProfitLoss) > 0
+              );
+            }).length;
+
+          return (wins / group.length) * 100;
+        }
 
         summary.innerHTML =
-          statementMetric("سود خالص", formatNumber(netProfit, 2) + " $", netProfit >= 0 ? "var(--green)" : "var(--red)") +
-          statementMetric("نرخ برد", formatNumber(winRate, 2) + "%", winRate >= 50 ? "var(--green)" : "var(--red)") +
-          statementMetric("Profit Factor", profitFactor === Infinity ? "∞" : formatNumber(profitFactor, 2)) +
-          statementMetric("حداکثر افت", formatNumber(maxDrawdown, 2) + " $", "var(--red)") +
-          statementMetric("مجموع R", formatNumber(totalR, 2) + " R") +
-          statementMetric("تعداد معاملات", formatNumber(closed.length, 0));
+          statementMetric(
+            "سود خالص",
+            formatMoney(
+              netProfit,
+              selectedCurrency
+            ),
+            netProfit >= 0
+              ? "var(--green)"
+              : "var(--red)"
+          ) +
+          statementMetric(
+            "نرخ برد",
+            formatNumber(winRate, 2) + "%",
+            winRate >= 50
+              ? "var(--green)"
+              : "var(--red)"
+          ) +
+          statementMetric(
+            "Profit Factor",
+            profitFactor === Infinity
+              ? "∞"
+              : formatNumber(profitFactor, 2)
+          ) +
+          statementMetric(
+            "حداکثر افت",
+            formatMoney(
+              maxDrawdown,
+              selectedCurrency
+            ),
+            "var(--red)"
+          ) +
+          statementMetric(
+            "مجموع R",
+            rValues.length
+              ? formatNumber(totalR, 2) + " R"
+              : "تعریف نشده"
+          ) +
+          statementMetric(
+            "تعداد معاملات",
+            formatNumber(closed.length, 0)
+          );
 
         details.innerHTML =
-          statementDetail("سود ناخالص", formatNumber(grossProfit, 2) + " $") +
-          statementDetail("زیان ناخالص", formatNumber(-grossLoss, 2) + " $") +
-          statementDetail("میانگین هر معامله", formatNumber(expectancy, 2) + " $") +
-          statementDetail("میانگین معامله برنده", formatNumber(averageWin, 2) + " $") +
-          statementDetail("میانگین معامله بازنده", formatNumber(averageLoss, 2) + " $") +
-          statementDetail("بهترین معامله", formatNumber(best, 2) + " $") +
-          statementDetail("بدترین معامله", formatNumber(worst, 2) + " $") +
-          statementDetail("میانگین R", formatNumber(averageR, 2) + " R") +
-          statementDetail("جمع بازده ثبت‌شده", formatNumber(totalReturn, 2) + "%") +
-          statementDetail("برنده / بازنده / سربه‌سر", winners.length + " / " + losers.length + " / " + breakeven.length) +
-          statementDetail("بیشترین برد متوالی", String(streaks.maxWin)) +
-          statementDetail("بیشترین باخت متوالی", String(streaks.maxLoss)) +
-          statementDetail("لانگ؛ تعداد و نرخ برد", longs.length + " | " + formatNumber(longWinRate, 2) + "%") +
-          statementDetail("شورت؛ تعداد و نرخ برد", shorts.length + " | " + formatNumber(shortWinRate, 2) + "%");
+          statementDetail(
+            "واحد محاسبه",
+            getCurrencyTitle(selectedCurrency)
+          ) +
+          statementDetail(
+            "سود ناخالص",
+            formatMoney(
+              grossProfit,
+              selectedCurrency
+            )
+          ) +
+          statementDetail(
+            "زیان ناخالص",
+            formatMoney(
+              -grossLoss,
+              selectedCurrency
+            )
+          ) +
+          statementDetail(
+            "میانگین هر معامله",
+            formatMoney(
+              expectancy,
+              selectedCurrency
+            )
+          ) +
+          statementDetail(
+            "میانگین معامله برنده",
+            formatMoney(
+              averageWin,
+              selectedCurrency
+            )
+          ) +
+          statementDetail(
+            "میانگین معامله بازنده",
+            formatMoney(
+              averageLoss,
+              selectedCurrency
+            )
+          ) +
+          statementDetail(
+            "بهترین معامله",
+            formatMoney(
+              best,
+              selectedCurrency
+            )
+          ) +
+          statementDetail(
+            "بدترین معامله",
+            formatMoney(
+              worst,
+              selectedCurrency
+            )
+          ) +
+          statementDetail(
+            "میانگین R",
+            rValues.length
+              ? formatNumber(averageR, 2) + " R"
+              : "تعریف نشده"
+          ) +
+          statementDetail(
+            "جمع بازده ثبت‌شده",
+            formatNumber(totalReturn, 2) + "%"
+          ) +
+          statementDetail(
+            "برنده / بازنده / سربه‌سر",
+            winners.length +
+              " / " +
+              losers.length +
+              " / " +
+              breakeven.length
+          ) +
+          statementDetail(
+            "بیشترین برد متوالی",
+            String(streaks.maxWin)
+          ) +
+          statementDetail(
+            "بیشترین باخت متوالی",
+            String(streaks.maxLoss)
+          ) +
+          statementDetail(
+            "فیوچرز لانگ؛ تعداد و نرخ برد",
+            futuresLongs.length +
+              " | " +
+              formatNumber(
+                groupWinRate(futuresLongs),
+                2
+              ) +
+              "%"
+          ) +
+          statementDetail(
+            "فیوچرز شورت؛ تعداد و نرخ برد",
+            futuresShorts.length +
+              " | " +
+              formatNumber(
+                groupWinRate(futuresShorts),
+                2
+              ) +
+              "%"
+          ) +
+          statementDetail(
+            "اسپات؛ تعداد و نرخ برد",
+            spotTrades.length +
+              " | " +
+              formatNumber(
+                groupWinRate(spotTrades),
+                2
+              ) +
+              "%"
+          );
 
         empty.style.display = "none";
         content.hidden = false;
-        requestAnimationFrame(function () { drawStatementChart(chart, cumulativeValues); });
+
+        requestAnimationFrame(function () {
+          drawStatementChart(
+            chart,
+            cumulativeValues
+          );
+        });
       } catch (error) {
         console.error(error);
         empty.style.display = "block";
-        empty.textContent = "خواندن اطلاعات استیتمنت ناموفق بود.";
+        empty.textContent =
+          "خواندن اطلاعات استیتمنت ناموفق بود.";
       }
     }
 
@@ -2421,7 +3617,7 @@
     });
 
     setupTelegram();
-    calculateTrade();
+    updateTradeModeUI();
   </script>
 </body>
 </html>
