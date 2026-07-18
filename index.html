@@ -824,14 +824,18 @@
           رتبه‌بندی بازار با قیمت زنده بایننس نمایش داده می‌شود.
         </div>
         <button
-          id="marketRefreshButton"
+          id="marketReconnectButton"
           type="button"
           class="secondary-button market-refresh-button"
-          onclick="refreshMarketData(true)"
+          onclick="reconnectLiveMarket()"
         >
-          تازه‌سازی
+          اتصال مجدد
         </button>
       </div>
+
+      <p class="note" style="margin:-3px 0 12px;text-align:center;">
+        قیمت‌ها خودکار زنده می‌شوند؛ این دکمه فقط اتصال Binance را از نو برقرار می‌کند.
+      </p>
 
       <div id="marketLoading" class="market-loading">
         در حال دریافت قیمت‌های بازار...
@@ -924,6 +928,8 @@
     let marketRowElements = Object.create(null);
     let marketCoinsInView = [];
     let marketLastLiveUpdate = 0;
+    let marketRankingBlockedUntil = 0;
+    let marketReconnectButtonTimer = null;
 
     const MARKET_API_URL =
       "https://api.coingecko.com/api/v3/coins/markets" +
@@ -931,6 +937,7 @@
       "&sparkline=false&price_change_percentage=24h";
     const MARKET_CACHE_KEY = "cryptoMasterTopMarketCacheV1";
     const MARKET_RANKING_REFRESH_INTERVAL = 15 * 60 * 1000;
+    const MARKET_RATE_LIMIT_COOLDOWN = 15 * 60 * 1000;
     const MARKET_SOCKET_RECONNECT_DELAY = 4000;
     const BINANCE_STREAM_BASE = "wss://stream.binance.com:443/stream?streams=";
 
@@ -1521,6 +1528,13 @@
         clearInterval(marketRefreshTimer);
         marketRefreshTimer = null;
       }
+
+      if (marketReconnectButtonTimer) {
+        clearTimeout(marketReconnectButtonTimer);
+        marketReconnectButtonTimer = null;
+      }
+
+      setMarketReconnectButtonBusy(false);
       stopMarketWebSocket();
     }
 
@@ -1532,7 +1546,7 @@
       marketRefreshTimer = setInterval(function () {
         const marketView = document.getElementById("marketView");
         if (marketView && !marketView.hidden && document.visibilityState !== "hidden") {
-          refreshMarketData(false);
+          refreshMarketData();
         }
       }, MARKET_RANKING_REFRESH_INTERVAL);
     }
@@ -1562,7 +1576,7 @@
     async function showMarket() {
       setActiveView("marketView");
       renderCachedMarketData();
-      await refreshMarketData(false);
+      await refreshMarketData();
       startMarketAutoRefresh();
     }
 
@@ -1820,6 +1834,44 @@
       }, MARKET_SOCKET_RECONNECT_DELAY);
     }
 
+    function setMarketReconnectButtonBusy(isBusy) {
+      const button = document.getElementById("marketReconnectButton");
+      if (!button) return;
+
+      button.disabled = Boolean(isBusy);
+      button.textContent = isBusy ? "در حال اتصال..." : "اتصال مجدد";
+
+      if (!isBusy && marketReconnectButtonTimer) {
+        clearTimeout(marketReconnectButtonTimer);
+        marketReconnectButtonTimer = null;
+      }
+    }
+
+    function reconnectLiveMarket() {
+      const marketView = document.getElementById("marketView");
+      if (!marketView || marketView.hidden) return;
+
+      if (marketReconnectButtonTimer) {
+        clearTimeout(marketReconnectButtonTimer);
+        marketReconnectButtonTimer = null;
+      }
+
+      setMarketReconnectButtonBusy(true);
+      setMarketStatus("در حال برقراری دوباره اتصال زنده...");
+
+      stopMarketWebSocket();
+      marketSocketShouldReconnect = true;
+
+      marketReconnectButtonTimer = setTimeout(function () {
+        marketReconnectButtonTimer = null;
+        setMarketReconnectButtonBusy(false);
+      }, 5000);
+
+      setTimeout(function () {
+        connectMarketWebSocket();
+      }, 180);
+    }
+
     function connectMarketWebSocket() {
       if (!marketSocketShouldReconnect) return;
 
@@ -1857,6 +1909,7 @@
           if (marketSocket !== socket) return;
           const errorBox = document.getElementById("marketError");
           if (errorBox) errorBox.hidden = true;
+          setMarketReconnectButtonBusy(false);
           setMarketStatus("● اتصال زنده برقرار شد؛ منتظر اولین قیمت...");
         };
 
@@ -1875,6 +1928,7 @@
 
         socket.onerror = function () {
           if (marketSocket !== socket) return;
+          setMarketReconnectButtonBusy(false);
           setMarketStatus("خطا در اتصال زنده؛ تلاش مجدد...");
         };
 
@@ -1892,27 +1946,33 @@
       }
     }
 
-    async function refreshMarketData(manualRefresh) {
-      if (marketRequestInFlight) return;
+    async function refreshMarketData() {
+      if (marketRequestInFlight) {
+        connectMarketWebSocket();
+        return;
+      }
 
       const loading = document.getElementById("marketLoading");
       const errorBox = document.getElementById("marketError");
       const list = document.getElementById("marketList");
-      const button = document.getElementById("marketRefreshButton");
       const cache = getMarketCache();
+      const now = Date.now();
+
+      if (marketRankingBlockedUntil > now) {
+        if (!marketCoinsInView.length) renderCachedMarketData();
+        connectMarketWebSocket();
+        return;
+      }
 
       if (
-        !manualRefresh &&
         cache &&
-        Date.now() - Number(cache.fetchedAt || 0) < MARKET_RANKING_REFRESH_INTERVAL
+        now - Number(cache.fetchedAt || 0) < MARKET_RANKING_REFRESH_INTERVAL
       ) {
         connectMarketWebSocket();
         return;
       }
 
       marketRequestInFlight = true;
-      button.disabled = true;
-      button.textContent = "در حال دریافت...";
 
       if (!cache && !marketCoinsInView.length) {
         loading.hidden = false;
@@ -1929,13 +1989,18 @@
           cache: "no-store"
         });
 
+        if (response.status === 429) {
+          marketRankingBlockedUntil = Date.now() + MARKET_RATE_LIMIT_COOLDOWN;
+          throw new Error("RATE_LIMIT");
+        }
+
         if (!response.ok) {
           throw new Error("HTTP " + response.status);
         }
 
         const coins = await response.json();
         if (!Array.isArray(coins) || coins.length < 1) {
-          throw new Error("پاسخ بازار خالی است.");
+          throw new Error("EMPTY_RESPONSE");
         }
 
         const normalizedCoins = coins.slice(0, 10).map(function (coin, index) {
@@ -1951,6 +2016,8 @@
           };
         });
 
+        marketRankingBlockedUntil = 0;
+
         const fetchedAt = Date.now();
         saveMarketCache(normalizedCoins, fetchedAt);
         renderMarketRows(normalizedCoins, fetchedAt, "رتبه‌بندی تازه CoinGecko");
@@ -1958,27 +2025,24 @@
         stopMarketWebSocket();
         marketSocketShouldReconnect = true;
         connectMarketWebSocket();
-
-        if (manualRefresh) showToast("رتبه‌بندی تازه شد و اتصال زنده برقرار می‌شود.");
       } catch (error) {
         console.error("Market ranking error:", error);
 
         if (!marketCoinsInView.length) renderCachedMarketData();
 
-        errorBox.textContent =
-          "رتبه‌بندی تازه دریافت نشد؛ قیمت‌های قابل پشتیبانی همچنان از Binance زنده می‌شوند.";
-        errorBox.hidden = false;
+        if (error && error.message === "RATE_LIMIT") {
+          errorBox.textContent =
+            "محدودیت دریافت رتبه‌بندی فعال شد؛ تا ۱۵ دقیقه درخواست تازه ارسال نمی‌شود. قیمت‌های Binance همچنان زنده هستند.";
+        } else {
+          errorBox.textContent =
+            "رتبه‌بندی تازه دریافت نشد؛ آخرین فهرست ذخیره‌شده باقی می‌ماند و قیمت‌های Binance همچنان زنده هستند.";
+        }
 
+        errorBox.hidden = false;
         marketSocketShouldReconnect = true;
         connectMarketWebSocket();
-
-        if (manualRefresh) {
-          showToast("رتبه‌بندی تازه نشد؛ اتصال قیمت زنده دوباره برقرار می‌شود.", true);
-        }
       } finally {
         marketRequestInFlight = false;
-        button.disabled = false;
-        button.textContent = "تازه‌سازی";
       }
     }
 
@@ -2345,7 +2409,7 @@
       const marketView = document.getElementById("marketView");
       if (document.visibilityState === "visible" && marketView && !marketView.hidden) {
         startMarketAutoRefresh();
-        refreshMarketData(false);
+        refreshMarketData();
       } else if (document.visibilityState === "hidden") {
         stopMarketAutoRefresh();
       }
