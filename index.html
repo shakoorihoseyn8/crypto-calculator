@@ -341,6 +341,127 @@
       color: var(--muted);
       text-align: center;
       font-size: 12px;
+      overflow-wrap: anywhere;
+    }
+
+    .exit-upload-control {
+      display: grid;
+      gap: 9px;
+      margin-top: 12px;
+    }
+
+    .exit-upload-button {
+      width: 100%;
+      min-height: 48px;
+      padding: 10px;
+      border: 1px dashed var(--blue);
+      border-radius: 11px;
+      background: var(--input);
+      color: var(--muted);
+      font-size: 14px;
+      font-weight: bold;
+      cursor: pointer;
+      text-align: center;
+      touch-action: manipulation;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .exit-upload-button:active {
+      transform: scale(0.99);
+    }
+
+    .exit-file-input {
+      position: fixed !important;
+      left: -10000px !important;
+      top: 0 !important;
+      width: 1px !important;
+      height: 1px !important;
+      opacity: 0 !important;
+      pointer-events: none !important;
+    }
+
+    .exit-preview-box {
+      display: none;
+      gap: 9px;
+      padding: 9px;
+      border: 1px solid var(--card-border);
+      border-radius: 11px;
+      background: var(--input);
+    }
+
+    .exit-preview-box.visible {
+      display: grid;
+    }
+
+    .exit-preview-box img {
+      display: block;
+      width: 100%;
+      max-height: 360px;
+      object-fit: contain;
+      border: 1px solid var(--card-border);
+      border-radius: 8px;
+      background: rgba(0, 0, 0, 0.16);
+    }
+
+    .exit-remove-image {
+      width: 100%;
+      min-height: 40px;
+      border: 1px solid rgba(239, 51, 64, 0.65);
+      border-radius: 9px;
+      background: rgba(239, 51, 64, 0.1);
+      color: #ffd6da;
+      font-size: 12px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .entry-upload-control {
+      margin-top: 4px;
+    }
+
+    .image-processing {
+      opacity: 0.68;
+      pointer-events: none;
+    }
+
+    .journal-image-wrap {
+      display: grid;
+      gap: 7px;
+      margin-top: 12px;
+      min-width: 0;
+    }
+
+    .journal-image-label {
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: bold;
+    }
+
+    .journal-image-status {
+      padding: 12px;
+      border: 1px dashed var(--card-border);
+      border-radius: 9px;
+      background: rgba(0, 0, 0, 0.12);
+      color: var(--muted);
+      font-size: 12px;
+      text-align: center;
+      line-height: 1.9;
+    }
+
+    .journal-image-error {
+      border-color: rgba(239, 51, 64, 0.45);
+      background: rgba(239, 51, 64, 0.08);
+      color: #ffd4d7;
+    }
+
+    .journal-image {
+      display: block;
+      width: 100%;
+      max-width: 100%;
+      max-height: 520px;
+      object-fit: contain;
+      border-radius: 9px;
+      background: rgba(0, 0, 0, 0.17);
     }
 
     .preview-box {
@@ -2508,12 +2629,41 @@
       <details id="newTradeDetails" class="entry-details">
         <summary>ثبت معامله جدید</summary>
         <div style="padding:0 12px 12px;">
-          <label class="upload-label" for="entryScreenshotInput">افزودن اسکرین‌شات نقطه ورود</label>
-          <input id="entryScreenshotInput" type="file" accept="image/*" style="display:none;" onchange="previewEntryScreenshot(event)" />
-          <p id="entryScreenshotName" class="file-name">هنوز تصویری انتخاب نشده است.</p>
-          <div id="entryScreenshotPreviewBox" class="preview-box">
-            <img id="entryScreenshotPreview" alt="پیش‌نمایش اسکرین‌شات ورود" />
-            <button type="button" class="danger-button" style="margin-top:10px;" onclick="removeEntryScreenshot()">حذف تصویر</button>
+          <div class="exit-upload-control entry-upload-control">
+            <button
+              id="entryScreenshotChooseButton"
+              type="button"
+              class="exit-upload-button"
+              onclick="openEntryScreenshotPicker()"
+            >
+              انتخاب اسکرین‌شات نقطه ورود
+            </button>
+
+            <input
+              id="entryScreenshotInput"
+              class="exit-file-input"
+              type="file"
+              accept="image/png,image/jpeg,image/webp"
+              onchange="previewEntryScreenshot(event)"
+            />
+
+            <p id="entryScreenshotName" class="file-name">
+              هنوز تصویری انتخاب نشده است.
+            </p>
+
+            <div id="entryScreenshotPreviewBox" class="exit-preview-box">
+              <img
+                id="entryScreenshotPreview"
+                alt="پیش‌نمایش اسکرین‌شات ورود"
+              />
+              <button
+                type="button"
+                class="exit-remove-image"
+                onclick="removeEntryScreenshot()"
+              >
+                حذف تصویر انتخاب‌شده
+              </button>
+            </div>
           </div>
           <button id="saveTradeButton" type="button" class="primary-button" style="margin-top:16px;" onclick="saveTradeToJournal()">ذخیره معامله در ژورنال</button>
         </div>
@@ -2563,8 +2713,8 @@
 
     let selectedTradeType = "futures";
     let selectedSide = "long";
-    let entryScreenshotFile = null;
-    let entryScreenshotObjectUrl = null;
+    let entryScreenshotPrepared = null;
+    let entryScreenshotProcessing = false;
     let journalObjectUrls = [];
     let toastTimer = null;
     let legacyMigrationAttempted = false;
@@ -3615,31 +3765,327 @@
       return runStoreRequest("readonly", function (store) { return store.get(id); });
     }
 
-    function previewEntryScreenshot(event) {
-      const input = event.target;
-      const file = input.files && input.files[0];
-      if (!file) return;
-      if (!file.type.startsWith("image/")) {
-        input.value = "";
-        showToast("فقط فایل تصویری مجاز است.", true);
-        return;
+    function openEntryScreenshotPicker() {
+      const input = document.getElementById("entryScreenshotInput");
+      if (input && !entryScreenshotProcessing) {
+        input.click();
       }
-      entryScreenshotFile = file;
-      if (entryScreenshotObjectUrl) URL.revokeObjectURL(entryScreenshotObjectUrl);
-      entryScreenshotObjectUrl = URL.createObjectURL(file);
-      document.getElementById("entryScreenshotPreview").src = entryScreenshotObjectUrl;
-      document.getElementById("entryScreenshotName").textContent = file.name;
-      document.getElementById("entryScreenshotPreviewBox").style.display = "block";
+    }
+
+    function readBlobAsDataUrl(blob) {
+      return new Promise(function (resolve, reject) {
+        if (!(blob instanceof Blob) || blob.size <= 0) {
+          reject(new Error("فایل تصویر معتبر نیست."));
+          return;
+        }
+
+        const reader = new FileReader();
+
+        reader.onload = function () {
+          resolve(String(reader.result || ""));
+        };
+
+        reader.onerror = function () {
+          reject(
+            reader.error ||
+            new Error("خواندن فایل تصویر ناموفق بود.")
+          );
+        };
+
+        reader.readAsDataURL(blob);
+      });
+    }
+
+    function dataUrlToBlob(dataUrl) {
+      const parts = String(dataUrl).split(",");
+      if (parts.length < 2) {
+        throw new Error("داده تصویر معتبر نیست.");
+      }
+
+      const mimeMatch =
+        parts[0].match(/data:([^;]+);base64/i);
+
+      const mimeType =
+        mimeMatch && mimeMatch[1]
+          ? mimeMatch[1]
+          : "image/jpeg";
+
+      const binary = atob(parts[1]);
+      const bytes = new Uint8Array(binary.length);
+
+      for (let index = 0; index < binary.length; index += 1) {
+        bytes[index] = binary.charCodeAt(index);
+      }
+
+      return new Blob(
+        [bytes],
+        { type: mimeType }
+      );
+    }
+
+    function loadImageFromDataUrl(dataUrl) {
+      return new Promise(function (resolve, reject) {
+        const image = new Image();
+
+        image.onload = function () {
+          resolve(image);
+        };
+
+        image.onerror = function () {
+          reject(
+            new Error(
+              "فرمت تصویر در این مرورگر قابل نمایش نیست. از PNG یا JPG استفاده کن."
+            )
+          );
+        };
+
+        image.src = dataUrl;
+      });
+    }
+
+    async function prepareScreenshotImage(file) {
+      if (!(file instanceof Blob) || file.size <= 0) {
+        throw new Error("فایل تصویر معتبر نیست.");
+      }
+
+      if (
+        !file.type ||
+        !["image/png", "image/jpeg", "image/webp"]
+          .includes(file.type.toLowerCase())
+      ) {
+        throw new Error(
+          "فقط تصاویر PNG، JPG و WebP پشتیبانی می‌شوند."
+        );
+      }
+
+      const maxOriginalSize = 15 * 1024 * 1024;
+
+      if (file.size > maxOriginalSize) {
+        throw new Error(
+          "حجم تصویر نباید بیشتر از ۱۵ مگابایت باشد."
+        );
+      }
+
+      const originalDataUrl =
+        await readBlobAsDataUrl(file);
+
+      const image =
+        await loadImageFromDataUrl(originalDataUrl);
+
+      const maxDimension = 1920;
+      const naturalWidth =
+        image.naturalWidth || image.width;
+      const naturalHeight =
+        image.naturalHeight || image.height;
+
+      if (!naturalWidth || !naturalHeight) {
+        throw new Error("ابعاد تصویر معتبر نیست.");
+      }
+
+      const scale = Math.min(
+        1,
+        maxDimension / naturalWidth,
+        maxDimension / naturalHeight
+      );
+
+      const width = Math.max(
+        1,
+        Math.round(naturalWidth * scale)
+      );
+
+      const height = Math.max(
+        1,
+        Math.round(naturalHeight * scale)
+      );
+
+      const canvas =
+        document.createElement("canvas");
+
+      canvas.width = width;
+      canvas.height = height;
+
+      const context =
+        canvas.getContext("2d", {
+          alpha: false
+        });
+
+      if (!context) {
+        throw new Error(
+          "آماده‌سازی تصویر در این دستگاه ممکن نیست."
+        );
+      }
+
+      context.fillStyle = "#ffffff";
+      context.fillRect(0, 0, width, height);
+      context.drawImage(image, 0, 0, width, height);
+
+      const dataUrl =
+        canvas.toDataURL("image/jpeg", 0.88);
+
+      const blob =
+        dataUrlToBlob(dataUrl);
+
+      const originalName =
+        file.name || "screenshot";
+
+      const safeBaseName =
+        originalName
+          .replace(/\.[^.]+$/, "")
+          .replace(/[^\w\u0600-\u06FF\- ]+/g, "_")
+          .slice(0, 80) ||
+        "screenshot";
+
+      return {
+        blob: blob,
+        dataUrl: dataUrl,
+        name: safeBaseName + ".jpg",
+        type: "image/jpeg",
+        size: blob.size,
+        width: width,
+        height: height
+      };
+    }
+
+    async function previewEntryScreenshot(event) {
+      const input = event.target;
+      const file =
+        input.files &&
+        input.files[0];
+
+      if (!file) return;
+
+      const chooseButton =
+        document.getElementById(
+          "entryScreenshotChooseButton"
+        );
+
+      const status =
+        document.getElementById(
+          "entryScreenshotName"
+        );
+
+      entryScreenshotProcessing = true;
+
+      if (chooseButton) {
+        chooseButton.disabled = true;
+        chooseButton.classList.add(
+          "image-processing"
+        );
+        chooseButton.textContent =
+          "در حال آماده‌سازی تصویر...";
+      }
+
+      if (status) {
+        status.textContent =
+          "در حال بررسی و تبدیل تصویر...";
+      }
+
+      try {
+        const prepared =
+          await prepareScreenshotImage(file);
+
+        entryScreenshotPrepared = prepared;
+
+        const preview =
+          document.getElementById(
+            "entryScreenshotPreview"
+          );
+
+        preview.src = prepared.dataUrl;
+
+        document
+          .getElementById(
+            "entryScreenshotPreviewBox"
+          )
+          .classList.add("visible");
+
+        status.textContent =
+          "تصویر آماده شد: " +
+          prepared.name;
+
+        showToast(
+          "اسکرین‌شات ورود آماده ذخیره است."
+        );
+      } catch (error) {
+        console.error(error);
+        input.value = "";
+        entryScreenshotPrepared = null;
+
+        document
+          .getElementById(
+            "entryScreenshotPreviewBox"
+          )
+          .classList.remove("visible");
+
+        status.textContent =
+          error && error.message
+            ? error.message
+            : "آماده‌سازی تصویر ناموفق بود.";
+
+        showToast(
+          status.textContent,
+          true
+        );
+      } finally {
+        entryScreenshotProcessing = false;
+
+        if (chooseButton) {
+          chooseButton.disabled = false;
+          chooseButton.classList.remove(
+            "image-processing"
+          );
+
+          chooseButton.textContent =
+            entryScreenshotPrepared
+              ? "تغییر اسکرین‌شات نقطه ورود"
+              : "انتخاب اسکرین‌شات نقطه ورود";
+        }
+      }
     }
 
     function removeEntryScreenshot() {
-      document.getElementById("entryScreenshotInput").value = "";
-      entryScreenshotFile = null;
-      if (entryScreenshotObjectUrl) URL.revokeObjectURL(entryScreenshotObjectUrl);
-      entryScreenshotObjectUrl = null;
-      document.getElementById("entryScreenshotPreview").removeAttribute("src");
-      document.getElementById("entryScreenshotName").textContent = "هنوز تصویری انتخاب نشده است.";
-      document.getElementById("entryScreenshotPreviewBox").style.display = "none";
+      document
+        .getElementById(
+          "entryScreenshotInput"
+        )
+        .value = "";
+
+      entryScreenshotPrepared = null;
+      entryScreenshotProcessing = false;
+
+      const preview =
+        document.getElementById(
+          "entryScreenshotPreview"
+        );
+
+      preview.removeAttribute("src");
+
+      document
+        .getElementById(
+          "entryScreenshotPreviewBox"
+        )
+        .classList.remove("visible");
+
+      document
+        .getElementById(
+          "entryScreenshotName"
+        )
+        .textContent =
+          "هنوز تصویری انتخاب نشده است.";
+
+      const chooseButton =
+        document.getElementById(
+          "entryScreenshotChooseButton"
+        );
+
+      if (chooseButton) {
+        chooseButton.disabled = false;
+        chooseButton.classList.remove(
+          "image-processing"
+        );
+        chooseButton.textContent =
+          "انتخاب اسکرین‌شات نقطه ورود";
+      }
     }
 
     async function saveTradeToJournal() {
@@ -3674,6 +4120,14 @@
         return;
       }
 
+      if (entryScreenshotProcessing) {
+        showToast(
+          "آماده‌سازی تصویر هنوز تمام نشده است.",
+          true
+        );
+        return;
+      }
+
       const saveButton = document.getElementById("saveTradeButton");
       saveButton.disabled = true;
       saveButton.textContent = "در حال ذخیره...";
@@ -3705,10 +4159,18 @@
         liquidationPrice: calculation.liquidationPrice,
         investedAmount: calculation.investedAmount,
         allocationPercent: calculation.allocationPercent,
-        screenshotBlob: entryScreenshotFile
-          ? entryScreenshotFile.slice(0, entryScreenshotFile.size, entryScreenshotFile.type)
+        screenshotBlob: entryScreenshotPrepared
+          ? entryScreenshotPrepared.blob
           : null,
-        screenshotName: entryScreenshotFile ? entryScreenshotFile.name : "",
+        screenshotDataUrl: entryScreenshotPrepared
+          ? entryScreenshotPrepared.dataUrl
+          : "",
+        screenshotName: entryScreenshotPrepared
+          ? entryScreenshotPrepared.name
+          : "",
+        screenshotMimeType: entryScreenshotPrepared
+          ? entryScreenshotPrepared.type
+          : "",
         status: "open",
         exitPrice: null,
         exitUsdtIrtRate: null,
@@ -3747,15 +4209,132 @@
     }
 
     function revokeJournalUrls() {
-      journalObjectUrls.forEach(function (url) { URL.revokeObjectURL(url); });
+      journalObjectUrls.forEach(
+        function (url) {
+          URL.revokeObjectURL(url);
+        }
+      );
       journalObjectUrls = [];
     }
 
     function makeImageUrl(blob) {
-      if (!blob) return "";
-      const url = URL.createObjectURL(blob);
+      if (!(blob instanceof Blob) || blob.size <= 0) {
+        return "";
+      }
+
+      const url =
+        URL.createObjectURL(blob);
+
       journalObjectUrls.push(url);
       return url;
+    }
+
+    function getPortableImageDataUrl(value) {
+      if (
+        typeof value === "string" &&
+        value.startsWith("data:image/")
+      ) {
+        return value;
+      }
+
+      if (
+        value &&
+        typeof value === "object" &&
+        typeof value.dataUrl === "string" &&
+        value.dataUrl.startsWith("data:image/")
+      ) {
+        return value.dataUrl;
+      }
+
+      return "";
+    }
+
+    function appendJournalImage(
+      card,
+      label,
+      dataUrl,
+      blob,
+      altText
+    ) {
+      const wrap =
+        document.createElement("div");
+
+      wrap.className =
+        "journal-image-wrap";
+
+      const title =
+        document.createElement("div");
+
+      title.className =
+        "journal-image-label";
+
+      title.textContent = label;
+      wrap.appendChild(title);
+
+      const status =
+        document.createElement("div");
+
+      status.className =
+        "journal-image-status";
+
+      status.textContent =
+        "در حال بارگذاری تصویر...";
+
+      wrap.appendChild(status);
+      card.appendChild(wrap);
+
+      const image =
+        document.createElement("img");
+
+      image.className =
+        "journal-image";
+
+      image.alt = altText;
+
+      image.onload = function () {
+        status.remove();
+        wrap.appendChild(image);
+      };
+
+      image.onerror = function () {
+        image.removeAttribute("src");
+        status.classList.add(
+          "journal-image-error"
+        );
+        status.textContent =
+          "این تصویر قدیمی در WebView قابل نمایش نیست. برای جلوگیری از تکرار، تصویر را با نسخه جدید برنامه دوباره بارگذاری کن.";
+      };
+
+      const directDataUrl =
+        getPortableImageDataUrl(dataUrl) ||
+        getPortableImageDataUrl(blob);
+
+      if (directDataUrl) {
+        image.src = directDataUrl;
+        return;
+      }
+
+      if (blob instanceof Blob && blob.size > 0) {
+        readBlobAsDataUrl(blob)
+          .then(function (resolvedDataUrl) {
+            image.src = resolvedDataUrl;
+          })
+          .catch(function () {
+            status.classList.add(
+              "journal-image-error"
+            );
+            status.textContent =
+              "خواندن تصویر ذخیره‌شده ناموفق بود.";
+          });
+
+        return;
+      }
+
+      status.classList.add(
+        "journal-image-error"
+      );
+      status.textContent =
+        "داده تصویر معتبر نیست.";
     }
 
     function createJournalGrid(trade) {
@@ -3942,13 +4521,17 @@
             card.appendChild(note);
           }
 
-          if (trade.screenshotBlob) {
-            const image = document.createElement("img");
-            image.className = "journal-image";
-            image.style.marginTop = "12px";
-            image.src = makeImageUrl(trade.screenshotBlob);
-            image.alt = "اسکرین‌شات نقطه ورود";
-            card.appendChild(image);
+          if (
+            trade.screenshotDataUrl ||
+            trade.screenshotBlob
+          ) {
+            appendJournalImage(
+              card,
+              "اسکرین‌شات نقطه ورود",
+              trade.screenshotDataUrl,
+              trade.screenshotBlob,
+              "اسکرین‌شات نقطه ورود"
+            );
           }
 
           if (trade.status === "closed") {
@@ -4011,13 +4594,17 @@
               (trade.exitNote ? "<br>یادداشت خروج: " + escapeHtml(trade.exitNote) : "");
             card.appendChild(result);
 
-            if (trade.exitScreenshotBlob) {
-              const exitImage = document.createElement("img");
-              exitImage.className = "journal-image";
-              exitImage.style.marginTop = "12px";
-              exitImage.src = makeImageUrl(trade.exitScreenshotBlob);
-              exitImage.alt = "اسکرین‌شات نقطه خروج";
-              card.appendChild(exitImage);
+            if (
+              trade.exitScreenshotDataUrl ||
+              trade.exitScreenshotBlob
+            ) {
+              appendJournalImage(
+                card,
+                "اسکرین‌شات نقطه خروج",
+                trade.exitScreenshotDataUrl,
+                trade.exitScreenshotBlob,
+                "اسکرین‌شات نقطه خروج"
+              );
             }
           }
 
@@ -4049,6 +4636,161 @@
       return String(value || "").replace(/[&<>'"]/g, function (char) {
         return { "&": "&amp;", "<": "&lt;", ">": "&gt;", "'": "&#39;", '"': "&quot;" }[char];
       });
+    }
+
+    function setupExitScreenshotControls(form) {
+      const input =
+        form.querySelector(
+          '[data-field="exitScreenshot"]'
+        );
+
+      const chooseButton =
+        form.querySelector(
+          '[data-action="chooseExitScreenshot"]'
+        );
+
+      const removeButton =
+        form.querySelector(
+          '[data-action="removeExitScreenshot"]'
+        );
+
+      const status =
+        form.querySelector(
+          '[data-field="exitScreenshotStatus"]'
+        );
+
+      const preview =
+        form.querySelector(
+          '[data-field="exitScreenshotPreview"]'
+        );
+
+      const previewImage =
+        form.querySelector(
+          '[data-field="exitScreenshotPreviewImage"]'
+        );
+
+      if (
+        !input ||
+        !chooseButton ||
+        !removeButton ||
+        !status ||
+        !preview ||
+        !previewImage
+      ) {
+        return;
+      }
+
+      input._preparedImage = null;
+      input.dataset.processing = "false";
+
+      function clearSelectedImage() {
+        input.value = "";
+        input._preparedImage = null;
+        input.dataset.processing = "false";
+        previewImage.removeAttribute("src");
+        preview.classList.remove("visible");
+        status.textContent =
+          "تصویری انتخاب نشده است";
+        chooseButton.disabled = false;
+        chooseButton.classList.remove(
+          "image-processing"
+        );
+        chooseButton.textContent =
+          "انتخاب اسکرین‌شات نقطه خروج";
+      }
+
+      chooseButton.addEventListener(
+        "click",
+        function () {
+          if (
+            input.dataset.processing !==
+            "true"
+          ) {
+            input.click();
+          }
+        }
+      );
+
+      input.addEventListener(
+        "change",
+        async function () {
+          const file =
+            input.files &&
+            input.files[0];
+
+          if (!file) {
+            clearSelectedImage();
+            return;
+          }
+
+          input.dataset.processing = "true";
+          input._preparedImage = null;
+
+          chooseButton.disabled = true;
+          chooseButton.classList.add(
+            "image-processing"
+          );
+          chooseButton.textContent =
+            "در حال آماده‌سازی تصویر...";
+
+          status.textContent =
+            "در حال بررسی و تبدیل تصویر...";
+
+          try {
+            const prepared =
+              await prepareScreenshotImage(file);
+
+            input._preparedImage = prepared;
+            previewImage.src =
+              prepared.dataUrl;
+            preview.classList.add("visible");
+
+            status.textContent =
+              "تصویر آماده شد: " +
+              prepared.name;
+
+            chooseButton.textContent =
+              "تغییر اسکرین‌شات خروج";
+
+            showToast(
+              "اسکرین‌شات خروج آماده ذخیره است."
+            );
+          } catch (error) {
+            console.error(error);
+            input.value = "";
+            input._preparedImage = null;
+            previewImage.removeAttribute("src");
+            preview.classList.remove("visible");
+
+            status.textContent =
+              error && error.message
+                ? error.message
+                : "آماده‌سازی تصویر ناموفق بود.";
+
+            showToast(
+              status.textContent,
+              true
+            );
+          } finally {
+            input.dataset.processing =
+              "false";
+            chooseButton.disabled = false;
+            chooseButton.classList.remove(
+              "image-processing"
+            );
+
+            if (!input._preparedImage) {
+              chooseButton.textContent =
+                "انتخاب اسکرین‌شات نقطه خروج";
+            }
+          }
+        }
+      );
+
+      removeButton.addEventListener(
+        "click",
+        clearSelectedImage
+      );
     }
 
     async function toggleTradeResultForm(tradeId, card) {
@@ -4085,10 +4827,11 @@
             '<div class="field"><label>بازده واقعی</label><input data-field="actualReturnPercent" type="text" readonly></div>' +
           '</div>' +
           '<div class="field"><label>یادداشت خروج</label><textarea data-field="exitNote" maxlength="1000" placeholder="علت فروش، نکته آموزشی و...">' + escapeHtml(trade.exitNote || "") + '</textarea></div>' +
-          '<label class="upload-label">افزودن اسکرین‌شات نقطه فروش<input data-field="exitScreenshot" type="file" accept="image/*" style="display:none;"></label>' +
+          '<div class="exit-upload-control">' +'<button type="button" class="exit-upload-button" data-action="chooseExitScreenshot">انتخاب اسکرین‌شات نقطه خروج</button>' +'<input class="exit-file-input" data-field="exitScreenshot" type="file" accept="image/png,image/jpeg,image/webp,image/gif">' +'<div class="file-name" data-field="exitScreenshotStatus">تصویری انتخاب نشده است</div>' +'<div class="exit-preview-box" data-field="exitScreenshotPreview">' +'<img data-field="exitScreenshotPreviewImage" alt="پیش‌نمایش اسکرین‌شات خروج">' +'<button type="button" class="exit-remove-image" data-action="removeExitScreenshot">حذف تصویر انتخاب‌شده</button>' +'</div>' +'</div>' +
           '<div class="journal-actions"><button type="button" class="primary-button" data-action="save">ذخیره نتیجه</button><button type="button" class="secondary-button" data-action="cancel">انصراف</button></div>';
 
         initializeFormattedNumberInputs(form);
+        setupExitScreenshotControls(form);
 
         const exitPriceInput = form.querySelector('[data-field="exitPrice"]');
         const totalFeesInput = form.querySelector('[data-field="totalFees"]');
@@ -4176,7 +4919,7 @@
 
           const exitNote = form.querySelector('[data-field="exitNote"]').value.trim();
           const exitFileInput = form.querySelector('[data-field="exitScreenshot"]');
-          const exitFile = exitFileInput.files && exitFileInput.files[0];
+          const exitPreparedImage = exitFileInput._preparedImage || null;
 
           trade.status = "closed";
           trade.exitPrice = outcome.exitPrice;
@@ -4192,15 +4935,33 @@
           trade.exitNote = exitNote;
           trade.closedAt = Date.now();
 
-          if (exitFile) {
-            trade.exitScreenshotBlob = exitFile.slice(0, exitFile.size, exitFile.type);
-            trade.exitScreenshotName = exitFile.name;
+          if (exitFileInput.dataset.processing === "true") {
+            showToast(
+              "آماده‌سازی تصویر خروج هنوز تمام نشده است.",
+              true
+            );
+            return;
+          }
+
+          if (exitPreparedImage) {
+            trade.exitScreenshotBlob =
+              exitPreparedImage.blob;
+            trade.exitScreenshotDataUrl =
+              exitPreparedImage.dataUrl;
+            trade.exitScreenshotName =
+              exitPreparedImage.name;
+            trade.exitScreenshotMimeType =
+              exitPreparedImage.type;
           }
 
           try {
             await updateTradeInDatabase(trade);
             await renderJournalTrades();
-            showToast("نتیجه اسپات به تتر و تومان ذخیره شد.");
+            showToast(
+              exitPreparedImage
+                ? "نتیجه اسپات و اسکرین‌شات خروج ذخیره شد."
+                : "نتیجه اسپات به تتر و تومان ذخیره شد."
+            );
           } catch (error) {
             console.error(error);
             showToast("ذخیره نتیجه ناموفق بود.", true);
@@ -4223,10 +4984,11 @@
             '<div class="field"><label>بازده واقعی (%)</label><input data-field="actualReturnPercent" type="number" inputmode="decimal" step="any" value="' + (trade.actualReturnPercent ?? "") + '"></div>' +
           '</div>' +
           '<div class="field"><label>یادداشت خروج</label><textarea data-field="exitNote" maxlength="1000" placeholder="علت خروج، اشتباه، نکته آموزشی و...">' + escapeHtml(trade.exitNote || "") + '</textarea></div>' +
-          '<label class="upload-label">افزودن اسکرین‌شات نقطه خروج<input data-field="exitScreenshot" type="file" accept="image/*" style="display:none;"></label>' +
+          '<div class="exit-upload-control">' +'<button type="button" class="exit-upload-button" data-action="chooseExitScreenshot">انتخاب اسکرین‌شات نقطه خروج</button>' +'<input class="exit-file-input" data-field="exitScreenshot" type="file" accept="image/png,image/jpeg,image/webp,image/gif">' +'<div class="file-name" data-field="exitScreenshotStatus">تصویری انتخاب نشده است</div>' +'<div class="exit-preview-box" data-field="exitScreenshotPreview">' +'<img data-field="exitScreenshotPreviewImage" alt="پیش‌نمایش اسکرین‌شات خروج">' +'<button type="button" class="exit-remove-image" data-action="removeExitScreenshot">حذف تصویر انتخاب‌شده</button>' +'</div>' +'</div>' +
           '<div class="journal-actions"><button type="button" class="primary-button" data-action="save">ذخیره نتیجه</button><button type="button" class="secondary-button" data-action="cancel">انصراف</button></div>';
 
         initializeFormattedNumberInputs(form);
+        setupExitScreenshotControls(form);
 
         const pnlInput = form.querySelector('[data-field="actualProfitLoss"]');
         const pnlUsdtDisplay = form.querySelector('[data-field="pnlUsdtDisplay"]');
@@ -4273,7 +5035,7 @@
           const irtOutcome = calculateIrtOutcome(trade, actualProfitLoss, exitUsdtIrtRate);
           const exitNote = form.querySelector('[data-field="exitNote"]').value.trim();
           const exitFileInput = form.querySelector('[data-field="exitScreenshot"]');
-          const exitFile = exitFileInput.files && exitFileInput.files[0];
+          const exitPreparedImage = exitFileInput._preparedImage || null;
 
           if (
             ![exitPrice, actualProfitLoss, actualR, actualReturnPercent, exitUsdtIrtRate].every(Number.isFinite) ||
@@ -4296,15 +5058,33 @@
           trade.exitNote = exitNote;
           trade.closedAt = Date.now();
 
-          if (exitFile) {
-            trade.exitScreenshotBlob = exitFile.slice(0, exitFile.size, exitFile.type);
-            trade.exitScreenshotName = exitFile.name;
+          if (exitFileInput.dataset.processing === "true") {
+            showToast(
+              "آماده‌سازی تصویر خروج هنوز تمام نشده است.",
+              true
+            );
+            return;
+          }
+
+          if (exitPreparedImage) {
+            trade.exitScreenshotBlob =
+              exitPreparedImage.blob;
+            trade.exitScreenshotDataUrl =
+              exitPreparedImage.dataUrl;
+            trade.exitScreenshotName =
+              exitPreparedImage.name;
+            trade.exitScreenshotMimeType =
+              exitPreparedImage.type;
           }
 
           try {
             await updateTradeInDatabase(trade);
             await renderJournalTrades();
-            showToast("نتیجه فیوچرز به تتر و تومان ذخیره شد.");
+            showToast(
+              exitPreparedImage
+                ? "نتیجه فیوچرز و اسکرین‌شات خروج ذخیره شد."
+                : "نتیجه فیوچرز به تتر و تومان ذخیره شد."
+            );
           } catch (error) {
             console.error(error);
             showToast("ذخیره نتیجه ناموفق بود.", true);
@@ -6100,6 +6880,12 @@
         trade.exitScreenshotBlob,
         trade.exitScreenshotName
       );
+
+      portableTrade.screenshotDataUrl =
+        trade.screenshotDataUrl || "";
+
+      portableTrade.exitScreenshotDataUrl =
+        trade.exitScreenshotDataUrl || "";
 
       return portableTrade;
     }
