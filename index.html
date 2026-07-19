@@ -3293,6 +3293,19 @@ button,
   color: #20384c;
 }
 
+#moreView {
+  scroll-padding-bottom:
+    calc(
+      var(--mobile-bottom-ui-height) +
+      42px +
+      env(safe-area-inset-bottom)
+    );
+}
+
+#moreView .theme-settings-card {
+  margin-bottom: 24px;
+}
+
 @media (max-width: 430px) {
   .theme-options {
     grid-template-columns: minmax(0, 1fr);
@@ -4791,93 +4804,93 @@ body {
         <div id="statementDetails" class="statement-details"></div>
       </div>
     </section>
-  </main>
+  
 
-
-
-<section id="moreView" class="view card" hidden>
-  <h2 class="card-title">بیشتر</h2>
-  <div class="more-grid">
-    <button type="button" class="more-action" onclick="showFundamental()">
-      <strong>اخبار و تقویم اقتصادی</strong>
-      <span>اخبار فارسی رمزارزها و تقویم مستقیم Forex Factory</span>
-    </button>
-    <button type="button" class="more-action" onclick="showStatement()">
-      <strong>استیتمنت معاملاتی</strong>
-      <span>تحلیل نتیجه معاملات بسته‌شده ژورنال</span>
-    </button>
-    <button type="button" class="more-action" onclick="exportFullJournalBackup()">
-      <strong>پشتیبان ژورنال</strong>
-      <span>دریافت همه معاملات و تصاویر در فایل JSON</span>
-    </button>
-    <button type="button" class="more-action" onclick="exportPortfolioBackup()">
-      <strong>پشتیبان پرتفوی</strong>
-      <span>خروجی تراکنش‌ها و Snapshotهای پرتفوی</span>
-    </button>
-  </div>
-
-  <section class="theme-settings-card" aria-labelledby="themeSettingsTitle">
-    <div class="theme-settings-header">
-      <div>
-        <h3 id="themeSettingsTitle" class="theme-settings-title">ظاهر برنامه</h3>
-        <p class="theme-settings-note">
-          انتخاب شما روی همین دستگاه ذخیره می‌شود. حالت خودکار با تم تلگرام یا دستگاه هماهنگ است.
-        </p>
+    <section id="moreView" class="view card" hidden>
+      <h2 class="card-title">بیشتر</h2>
+      <div class="more-grid">
+        <button type="button" class="more-action" onclick="showFundamental()">
+          <strong>اخبار و تقویم اقتصادی</strong>
+          <span>اخبار فارسی رمزارزها و تقویم مستقیم Forex Factory</span>
+        </button>
+        <button type="button" class="more-action" onclick="showStatement()">
+          <strong>استیتمنت معاملاتی</strong>
+          <span>تحلیل نتیجه معاملات بسته‌شده ژورنال</span>
+        </button>
+        <button type="button" class="more-action" onclick="exportFullJournalBackup()">
+          <strong>پشتیبان ژورنال</strong>
+          <span>دریافت همه معاملات و تصاویر در فایل JSON</span>
+        </button>
+        <button type="button" class="more-action" onclick="exportPortfolioBackup()">
+          <strong>پشتیبان پرتفوی</strong>
+          <span>خروجی تراکنش‌ها و Snapshotهای پرتفوی</span>
+        </button>
       </div>
-      <span id="themeCurrentBadge" class="theme-current-badge">تاریک</span>
-    </div>
+    
+      <section class="theme-settings-card" aria-labelledby="themeSettingsTitle">
+        <div class="theme-settings-header">
+          <div>
+            <h3 id="themeSettingsTitle" class="theme-settings-title">ظاهر برنامه</h3>
+            <p class="theme-settings-note">
+              انتخاب شما روی همین دستگاه ذخیره می‌شود. حالت خودکار با تم تلگرام یا دستگاه هماهنگ است.
+            </p>
+          </div>
+          <span id="themeCurrentBadge" class="theme-current-badge">تاریک</span>
+        </div>
+    
+        <div class="theme-options" role="group" aria-label="انتخاب تم برنامه">
+          <button
+            type="button"
+            class="theme-option"
+            data-theme-choice="auto"
+            aria-pressed="false"
+            onclick="setThemePreference('auto', true)"
+          >
+            <span class="theme-option-check">✓</span>
+            <span class="theme-option-preview theme-preview-auto" aria-hidden="true">
+              <span class="theme-preview-main"></span>
+              <span class="theme-preview-side"></span>
+            </span>
+            <strong>خودکار</strong>
+            <span>هماهنگ با تلگرام</span>
+          </button>
+    
+          <button
+            type="button"
+            class="theme-option"
+            data-theme-choice="light"
+            aria-pressed="false"
+            onclick="setThemePreference('light', true)"
+          >
+            <span class="theme-option-check">✓</span>
+            <span class="theme-option-preview theme-preview-light" aria-hidden="true">
+              <span class="theme-preview-main"></span>
+              <span class="theme-preview-side"></span>
+            </span>
+            <strong>روشن</strong>
+            <span>پس‌زمینه سفید و خوانا</span>
+          </button>
+    
+          <button
+            type="button"
+            class="theme-option"
+            data-theme-choice="dark"
+            aria-pressed="false"
+            onclick="setThemePreference('dark', true)"
+          >
+            <span class="theme-option-check">✓</span>
+            <span class="theme-option-preview theme-preview-dark" aria-hidden="true">
+              <span class="theme-preview-main"></span>
+              <span class="theme-preview-side"></span>
+            </span>
+            <strong>تاریک</strong>
+            <span>طراحی سرمه‌ای فعلی</span>
+          </button>
+        </div>
+      </section>
+    </section>
+</main>
 
-    <div class="theme-options" role="group" aria-label="انتخاب تم برنامه">
-      <button
-        type="button"
-        class="theme-option"
-        data-theme-choice="auto"
-        aria-pressed="false"
-        onclick="setThemePreference('auto', true)"
-      >
-        <span class="theme-option-check">✓</span>
-        <span class="theme-option-preview theme-preview-auto" aria-hidden="true">
-          <span class="theme-preview-main"></span>
-          <span class="theme-preview-side"></span>
-        </span>
-        <strong>خودکار</strong>
-        <span>هماهنگ با تلگرام</span>
-      </button>
-
-      <button
-        type="button"
-        class="theme-option"
-        data-theme-choice="light"
-        aria-pressed="false"
-        onclick="setThemePreference('light', true)"
-      >
-        <span class="theme-option-check">✓</span>
-        <span class="theme-option-preview theme-preview-light" aria-hidden="true">
-          <span class="theme-preview-main"></span>
-          <span class="theme-preview-side"></span>
-        </span>
-        <strong>روشن</strong>
-        <span>پس‌زمینه سفید و خوانا</span>
-      </button>
-
-      <button
-        type="button"
-        class="theme-option"
-        data-theme-choice="dark"
-        aria-pressed="false"
-        onclick="setThemePreference('dark', true)"
-      >
-        <span class="theme-option-check">✓</span>
-        <span class="theme-option-preview theme-preview-dark" aria-hidden="true">
-          <span class="theme-preview-main"></span>
-          <span class="theme-preview-side"></span>
-        </span>
-        <strong>تاریک</strong>
-        <span>طراحی سرمه‌ای فعلی</span>
-      </button>
-    </div>
-  </section>
-</section>
 
 
 <nav class="bottom-nav" aria-label="ناوبری اصلی">
@@ -11582,6 +11595,18 @@ async function showAlerts() {
 }
 
 
+function resetActiveViewScroll() {
+  const resetScroll = function () {
+    window.scrollTo(0, 0);
+    document.documentElement.scrollTop = 0;
+    document.body.scrollTop = 0;
+  };
+
+  resetScroll();
+  requestAnimationFrame(resetScroll);
+  setTimeout(resetScroll, 80);
+}
+
 function setActiveView(viewId) {
   [
     "calculatorView",
@@ -11645,10 +11670,7 @@ function setActiveView(viewId) {
 
   syncMobileBottomLayout();
 
-  window.scrollTo({
-    top: 0,
-    behavior: "smooth"
-  });
+  resetActiveViewScroll();
 }
 
 function showCalculator() {
