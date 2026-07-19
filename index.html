@@ -2207,6 +2207,581 @@
       }
     }
 
+  
+/* =========================
+   Professional Portfolio
+   ========================= */
+.portfolio-view {
+  display: grid;
+  gap: 14px;
+  min-width: 0;
+}
+
+.portfolio-view[hidden] {
+  display: none !important;
+}
+
+.portfolio-hero {
+  position: relative;
+  overflow: hidden;
+  padding: 18px;
+  border: 1px solid rgba(55, 178, 232, 0.28);
+  border-radius: 18px;
+  background:
+    radial-gradient(circle at 12% 0%, rgba(56, 189, 248, 0.15), transparent 35%),
+    radial-gradient(circle at 90% 18%, rgba(46, 204, 113, 0.12), transparent 33%),
+    linear-gradient(145deg, rgba(16, 43, 69, 0.98), rgba(7, 28, 47, 0.98));
+  box-shadow: 0 18px 42px rgba(0, 0, 0, 0.22);
+}
+
+.portfolio-hero-head,
+.portfolio-section-head,
+.portfolio-asset-head,
+.portfolio-transaction-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  min-width: 0;
+}
+
+.portfolio-title {
+  margin: 0;
+  font-size: 22px;
+  color: #fff;
+}
+
+.portfolio-subtitle {
+  margin: 6px 0 0;
+  color: #86a3bc;
+  font-size: 11px;
+  line-height: 1.9;
+}
+
+.portfolio-live {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: #87f2b5;
+  font-size: 10px;
+  font-weight: 800;
+}
+
+.portfolio-live::before {
+  content: "";
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #2ecc71;
+  box-shadow: 0 0 0 4px rgba(46, 204, 113, 0.12);
+}
+
+.portfolio-mode-tabs,
+.portfolio-currency-tabs,
+.portfolio-chart-tabs {
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.portfolio-mode-tabs::-webkit-scrollbar,
+.portfolio-currency-tabs::-webkit-scrollbar,
+.portfolio-chart-tabs::-webkit-scrollbar {
+  display: none;
+}
+
+.portfolio-tab {
+  flex: 0 0 auto;
+  min-height: 37px;
+  padding: 7px 12px;
+  border: 1px solid rgba(62, 124, 173, 0.46);
+  border-radius: 999px;
+  background: rgba(7, 28, 47, 0.74);
+  color: #8faac1;
+  font-size: 11px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.portfolio-tab.active {
+  border-color: rgba(46, 204, 113, 0.7);
+  background: rgba(46, 204, 113, 0.15);
+  color: #8cf1b4;
+}
+
+.portfolio-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 9px;
+  margin-top: 15px;
+}
+
+.portfolio-summary-card {
+  min-width: 0;
+  padding: 12px;
+  border: 1px solid rgba(64, 122, 169, 0.3);
+  border-radius: 13px;
+  background: rgba(7, 28, 47, 0.67);
+}
+
+.portfolio-summary-label {
+  display: block;
+  color: #7895ad;
+  font-size: 10px;
+  line-height: 1.7;
+}
+
+.portfolio-summary-value {
+  display: block;
+  margin-top: 5px;
+  overflow-wrap: anywhere;
+  color: #fff;
+  font-size: 18px;
+  font-weight: 900;
+  direction: ltr;
+  text-align: right;
+}
+
+.portfolio-summary-sub {
+  display: block;
+  margin-top: 5px;
+  color: #7895ad;
+  font-size: 9px;
+  line-height: 1.7;
+}
+
+.portfolio-positive {
+  color: #2ecc71 !important;
+}
+
+.portfolio-negative {
+  color: #ff5f68 !important;
+}
+
+.portfolio-neutral {
+  color: #c9d9e7 !important;
+}
+
+.portfolio-panel {
+  min-width: 0;
+  padding: 15px;
+  border: 1px solid rgba(62, 124, 173, 0.42);
+  border-radius: 17px;
+  background: rgba(8, 31, 52, 0.94);
+}
+
+.portfolio-section-title {
+  margin: 0;
+  color: #fff;
+  font-size: 16px;
+}
+
+.portfolio-section-note {
+  color: #7895ad;
+  font-size: 10px;
+  line-height: 1.8;
+}
+
+.portfolio-chart-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.65fr) minmax(230px, 0.75fr);
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.portfolio-chart-box,
+.portfolio-allocation-box {
+  position: relative;
+  min-width: 0;
+  min-height: 260px;
+  padding: 12px;
+  border: 1px solid rgba(62, 124, 173, 0.26);
+  border-radius: 13px;
+  background: rgba(4, 23, 40, 0.72);
+}
+
+.portfolio-chart-box canvas,
+.portfolio-allocation-box canvas,
+.portfolio-sparkline {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+}
+
+.portfolio-chart-box canvas {
+  height: 210px;
+}
+
+.portfolio-allocation-box canvas {
+  height: 190px;
+}
+
+.portfolio-chart-empty,
+.portfolio-empty {
+  padding: 20px 12px;
+  color: #7895ad;
+  text-align: center;
+  font-size: 12px;
+  line-height: 2;
+}
+
+.portfolio-allocation-legend {
+  display: grid;
+  gap: 7px;
+  margin-top: 7px;
+}
+
+.portfolio-allocation-row {
+  display: grid;
+  grid-template-columns: 9px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 7px;
+  min-width: 0;
+  color: #a9bdcf;
+  font-size: 10px;
+}
+
+.portfolio-allocation-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--allocation-color, #37b2e8);
+}
+
+.portfolio-allocation-symbol {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.portfolio-assets-list {
+  display: grid;
+  gap: 11px;
+  margin-top: 12px;
+}
+
+.portfolio-asset-card {
+  min-width: 0;
+  padding: 13px;
+  border: 1px solid rgba(62, 124, 173, 0.28);
+  border-radius: 14px;
+  background: rgba(4, 23, 40, 0.72);
+}
+
+.portfolio-asset-identity {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  min-width: 0;
+}
+
+.portfolio-asset-logo {
+  width: 38px;
+  height: 38px;
+  flex: 0 0 38px;
+  border-radius: 50%;
+  background: #163552;
+  object-fit: cover;
+}
+
+.portfolio-asset-name {
+  min-width: 0;
+}
+
+.portfolio-asset-name strong {
+  display: block;
+  overflow: hidden;
+  color: #fff;
+  font-size: 13px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.portfolio-asset-name span {
+  display: block;
+  margin-top: 3px;
+  color: #7290a9;
+  font-size: 9px;
+  direction: ltr;
+  text-align: right;
+}
+
+.portfolio-strategy-badge {
+  flex: 0 0 auto;
+  padding: 5px 8px;
+  border-radius: 999px;
+  font-size: 9px;
+  font-weight: 900;
+}
+
+.portfolio-strategy-hold {
+  background: rgba(55, 178, 232, 0.12);
+  color: #80d6ff;
+}
+
+.portfolio-strategy-swing {
+  background: rgba(245, 158, 11, 0.12);
+  color: #ffc970;
+}
+
+.portfolio-asset-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.portfolio-asset-metric {
+  min-width: 0;
+  padding: 8px;
+  border-radius: 10px;
+  background: rgba(15, 49, 78, 0.64);
+}
+
+.portfolio-asset-metric span {
+  display: block;
+  color: #7190aa;
+  font-size: 9px;
+}
+
+.portfolio-asset-metric strong {
+  display: block;
+  margin-top: 5px;
+  overflow-wrap: anywhere;
+  color: #eaf4fc;
+  font-size: 11px;
+  direction: ltr;
+  text-align: right;
+}
+
+.portfolio-asset-bottom {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(120px, 0.5fr);
+  gap: 10px;
+  align-items: end;
+  margin-top: 11px;
+}
+
+.portfolio-allocation-track {
+  height: 7px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.07);
+}
+
+.portfolio-allocation-fill {
+  width: 0;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #37b2e8, #2ecc71);
+}
+
+.portfolio-asset-actions {
+  display: flex;
+  gap: 6px;
+  justify-content: flex-end;
+}
+
+.portfolio-mini-button {
+  min-height: 34px;
+  padding: 6px 10px;
+  border: 1px solid rgba(62, 124, 173, 0.48);
+  border-radius: 9px;
+  background: rgba(15, 49, 78, 0.66);
+  color: #a8c8df;
+  font-size: 10px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.portfolio-transaction-form {
+  display: grid;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.portfolio-form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.portfolio-form-preview {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  padding: 11px;
+  border: 1px solid rgba(46, 204, 113, 0.25);
+  border-radius: 12px;
+  background: rgba(46, 204, 113, 0.07);
+}
+
+.portfolio-form-preview div {
+  min-width: 0;
+}
+
+.portfolio-form-preview span {
+  display: block;
+  color: #7190aa;
+  font-size: 9px;
+}
+
+.portfolio-form-preview strong {
+  display: block;
+  margin-top: 5px;
+  color: #fff;
+  font-size: 11px;
+  direction: ltr;
+  text-align: right;
+  overflow-wrap: anywhere;
+}
+
+.portfolio-swing-fields[hidden] {
+  display: none !important;
+}
+
+.portfolio-transactions-list {
+  display: grid;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.portfolio-transaction-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 9px;
+  align-items: center;
+  min-width: 0;
+  padding: 10px;
+  border: 1px solid rgba(62, 124, 173, 0.22);
+  border-radius: 11px;
+  background: rgba(4, 23, 40, 0.68);
+}
+
+.portfolio-transaction-main {
+  min-width: 0;
+}
+
+.portfolio-transaction-main strong {
+  display: block;
+  color: #eaf4fc;
+  font-size: 11px;
+}
+
+.portfolio-transaction-main span {
+  display: block;
+  margin-top: 4px;
+  color: #7895ad;
+  font-size: 9px;
+  line-height: 1.8;
+}
+
+.portfolio-delete-button {
+  min-height: 34px;
+  padding: 6px 9px;
+  border: 1px solid rgba(239, 51, 64, 0.45);
+  border-radius: 8px;
+  background: rgba(239, 51, 64, 0.08);
+  color: #ffadb3;
+  font-size: 9px;
+  cursor: pointer;
+}
+
+.more-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 11px;
+}
+
+.more-action {
+  min-height: 105px;
+  padding: 14px;
+  border: 1px solid rgba(62, 124, 173, 0.36);
+  border-radius: 14px;
+  background: rgba(8, 31, 52, 0.94);
+  color: #dcecf8;
+  text-align: right;
+  cursor: pointer;
+}
+
+.more-action strong {
+  display: block;
+  font-size: 15px;
+}
+
+.more-action span {
+  display: block;
+  margin-top: 7px;
+  color: #7895ad;
+  font-size: 10px;
+  line-height: 1.9;
+}
+
+@media (max-width: 760px) {
+  .portfolio-summary-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .portfolio-chart-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .portfolio-asset-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .portfolio-asset-bottom {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .portfolio-asset-actions {
+    justify-content: stretch;
+  }
+
+  .portfolio-mini-button {
+    flex: 1 1 0;
+  }
+}
+
+@media (max-width: 430px) {
+  .portfolio-hero {
+    padding: 14px;
+  }
+
+  .portfolio-form-grid,
+  .portfolio-form-preview,
+  .more-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .portfolio-summary-value {
+    font-size: 16px;
+  }
+
+  .portfolio-asset-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+  
+.bottom-nav {
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+}
+
+.bottom-nav .nav-item {
+  min-width: 0;
+  padding-right: 4px;
+  padding-left: 4px;
+  font-size: 10px;
+}
+
+@media (max-width: 390px) {
+  .bottom-nav .nav-item {
+    font-size: 8px;
+  }
+}
+
   </style>
 </head>
 <body>
@@ -2567,6 +3142,238 @@
       </div>
     </section>
 
+
+<section id="portfolioView" class="view portfolio-view" hidden>
+  <section class="portfolio-hero">
+    <div class="portfolio-hero-head">
+      <div>
+        <div class="portfolio-live">قیمت آنلاین CoinMarketCap و تتر نوبیتکس</div>
+        <h2 class="portfolio-title">پرتفوی حرفه‌ای اسپات</h2>
+        <p id="portfolioStatus" class="portfolio-subtitle">
+          محاسبه هولد و نوسان‌گیری با میانگین موزون، سود باز و سود بسته‌شده
+        </p>
+      </div>
+      <button
+        id="portfolioRefreshButton"
+        type="button"
+        class="secondary-button"
+        onclick="refreshPortfolioMarket(true)"
+      >
+        تازه‌سازی
+      </button>
+    </div>
+
+    <div class="portfolio-mode-tabs" style="margin-top:14px;">
+      <button class="portfolio-tab active" data-portfolio-mode="all" onclick="setPortfolioMode('all')">کل پرتفوی</button>
+      <button class="portfolio-tab" data-portfolio-mode="hold" onclick="setPortfolioMode('hold')">هولد</button>
+      <button class="portfolio-tab" data-portfolio-mode="swing" onclick="setPortfolioMode('swing')">نوسان‌گیری</button>
+    </div>
+
+    <div class="portfolio-summary-grid">
+      <div class="portfolio-summary-card">
+        <span class="portfolio-summary-label">ارزش فعلی</span>
+        <strong id="portfolioCurrentValue" class="portfolio-summary-value">—</strong>
+        <span id="portfolioCurrentValueIrt" class="portfolio-summary-sub">—</span>
+      </div>
+      <div class="portfolio-summary-card">
+        <span class="portfolio-summary-label">سود باز</span>
+        <strong id="portfolioUnrealizedPnl" class="portfolio-summary-value">—</strong>
+        <span id="portfolioUnrealizedPnlIrt" class="portfolio-summary-sub">—</span>
+      </div>
+      <div class="portfolio-summary-card">
+        <span class="portfolio-summary-label">سود بسته‌شده</span>
+        <strong id="portfolioRealizedPnl" class="portfolio-summary-value">—</strong>
+        <span id="portfolioRealizedPnlIrt" class="portfolio-summary-sub">—</span>
+      </div>
+      <div class="portfolio-summary-card">
+        <span class="portfolio-summary-label">تغییر تقریبی ۲۴ ساعت</span>
+        <strong id="portfolioChange24h" class="portfolio-summary-value">—</strong>
+        <span id="portfolioAssetCount" class="portfolio-summary-sub">—</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="portfolio-panel">
+    <div class="portfolio-section-head">
+      <div>
+        <h3 class="portfolio-section-title">نمودار و ترکیب دارایی‌ها</h3>
+        <div class="portfolio-section-note">
+          نمودار ارزش از زمان فعال‌شدن این نسخه و ثبت Snapshotها شکل می‌گیرد.
+        </div>
+      </div>
+      <div class="portfolio-currency-tabs">
+        <button class="portfolio-tab active" data-portfolio-currency="USD" onclick="setPortfolioCurrency('USD')">USDT</button>
+        <button class="portfolio-tab" data-portfolio-currency="IRT" onclick="setPortfolioCurrency('IRT')">تومان</button>
+      </div>
+    </div>
+
+    <div class="portfolio-chart-tabs" style="margin-top:10px;">
+      <button class="portfolio-tab" data-portfolio-range="1D" onclick="setPortfolioChartRange('1D')">۱ روز</button>
+      <button class="portfolio-tab active" data-portfolio-range="7D" onclick="setPortfolioChartRange('7D')">۷ روز</button>
+      <button class="portfolio-tab" data-portfolio-range="30D" onclick="setPortfolioChartRange('30D')">۳۰ روز</button>
+      <button class="portfolio-tab" data-portfolio-range="ALL" onclick="setPortfolioChartRange('ALL')">کل</button>
+    </div>
+
+    <div class="portfolio-chart-grid">
+      <div class="portfolio-chart-box">
+        <canvas id="portfolioValueChart"></canvas>
+        <div id="portfolioChartEmpty" class="portfolio-chart-empty" hidden>
+          هنوز Snapshot کافی برای رسم نمودار وجود ندارد.
+        </div>
+      </div>
+      <div class="portfolio-allocation-box">
+        <canvas id="portfolioAllocationChart"></canvas>
+        <div id="portfolioAllocationLegend" class="portfolio-allocation-legend"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="portfolio-panel">
+    <div class="portfolio-section-head">
+      <div>
+        <h3 class="portfolio-section-title">دارایی‌های فعال</h3>
+        <div id="portfolioAssetsNote" class="portfolio-section-note">—</div>
+      </div>
+    </div>
+    <div id="portfolioAssetsList" class="portfolio-assets-list"></div>
+    <div id="portfolioAssetsEmpty" class="portfolio-empty" hidden>
+      هنوز دارایی فعالی در این بخش ثبت نشده است.
+    </div>
+  </section>
+
+  <section id="portfolioTransactionPanel" class="portfolio-panel">
+    <div class="portfolio-section-head">
+      <div>
+        <h3 class="portfolio-section-title">افزودن تراکنش</h3>
+        <div class="portfolio-section-note">
+          خرید، فروش جزئی یا فروش کامل با ثبت نرخ تتر همان لحظه
+        </div>
+      </div>
+    </div>
+
+    <div class="portfolio-transaction-form">
+      <div class="portfolio-form-grid">
+        <div class="field">
+          <label for="portfolioTransactionType">نوع تراکنش</label>
+          <select id="portfolioTransactionType" onchange="updatePortfolioFormPreview()">
+            <option value="buy">خرید</option>
+            <option value="sell">فروش</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="portfolioStrategy">نوع پرتفوی</label>
+          <select id="portfolioStrategy" onchange="updatePortfolioStrategyFields()">
+            <option value="hold">هولد</option>
+            <option value="swing">نوسان‌گیری اسپات</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="portfolioAssetSearch">جست‌وجوی ارز</label>
+        <input
+          id="portfolioAssetSearch"
+          type="text"
+          autocomplete="off"
+          placeholder="مثلاً BTC یا Bitcoin"
+          oninput="filterPortfolioAssetOptions()"
+        />
+      </div>
+
+      <div class="field">
+        <label for="portfolioAssetSelect">انتخاب ارز از CoinMarketCap</label>
+        <select id="portfolioAssetSelect" onchange="selectPortfolioAsset()">
+          <option value="">ابتدا داده‌های بازار دریافت شود</option>
+        </select>
+      </div>
+
+      <div class="portfolio-form-grid">
+        <div class="field">
+          <label for="portfolioQuantity">مقدار ارز</label>
+          <input id="portfolioQuantity" data-formatted-number="true" type="text" inputmode="decimal" placeholder="مثلاً 0.015" oninput="updatePortfolioFormPreview()" />
+        </div>
+        <div class="field">
+          <label for="portfolioPriceUsd">قیمت هر واحد (USDT)</label>
+          <input id="portfolioPriceUsd" data-formatted-number="true" type="text" inputmode="decimal" placeholder="مثلاً 68000" oninput="updatePortfolioFormPreview()" />
+        </div>
+      </div>
+
+      <div class="portfolio-form-grid">
+        <div class="field">
+          <label for="portfolioFeeUsd">کارمزد (USDT)</label>
+          <input id="portfolioFeeUsd" data-formatted-number="true" type="text" inputmode="decimal" value="0" oninput="updatePortfolioFormPreview()" />
+        </div>
+        <div class="field">
+          <label for="portfolioUsdtRate">نرخ تتر همان لحظه (تومان)</label>
+          <input id="portfolioUsdtRate" data-formatted-number="true" type="text" inputmode="decimal" placeholder="نرخ نوبیتکس" oninput="updatePortfolioFormPreview()" />
+        </div>
+      </div>
+
+      <div class="portfolio-form-grid">
+        <div class="field">
+          <label for="portfolioTransactionDate">تاریخ و ساعت</label>
+          <input id="portfolioTransactionDate" type="datetime-local" />
+        </div>
+        <div class="field">
+          <label for="portfolioExchange">صرافی یا محل نگهداری</label>
+          <input id="portfolioExchange" type="text" placeholder="مثلاً Binance یا کیف پول" />
+        </div>
+      </div>
+
+      <div id="portfolioSwingFields" class="portfolio-swing-fields" hidden>
+        <div class="portfolio-form-grid">
+          <div class="field">
+            <label for="portfolioStopPrice">حد ضرر (USDT)</label>
+            <input id="portfolioStopPrice" data-formatted-number="true" type="text" inputmode="decimal" placeholder="اختیاری برای ثبت پرتفوی" />
+          </div>
+          <div class="field">
+            <label for="portfolioTargetPrice">هدف اصلی (USDT)</label>
+            <input id="portfolioTargetPrice" data-formatted-number="true" type="text" inputmode="decimal" placeholder="اختیاری" />
+          </div>
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="portfolioNote">یادداشت</label>
+        <textarea id="portfolioNote" placeholder="دلیل خرید، سناریو، برنامه فروش یا نکته مدیریت سرمایه"></textarea>
+      </div>
+
+      <div class="portfolio-form-preview">
+        <div>
+          <span>مبلغ ناخالص</span>
+          <strong id="portfolioFormGross">—</strong>
+        </div>
+        <div>
+          <span>مبلغ نهایی با کارمزد</span>
+          <strong id="portfolioFormNet">—</strong>
+        </div>
+        <div>
+          <span>معادل تومان</span>
+          <strong id="portfolioFormIrt">—</strong>
+        </div>
+      </div>
+
+      <button id="portfolioSaveTransactionButton" type="button" class="primary-button" onclick="savePortfolioTransaction()">
+        ثبت تراکنش در پرتفوی
+      </button>
+    </div>
+  </section>
+
+  <section class="portfolio-panel">
+    <details>
+      <summary>تاریخچه تراکنش‌ها و پشتیبان</summary>
+      <div style="padding-top:12px;">
+        <div id="portfolioTransactionsList" class="portfolio-transactions-list"></div>
+        <div style="display:grid;gap:8px;margin-top:12px;">
+          <button type="button" class="secondary-button" onclick="exportPortfolioBackup()">دریافت پشتیبان پرتفوی (JSON)</button>
+          <button type="button" class="secondary-button" onclick="createManualPortfolioSnapshot()">ثبت Snapshot دستی</button>
+        </div>
+      </div>
+    </details>
+  </section>
+</section>
+
     <section id="fundamentalView" class="view card" hidden>
       <h2 class="card-title">اخبار فاندامنتال فارسی</h2>
 
@@ -2692,14 +3499,38 @@
     </section>
   </main>
 
-  <nav class="bottom-nav" aria-label="ناوبری اصلی">
-    <button id="calculatorNavButton" class="nav-item active" type="button" onclick="showCalculator()">ماشین‌حساب</button>
-    <button id="marketNavButton" class="nav-item" type="button" onclick="showMarket()">بازار</button>
-    <button id="marketPulseNavButton" class="nav-item" type="button" onclick="showMarketPulse()">نبض</button>
-    <button id="fundamentalNavButton" class="nav-item" type="button" onclick="showFundamental()">اخبار</button>
-    <button id="journalNavButton" class="nav-item" type="button" onclick="showJournal()">ژورنال</button>
-    <button id="statementNavButton" class="nav-item" type="button" onclick="showStatement()">استیتمنت</button>
-  </nav>
+
+<section id="moreView" class="view card" hidden>
+  <h2 class="card-title">بیشتر</h2>
+  <div class="more-grid">
+    <button type="button" class="more-action" onclick="showFundamental()">
+      <strong>اخبار فاندامنتال</strong>
+      <span>خبرهای فارسی و تازه بازار رمزارزها</span>
+    </button>
+    <button type="button" class="more-action" onclick="showStatement()">
+      <strong>استیتمنت معاملاتی</strong>
+      <span>تحلیل نتیجه معاملات بسته‌شده ژورنال</span>
+    </button>
+    <button type="button" class="more-action" onclick="exportFullJournalBackup()">
+      <strong>پشتیبان ژورنال</strong>
+      <span>دریافت همه معاملات و تصاویر در فایل JSON</span>
+    </button>
+    <button type="button" class="more-action" onclick="exportPortfolioBackup()">
+      <strong>پشتیبان پرتفوی</strong>
+      <span>خروجی تراکنش‌ها و Snapshotهای پرتفوی</span>
+    </button>
+  </div>
+</section>
+
+
+<nav class="bottom-nav" aria-label="ناوبری اصلی">
+  <button id="calculatorNavButton" class="nav-item active" type="button" onclick="showCalculator()">ماشین‌حساب</button>
+  <button id="marketNavButton" class="nav-item" type="button" onclick="showMarket()">بازار</button>
+  <button id="marketPulseNavButton" class="nav-item" type="button" onclick="showMarketPulse()">نبض</button>
+  <button id="portfolioNavButton" class="nav-item" type="button" onclick="showPortfolio()">پرتفوی</button>
+  <button id="journalNavButton" class="nav-item" type="button" onclick="showJournal()">ژورنال</button>
+  <button id="moreNavButton" class="nav-item" type="button" onclick="showMore()">بیشتر</button>
+</nav>
 
   <footer class="footer">@CryptoSmartTradeBot</footer>
   <div id="toast" class="toast" role="status"></div>
@@ -2708,8 +3539,10 @@
     "use strict";
 
     const DB_NAME = "cryptoSmartJournalDB";
-    const DB_VERSION = 1;
+    const DB_VERSION = 2;
     const STORE_NAME = "trades";
+    const PORTFOLIO_TRANSACTION_STORE = "portfolioTransactions";
+    const PORTFOLIO_SNAPSHOT_STORE = "portfolioSnapshots";
 
     let selectedTradeType = "futures";
     let selectedSide = "long";
@@ -2771,6 +3604,20 @@
     let fundamentalRequestInFlight = false;
     let fundamentalCategory = "all";
     let fundamentalNewsItems = [];
+
+    let portfolioMode = "all";
+    let portfolioCurrency = "USD";
+    let portfolioChartRange = "7D";
+    let portfolioTransactions = [];
+    let portfolioSnapshots = [];
+    let portfolioComputedAssets = [];
+    let portfolioMarketListings = [];
+    let portfolioMarketMap = new Map();
+    let portfolioRefreshTimer = null;
+    let portfolioRenderQueued = false;
+
+    const PORTFOLIO_SNAPSHOT_MIN_INTERVAL = 30 * 60 * 1000;
+    const PORTFOLIO_AUTO_REFRESH_INTERVAL = 2 * 60 * 1000;
 
     const FALLBACK_MARKET_COINS = [
       { id: "bitcoin", name: "Bitcoin", symbol: "btc", market_cap_rank: 1 },
@@ -3659,6 +4506,24 @@
             store.createIndex("createdAt", "createdAt", { unique: false });
             store.createIndex("status", "status", { unique: false });
           }
+
+          if (!database.objectStoreNames.contains(PORTFOLIO_TRANSACTION_STORE)) {
+            const portfolioStore = database.createObjectStore(
+              PORTFOLIO_TRANSACTION_STORE,
+              { keyPath: "id", autoIncrement: true }
+            );
+            portfolioStore.createIndex("timestamp", "timestamp", { unique: false });
+            portfolioStore.createIndex("cmcId", "cmcId", { unique: false });
+            portfolioStore.createIndex("strategy", "strategy", { unique: false });
+          }
+
+          if (!database.objectStoreNames.contains(PORTFOLIO_SNAPSHOT_STORE)) {
+            const snapshotStore = database.createObjectStore(
+              PORTFOLIO_SNAPSHOT_STORE,
+              { keyPath: "id", autoIncrement: true }
+            );
+            snapshotStore.createIndex("timestamp", "timestamp", { unique: false });
+          }
         };
         request.onsuccess = function () { resolve(request.result); };
         request.onerror = function () { reject(request.error || new Error("بازکردن دیتابیس ناموفق بود.")); };
@@ -3679,6 +4544,98 @@
         transaction.onabort = function () { database.close(); };
       });
     }
+
+
+async function runNamedStoreRequest(storeName, mode, handler) {
+  const database = await openJournalDatabase();
+
+  return new Promise(function (resolve, reject) {
+    const transaction = database.transaction(storeName, mode);
+    const store = transaction.objectStore(storeName);
+    let request;
+
+    try {
+      request = handler(store);
+    } catch (error) {
+      database.close();
+      reject(error);
+      return;
+    }
+
+    request.onsuccess = function () {
+      resolve(request.result);
+    };
+
+    request.onerror = function () {
+      reject(
+        request.error ||
+        new Error("عملیات دیتابیس پرتفوی ناموفق بود.")
+      );
+    };
+
+    transaction.oncomplete = function () {
+      database.close();
+    };
+
+    transaction.onerror = function () {
+      database.close();
+    };
+
+    transaction.onabort = function () {
+      database.close();
+    };
+  });
+}
+
+function getAllPortfolioTransactions() {
+  return runNamedStoreRequest(
+    PORTFOLIO_TRANSACTION_STORE,
+    "readonly",
+    function (store) {
+      return store.getAll();
+    }
+  );
+}
+
+function addPortfolioTransactionToDatabase(transaction) {
+  return runNamedStoreRequest(
+    PORTFOLIO_TRANSACTION_STORE,
+    "readwrite",
+    function (store) {
+      return store.add(transaction);
+    }
+  );
+}
+
+function deletePortfolioTransactionFromDatabase(id) {
+  return runNamedStoreRequest(
+    PORTFOLIO_TRANSACTION_STORE,
+    "readwrite",
+    function (store) {
+      return store.delete(id);
+    }
+  );
+}
+
+function getAllPortfolioSnapshots() {
+  return runNamedStoreRequest(
+    PORTFOLIO_SNAPSHOT_STORE,
+    "readonly",
+    function (store) {
+      return store.getAll();
+    }
+  );
+}
+
+function addPortfolioSnapshotToDatabase(snapshot) {
+  return runNamedStoreRequest(
+    PORTFOLIO_SNAPSHOT_STORE,
+    "readwrite",
+    function (store) {
+      return store.add(snapshot);
+    }
+  );
+}
 
     function addTradeToDatabase(trade) { return runStoreRequest("readwrite", function (store) { return store.add(trade); }); }
     function updateTradeInDatabase(trade) { return runStoreRequest("readwrite", function (store) { return store.put(trade); }); }
@@ -5159,31 +6116,2729 @@
       }, MARKET_RANKING_REFRESH_INTERVAL);
     }
 
-    function setActiveView(viewId) {
-      ["calculatorView", "marketView", "marketPulseView", "fundamentalView", "journalView", "statementView"].forEach(function (id) {
-        document.getElementById(id).hidden = id !== viewId;
+
+function portfolioClassForNumber(value) {
+  const number = Number(value);
+  if (!Number.isFinite(number) || Math.abs(number) < 1e-12) {
+    return "portfolio-neutral";
+  }
+  return number > 0
+    ? "portfolio-positive"
+    : "portfolio-negative";
+}
+
+function portfolioSigned(value, digits) {
+  const number = Number(value);
+  if (!Number.isFinite(number)) return "—";
+  return (
+    (number > 0 ? "+" : "") +
+    formatNumber(number, digits)
+  );
+}
+
+function portfolioMoney(value, currency) {
+  const number = Number(value);
+  if (!Number.isFinite(number)) return "—";
+
+  if (currency === "IRT") {
+    return formatNumber(number, 0) + " تومان";
+  }
+
+  return formatNumber(number, 2) + " USDT";
+}
+
+function portfolioCurrentUsdtRate() {
+  const value =
+    usdtIrtRateData &&
+    Number(usdtIrtRateData.sellIrt);
+
+  return Number.isFinite(value) && value > 0
+    ? value
+    : null;
+}
+
+function portfolioListingFromId(cmcId) {
+  return portfolioMarketMap.get(
+    String(cmcId)
+  ) || null;
+}
+
+function normalizePortfolioListings(data) {
+  const direct =
+    Array.isArray(data && data.listings)
+      ? data.listings
+      : [];
+
+  const fallback = []
+    .concat(
+      Array.isArray(data && data.trending)
+        ? data.trending
+        : [],
+      Array.isArray(data && data.gainers)
+        ? data.gainers
+        : [],
+      Array.isArray(data && data.losers)
+        ? data.losers
+        : []
+    );
+
+  const rows = direct.length
+    ? direct
+    : fallback;
+
+  const map = new Map();
+
+  rows.forEach(function (row) {
+    const id = Number(row && row.id);
+    if (!Number.isFinite(id)) return;
+
+    map.set(String(id), {
+      id: id,
+      name: String(row.name || ""),
+      symbol: String(row.symbol || "").toUpperCase(),
+      slug: String(row.slug || ""),
+      image:
+        row.image ||
+        "https://s2.coinmarketcap.com/static/img/coins/64x64/" +
+          id +
+          ".png",
+      marketCapRank:
+        Number.isFinite(Number(row.marketCapRank))
+          ? Number(row.marketCapRank)
+          : null,
+      priceUsd:
+        Number.isFinite(Number(row.priceUsd))
+          ? Number(row.priceUsd)
+          : null,
+      change24h:
+        Number.isFinite(Number(row.change24h))
+          ? Number(row.change24h)
+          : null,
+      marketCapUsd:
+        Number.isFinite(Number(row.marketCapUsd))
+          ? Number(row.marketCapUsd)
+          : null
+    });
+  });
+
+  return Array.from(map.values())
+    .sort(function (a, b) {
+      const rankA =
+        Number.isFinite(a.marketCapRank)
+          ? a.marketCapRank
+          : 999999;
+      const rankB =
+        Number.isFinite(b.marketCapRank)
+          ? b.marketCapRank
+          : 999999;
+      return rankA - rankB;
+    });
+}
+
+function applyPortfolioMarketData(data) {
+  portfolioMarketListings =
+    normalizePortfolioListings(data);
+
+  portfolioMarketMap = new Map(
+    portfolioMarketListings.map(function (row) {
+      return [String(row.id), row];
+    })
+  );
+
+  populatePortfolioAssetOptions();
+
+  if (
+    !document.getElementById(
+      "portfolioView"
+    ).hidden
+  ) {
+    schedulePortfolioRender();
+  }
+}
+
+function populatePortfolioAssetOptions() {
+  const select =
+    document.getElementById(
+      "portfolioAssetSelect"
+    );
+
+  if (!select) return;
+
+  const previousValue = select.value;
+  select.innerHTML = "";
+
+  if (!portfolioMarketListings.length) {
+    const option =
+      document.createElement("option");
+    option.value = "";
+    option.textContent =
+      "داده CoinMarketCap در دسترس نیست";
+    select.appendChild(option);
+    return;
+  }
+
+  portfolioMarketListings.forEach(
+    function (row) {
+      const option =
+        document.createElement("option");
+
+      option.value = String(row.id);
+      option.dataset.search =
+        (
+          row.symbol +
+          " " +
+          row.name +
+          " " +
+          row.slug
+        ).toLowerCase();
+
+      option.textContent =
+        (row.marketCapRank
+          ? "#" + row.marketCapRank + " "
+          : "") +
+        row.symbol +
+        " — " +
+        row.name;
+
+      select.appendChild(option);
+    }
+  );
+
+  if (
+    previousValue &&
+    portfolioMarketMap.has(
+      String(previousValue)
+    )
+  ) {
+    select.value = previousValue;
+  }
+
+  selectPortfolioAsset();
+}
+
+function filterPortfolioAssetOptions() {
+  const query =
+    String(
+      document.getElementById(
+        "portfolioAssetSearch"
+      ).value || ""
+    )
+      .trim()
+      .toLowerCase();
+
+  const select =
+    document.getElementById(
+      "portfolioAssetSelect"
+    );
+
+  if (!select) return;
+
+  Array.from(select.options).forEach(
+    function (option) {
+      option.hidden =
+        Boolean(query) &&
+        !String(
+          option.dataset.search ||
+          option.textContent ||
+          ""
+        )
+          .toLowerCase()
+          .includes(query);
+    }
+  );
+
+  const visible =
+    Array.from(select.options)
+      .find(function (option) {
+        return !option.hidden;
       });
 
-      const mapping = {
-        calculatorView: "calculatorNavButton",
-        marketView: "marketNavButton",
-        marketPulseView: "marketPulseNavButton",
-        fundamentalView: "fundamentalNavButton",
-        journalView: "journalNavButton",
-        statementView: "statementNavButton"
-      };
+  if (visible) {
+    select.value = visible.value;
+    selectPortfolioAsset();
+  }
+}
 
-      ["calculatorNavButton", "marketNavButton", "marketPulseNavButton", "fundamentalNavButton", "journalNavButton", "statementNavButton"].forEach(function (id) {
-        document.getElementById(id).classList.toggle("active", id === mapping[viewId]);
+function selectPortfolioAsset() {
+  const select =
+    document.getElementById(
+      "portfolioAssetSelect"
+    );
+
+  if (!select) return;
+
+  const listing =
+    portfolioListingFromId(select.value);
+
+  if (
+    listing &&
+    Number.isFinite(listing.priceUsd)
+  ) {
+    const input =
+      document.getElementById(
+        "portfolioPriceUsd"
+      );
+
+    input.value =
+      formatNumericInputValue(
+        listing.priceUsd
+      );
+
+    input.dispatchEvent(
+      new Event("input", {
+        bubbles: true
+      })
+    );
+  }
+
+  updatePortfolioFormPreview();
+}
+
+function setPortfolioMode(mode) {
+  portfolioMode =
+    ["all", "hold", "swing"]
+      .includes(mode)
+      ? mode
+      : "all";
+
+  document
+    .querySelectorAll(
+      "[data-portfolio-mode]"
+    )
+    .forEach(function (button) {
+      button.classList.toggle(
+        "active",
+        button.dataset.portfolioMode ===
+          portfolioMode
+      );
+    });
+
+  schedulePortfolioRender();
+}
+
+function setPortfolioCurrency(currency) {
+  portfolioCurrency =
+    currency === "IRT"
+      ? "IRT"
+      : "USD";
+
+  document
+    .querySelectorAll(
+      "[data-portfolio-currency]"
+    )
+    .forEach(function (button) {
+      button.classList.toggle(
+        "active",
+        button.dataset.portfolioCurrency ===
+          portfolioCurrency
+      );
+    });
+
+  renderPortfolioCharts();
+}
+
+function setPortfolioChartRange(range) {
+  portfolioChartRange =
+    ["1D", "7D", "30D", "ALL"]
+      .includes(range)
+      ? range
+      : "7D";
+
+  document
+    .querySelectorAll(
+      "[data-portfolio-range]"
+    )
+    .forEach(function (button) {
+      button.classList.toggle(
+        "active",
+        button.dataset.portfolioRange ===
+          portfolioChartRange
+      );
+    });
+
+  renderPortfolioValueChart();
+}
+
+function updatePortfolioStrategyFields() {
+  const strategy =
+    document.getElementById(
+      "portfolioStrategy"
+    ).value;
+
+  document.getElementById(
+    "portfolioSwingFields"
+  ).hidden = strategy !== "swing";
+
+  updatePortfolioFormPreview();
+}
+
+function setPortfolioFormRate() {
+  const input =
+    document.getElementById(
+      "portfolioUsdtRate"
+    );
+
+  const type =
+    document.getElementById(
+      "portfolioTransactionType"
+    ).value;
+
+  if (!input || !usdtIrtRateData) return;
+
+  const rate =
+    type === "buy"
+      ? Number(usdtIrtRateData.buyIrt)
+      : Number(usdtIrtRateData.sellIrt);
+
+  if (
+    Number.isFinite(rate) &&
+    rate > 0
+  ) {
+    input.value =
+      formatNumericInputValue(rate);
+  }
+}
+
+function updatePortfolioFormPreview() {
+  const type =
+    document.getElementById(
+      "portfolioTransactionType"
+    ).value;
+
+  setPortfolioFormRate();
+
+  const quantity =
+    getNumber("portfolioQuantity");
+  const price =
+    getNumber("portfolioPriceUsd");
+  const fee =
+    getNumber("portfolioFeeUsd") || 0;
+  const rate =
+    getNumber("portfolioUsdtRate");
+
+  const gross =
+    Number.isFinite(quantity) &&
+    Number.isFinite(price)
+      ? quantity * price
+      : null;
+
+  let net = null;
+
+  if (Number.isFinite(gross)) {
+    net =
+      type === "buy"
+        ? gross + fee
+        : gross - fee;
+  }
+
+  document.getElementById(
+    "portfolioFormGross"
+  ).textContent =
+    Number.isFinite(gross)
+      ? portfolioMoney(gross, "USD")
+      : "—";
+
+  document.getElementById(
+    "portfolioFormNet"
+  ).textContent =
+    Number.isFinite(net)
+      ? portfolioMoney(net, "USD")
+      : "—";
+
+  document.getElementById(
+    "portfolioFormIrt"
+  ).textContent =
+    Number.isFinite(net) &&
+    Number.isFinite(rate)
+      ? portfolioMoney(
+          net * rate,
+          "IRT"
+        )
+      : "—";
+}
+
+function calculatePortfolioLedger(
+  transactions
+) {
+  const ledgers = new Map();
+
+  const ordered = [...transactions]
+    .sort(function (a, b) {
+      return (
+        Number(a.timestamp) -
+        Number(b.timestamp)
+      );
+    });
+
+  ordered.forEach(function (transaction) {
+    const cmcId =
+      String(transaction.cmcId);
+
+    const strategy =
+      transaction.strategy === "swing"
+        ? "swing"
+        : "hold";
+
+    const key =
+      cmcId + ":" + strategy;
+
+    if (!ledgers.has(key)) {
+      ledgers.set(key, {
+        key: key,
+        cmcId: Number(transaction.cmcId),
+        symbol: transaction.symbol,
+        name: transaction.name,
+        image: transaction.image,
+        strategy: strategy,
+        quantity: 0,
+        costUsdt: 0,
+        costIrt: 0,
+        realizedUsdt: 0,
+        realizedIrt: 0,
+        buys: 0,
+        sells: 0,
+        latestStop: null,
+        latestTarget: null,
+        latestNote: "",
+        lastTimestamp: 0
       });
-
-      if (viewId !== "marketView") stopMarketAutoRefresh();
-      if (viewId !== "marketPulseView") stopMarketPulseAutoRefresh();
-      if (viewId !== "fundamentalView") stopFundamentalAutoRefresh();
-      window.scrollTo({ top: 0, behavior: "smooth" });
     }
 
-    function showCalculator() { setActiveView("calculatorView"); }
+    const ledger = ledgers.get(key);
+    const quantity =
+      Number(transaction.quantity);
+    const price =
+      Number(transaction.priceUsd);
+    const fee =
+      Number(transaction.feeUsd) || 0;
+    const rate =
+      Number(transaction.usdtIrtRate);
+
+    if (
+      !Number.isFinite(quantity) ||
+      quantity <= 0 ||
+      !Number.isFinite(price) ||
+      price <= 0
+    ) {
+      return;
+    }
+
+    if (transaction.type === "sell") {
+      const sellQuantity =
+        Math.min(
+          quantity,
+          Math.max(0, ledger.quantity)
+        );
+
+      if (sellQuantity <= 0) return;
+
+      const averageUsdt =
+        ledger.quantity > 0
+          ? ledger.costUsdt /
+            ledger.quantity
+          : 0;
+
+      const averageIrt =
+        ledger.quantity > 0
+          ? ledger.costIrt /
+            ledger.quantity
+          : 0;
+
+      const proceedsUsdt =
+        sellQuantity * price - fee;
+
+      const proceedsIrt =
+        Number.isFinite(rate) &&
+        rate > 0
+          ? proceedsUsdt * rate
+          : 0;
+
+      ledger.realizedUsdt +=
+        proceedsUsdt -
+        averageUsdt * sellQuantity;
+
+      ledger.realizedIrt +=
+        proceedsIrt -
+        averageIrt * sellQuantity;
+
+      ledger.costUsdt -=
+        averageUsdt * sellQuantity;
+
+      ledger.costIrt -=
+        averageIrt * sellQuantity;
+
+      ledger.quantity -=
+        sellQuantity;
+
+      if (
+        Math.abs(ledger.quantity) <
+        1e-12
+      ) {
+        ledger.quantity = 0;
+        ledger.costUsdt = 0;
+        ledger.costIrt = 0;
+      }
+
+      ledger.sells += 1;
+    } else {
+      const totalUsdt =
+        quantity * price + fee;
+
+      ledger.quantity += quantity;
+      ledger.costUsdt += totalUsdt;
+
+      if (
+        Number.isFinite(rate) &&
+        rate > 0
+      ) {
+        ledger.costIrt +=
+          totalUsdt * rate;
+      }
+
+      ledger.buys += 1;
+    }
+
+    ledger.latestStop =
+      Number.isFinite(
+        Number(transaction.stopPrice)
+      )
+        ? Number(transaction.stopPrice)
+        : ledger.latestStop;
+
+    ledger.latestTarget =
+      Number.isFinite(
+        Number(transaction.targetPrice)
+      )
+        ? Number(transaction.targetPrice)
+        : ledger.latestTarget;
+
+    ledger.latestNote =
+      transaction.note ||
+      ledger.latestNote;
+
+    ledger.lastTimestamp =
+      Math.max(
+        ledger.lastTimestamp,
+        Number(transaction.timestamp) || 0
+      );
+  });
+
+  return Array.from(ledgers.values());
+}
+
+function buildPortfolioComputedAssets() {
+  const selectedTransactions =
+    portfolioMode === "all"
+      ? portfolioTransactions
+      : portfolioTransactions.filter(
+          function (transaction) {
+            return (
+              transaction.strategy ===
+              portfolioMode
+            );
+          }
+        );
+
+  return calculatePortfolioLedger(
+    selectedTransactions
+  )
+    .map(function (ledger) {
+      const listing =
+        portfolioListingFromId(
+          ledger.cmcId
+        );
+
+      const currentPrice =
+        listing &&
+        Number.isFinite(listing.priceUsd)
+          ? listing.priceUsd
+          : null;
+
+      const currentRate =
+        portfolioCurrentUsdtRate();
+
+      const currentValue =
+        Number.isFinite(currentPrice)
+          ? ledger.quantity *
+            currentPrice
+          : null;
+
+      const currentValueIrt =
+        Number.isFinite(currentValue) &&
+        Number.isFinite(currentRate)
+          ? currentValue *
+            currentRate
+          : null;
+
+      const averageCost =
+        ledger.quantity > 0
+          ? ledger.costUsdt /
+            ledger.quantity
+          : 0;
+
+      const averageCostIrt =
+        ledger.quantity > 0
+          ? ledger.costIrt /
+            ledger.quantity
+          : 0;
+
+      const unrealized =
+        Number.isFinite(currentValue)
+          ? currentValue -
+            ledger.costUsdt
+          : null;
+
+      const unrealizedIrt =
+        Number.isFinite(currentValueIrt)
+          ? currentValueIrt -
+            ledger.costIrt
+          : null;
+
+      const returnPercent =
+        ledger.costUsdt > 0 &&
+        Number.isFinite(unrealized)
+          ? (
+              unrealized /
+              ledger.costUsdt
+            ) * 100
+          : 0;
+
+      return {
+        ...ledger,
+        listing: listing,
+        symbol:
+          listing && listing.symbol
+            ? listing.symbol
+            : ledger.symbol,
+        name:
+          listing && listing.name
+            ? listing.name
+            : ledger.name,
+        image:
+          listing && listing.image
+            ? listing.image
+            : ledger.image,
+        currentPrice: currentPrice,
+        change24h:
+          listing
+            ? listing.change24h
+            : null,
+        currentValue: currentValue,
+        currentValueIrt:
+          currentValueIrt,
+        averageCost: averageCost,
+        averageCostIrt:
+          averageCostIrt,
+        unrealized: unrealized,
+        unrealizedIrt:
+          unrealizedIrt,
+        returnPercent:
+          returnPercent
+      };
+    })
+    .filter(function (asset) {
+      return (
+        asset.quantity > 1e-12 ||
+        Math.abs(asset.realizedUsdt) >
+          1e-12
+      );
+    });
+}
+
+function getPortfolioSummary(assets) {
+  const currentValue =
+    assets.reduce(function (sum, asset) {
+      return (
+        sum +
+        (
+          Number.isFinite(
+            asset.currentValue
+          )
+            ? asset.currentValue
+            : 0
+        )
+      );
+    }, 0);
+
+  const currentValueIrt =
+    assets.reduce(function (sum, asset) {
+      return (
+        sum +
+        (
+          Number.isFinite(
+            asset.currentValueIrt
+          )
+            ? asset.currentValueIrt
+            : 0
+        )
+      );
+    }, 0);
+
+  const costUsdt =
+    assets.reduce(function (sum, asset) {
+      return sum + asset.costUsdt;
+    }, 0);
+
+  const costIrt =
+    assets.reduce(function (sum, asset) {
+      return sum + asset.costIrt;
+    }, 0);
+
+  const realizedUsdt =
+    assets.reduce(function (sum, asset) {
+      return sum + asset.realizedUsdt;
+    }, 0);
+
+  const realizedIrt =
+    assets.reduce(function (sum, asset) {
+      return sum + asset.realizedIrt;
+    }, 0);
+
+  const unrealizedUsdt =
+    currentValue - costUsdt;
+
+  const unrealizedIrt =
+    currentValueIrt - costIrt;
+
+  let previousValue = 0;
+
+  assets.forEach(function (asset) {
+    if (
+      !Number.isFinite(
+        asset.currentValue
+      ) ||
+      !Number.isFinite(
+        asset.change24h
+      ) ||
+      asset.change24h <= -99.99
+    ) {
+      return;
+    }
+
+    previousValue +=
+      asset.currentValue /
+      (
+        1 +
+        asset.change24h / 100
+      );
+  });
+
+  const change24h =
+    previousValue > 0
+      ? (
+          (
+            currentValue -
+            previousValue
+          ) /
+          previousValue
+        ) * 100
+      : null;
+
+  return {
+    currentValue,
+    currentValueIrt,
+    costUsdt,
+    costIrt,
+    realizedUsdt,
+    realizedIrt,
+    unrealizedUsdt,
+    unrealizedIrt,
+    change24h,
+    activeAssetCount:
+      assets.filter(function (asset) {
+        return asset.quantity > 1e-12;
+      }).length
+  };
+}
+
+function renderPortfolioSummary(summary) {
+  const currentValue =
+    document.getElementById(
+      "portfolioCurrentValue"
+    );
+
+  currentValue.textContent =
+    portfolioMoney(
+      summary.currentValue,
+      "USD"
+    );
+
+  document.getElementById(
+    "portfolioCurrentValueIrt"
+  ).textContent =
+    portfolioMoney(
+      summary.currentValueIrt,
+      "IRT"
+    );
+
+  const unrealized =
+    document.getElementById(
+      "portfolioUnrealizedPnl"
+    );
+
+  unrealized.className =
+    "portfolio-summary-value " +
+    portfolioClassForNumber(
+      summary.unrealizedUsdt
+    );
+
+  unrealized.textContent =
+    portfolioMoney(
+      summary.unrealizedUsdt,
+      "USD"
+    );
+
+  const unrealizedIrt =
+    document.getElementById(
+      "portfolioUnrealizedPnlIrt"
+    );
+
+  unrealizedIrt.className =
+    "portfolio-summary-sub " +
+    portfolioClassForNumber(
+      summary.unrealizedIrt
+    );
+
+  unrealizedIrt.textContent =
+    portfolioMoney(
+      summary.unrealizedIrt,
+      "IRT"
+    );
+
+  const realized =
+    document.getElementById(
+      "portfolioRealizedPnl"
+    );
+
+  realized.className =
+    "portfolio-summary-value " +
+    portfolioClassForNumber(
+      summary.realizedUsdt
+    );
+
+  realized.textContent =
+    portfolioMoney(
+      summary.realizedUsdt,
+      "USD"
+    );
+
+  const realizedIrt =
+    document.getElementById(
+      "portfolioRealizedPnlIrt"
+    );
+
+  realizedIrt.className =
+    "portfolio-summary-sub " +
+    portfolioClassForNumber(
+      summary.realizedIrt
+    );
+
+  realizedIrt.textContent =
+    portfolioMoney(
+      summary.realizedIrt,
+      "IRT"
+    );
+
+  const change =
+    document.getElementById(
+      "portfolioChange24h"
+    );
+
+  change.className =
+    "portfolio-summary-value " +
+    portfolioClassForNumber(
+      summary.change24h
+    );
+
+  change.textContent =
+    Number.isFinite(
+      summary.change24h
+    )
+      ? portfolioSigned(
+          summary.change24h,
+          2
+        ) + "%"
+      : "—";
+
+  document.getElementById(
+    "portfolioAssetCount"
+  ).textContent =
+    formatNumber(
+      summary.activeAssetCount,
+      0
+    ) +
+    " دارایی فعال";
+}
+
+function createPortfolioAssetCard(
+  asset,
+  totalValue
+) {
+  const card =
+    document.createElement("article");
+
+  card.className =
+    "portfolio-asset-card";
+
+  const head =
+    document.createElement("div");
+
+  head.className =
+    "portfolio-asset-head";
+
+  const identity =
+    document.createElement("div");
+
+  identity.className =
+    "portfolio-asset-identity";
+
+  const image =
+    document.createElement("img");
+
+  image.className =
+    "portfolio-asset-logo";
+
+  image.src =
+    asset.image ||
+    "data:image/svg+xml;charset=utf-8," +
+    encodeURIComponent(
+      '<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64"><rect width="64" height="64" rx="32" fill="#153754"/><text x="32" y="38" text-anchor="middle" fill="#fff" font-size="18">' +
+      String(asset.symbol || "?")
+        .slice(0, 3) +
+      "</text></svg>"
+    );
+
+  image.alt =
+    asset.symbol || "Asset";
+
+  const name =
+    document.createElement("div");
+
+  name.className =
+    "portfolio-asset-name";
+
+  const strong =
+    document.createElement("strong");
+
+  strong.textContent =
+    asset.name ||
+    asset.symbol ||
+    "دارایی";
+
+  const symbol =
+    document.createElement("span");
+
+  symbol.textContent =
+    asset.symbol || "—";
+
+  name.appendChild(strong);
+  name.appendChild(symbol);
+  identity.appendChild(image);
+  identity.appendChild(name);
+
+  const badge =
+    document.createElement("span");
+
+  badge.className =
+    "portfolio-strategy-badge " +
+    (
+      asset.strategy === "swing"
+        ? "portfolio-strategy-swing"
+        : "portfolio-strategy-hold"
+    );
+
+  badge.textContent =
+    asset.strategy === "swing"
+      ? "نوسان"
+      : "هولد";
+
+  head.appendChild(identity);
+  head.appendChild(badge);
+
+  const grid =
+    document.createElement("div");
+
+  grid.className =
+    "portfolio-asset-grid";
+
+  const metrics = [
+    [
+      "مقدار",
+      formatNumber(
+        asset.quantity,
+        8
+      ) +
+        " " +
+        asset.symbol
+    ],
+    [
+      "میانگین خرید",
+      Number.isFinite(
+        asset.averageCost
+      )
+        ? portfolioMoney(
+            asset.averageCost,
+            "USD"
+          )
+        : "—"
+    ],
+    [
+      "قیمت فعلی",
+      Number.isFinite(
+        asset.currentPrice
+      )
+        ? portfolioMoney(
+            asset.currentPrice,
+            "USD"
+          )
+        : "—"
+    ],
+    [
+      "ارزش فعلی",
+      Number.isFinite(
+        asset.currentValue
+      )
+        ? portfolioMoney(
+            asset.currentValue,
+            "USD"
+          )
+        : "—"
+    ],
+    [
+      "سود باز",
+      Number.isFinite(
+        asset.unrealized
+      )
+        ? portfolioMoney(
+            asset.unrealized,
+            "USD"
+          )
+        : "—",
+      portfolioClassForNumber(
+        asset.unrealized
+      )
+    ],
+    [
+      "بازده",
+      portfolioSigned(
+        asset.returnPercent,
+        2
+      ) + "%",
+      portfolioClassForNumber(
+        asset.returnPercent
+      )
+    ],
+    [
+      "تغییر ۲۴ساعت",
+      Number.isFinite(
+        asset.change24h
+      )
+        ? portfolioSigned(
+            asset.change24h,
+            2
+          ) + "%"
+        : "—",
+      portfolioClassForNumber(
+        asset.change24h
+      )
+    ],
+    [
+      "سود بسته‌شده",
+      portfolioMoney(
+        asset.realizedUsdt,
+        "USD"
+      ),
+      portfolioClassForNumber(
+        asset.realizedUsdt
+      )
+    ]
+  ];
+
+  metrics.forEach(function (metric) {
+    const box =
+      document.createElement("div");
+
+    box.className =
+      "portfolio-asset-metric";
+
+    const label =
+      document.createElement("span");
+
+    label.textContent = metric[0];
+
+    const value =
+      document.createElement("strong");
+
+    value.textContent = metric[1];
+
+    if (metric[2]) {
+      value.classList.add(
+        metric[2]
+      );
+    }
+
+    box.appendChild(label);
+    box.appendChild(value);
+    grid.appendChild(box);
+  });
+
+  const bottom =
+    document.createElement("div");
+
+  bottom.className =
+    "portfolio-asset-bottom";
+
+  const allocationWrap =
+    document.createElement("div");
+
+  const allocation =
+    Number.isFinite(
+      asset.currentValue
+    ) &&
+    totalValue > 0
+      ? (
+          asset.currentValue /
+          totalValue
+        ) * 100
+      : 0;
+
+  const allocationLabel =
+    document.createElement("div");
+
+  allocationLabel.className =
+    "portfolio-section-note";
+
+  allocationLabel.style.marginBottom =
+    "6px";
+
+  allocationLabel.textContent =
+    "سهم از پرتفوی: " +
+    formatNumber(
+      allocation,
+      2
+    ) +
+    "%";
+
+  const allocationTrack =
+    document.createElement("div");
+
+  allocationTrack.className =
+    "portfolio-allocation-track";
+
+  const allocationFill =
+    document.createElement("div");
+
+  allocationFill.className =
+    "portfolio-allocation-fill";
+
+  allocationFill.style.width =
+    Math.max(
+      0,
+      Math.min(100, allocation)
+    ) + "%";
+
+  allocationTrack.appendChild(
+    allocationFill
+  );
+
+  allocationWrap.appendChild(
+    allocationLabel
+  );
+
+  allocationWrap.appendChild(
+    allocationTrack
+  );
+
+  const actions =
+    document.createElement("div");
+
+  actions.className =
+    "portfolio-asset-actions";
+
+  const buy =
+    document.createElement("button");
+
+  buy.type = "button";
+  buy.className =
+    "portfolio-mini-button";
+  buy.textContent = "خرید";
+  buy.addEventListener(
+    "click",
+    function () {
+      fillPortfolioFormForAsset(
+        asset,
+        "buy"
+      );
+    }
+  );
+
+  const sell =
+    document.createElement("button");
+
+  sell.type = "button";
+  sell.className =
+    "portfolio-mini-button";
+  sell.textContent = "فروش";
+  sell.disabled =
+    asset.quantity <= 1e-12;
+
+  sell.addEventListener(
+    "click",
+    function () {
+      fillPortfolioFormForAsset(
+        asset,
+        "sell"
+      );
+    }
+  );
+
+  actions.appendChild(buy);
+  actions.appendChild(sell);
+
+  bottom.appendChild(allocationWrap);
+  bottom.appendChild(actions);
+
+  card.appendChild(head);
+  card.appendChild(grid);
+  card.appendChild(bottom);
+
+  return card;
+}
+
+function renderPortfolioAssets(
+  assets,
+  summary
+) {
+  const list =
+    document.getElementById(
+      "portfolioAssetsList"
+    );
+
+  const empty =
+    document.getElementById(
+      "portfolioAssetsEmpty"
+    );
+
+  list.innerHTML = "";
+
+  const active = assets.filter(
+    function (asset) {
+      return asset.quantity > 1e-12;
+    }
+  );
+
+  empty.hidden =
+    active.length > 0;
+
+  document.getElementById(
+    "portfolioAssetsNote"
+  ).textContent =
+    active.length
+      ? active.length +
+        " دارایی فعال — روش قیمت تمام‌شده: میانگین موزون"
+      : "تراکنشی برای نمایش وجود ندارد";
+
+  active
+    .sort(function (a, b) {
+      return (
+        (
+          Number(b.currentValue) ||
+          0
+        ) -
+        (
+          Number(a.currentValue) ||
+          0
+        )
+      );
+    })
+    .forEach(function (asset) {
+      list.appendChild(
+        createPortfolioAssetCard(
+          asset,
+          summary.currentValue
+        )
+      );
+    });
+}
+
+function renderPortfolioTransactions() {
+  const container =
+    document.getElementById(
+      "portfolioTransactionsList"
+    );
+
+  if (!container) return;
+
+  container.innerHTML = "";
+
+  const rows =
+    portfolioMode === "all"
+      ? portfolioTransactions
+      : portfolioTransactions.filter(
+          function (transaction) {
+            return (
+              transaction.strategy ===
+              portfolioMode
+            );
+          }
+        );
+
+  [...rows]
+    .sort(function (a, b) {
+      return (
+        Number(b.timestamp) -
+        Number(a.timestamp)
+      );
+    })
+    .forEach(function (transaction) {
+      const row =
+        document.createElement("div");
+
+      row.className =
+        "portfolio-transaction-row";
+
+      const main =
+        document.createElement("div");
+
+      main.className =
+        "portfolio-transaction-main";
+
+      const title =
+        document.createElement("strong");
+
+      title.textContent =
+        (
+          transaction.type === "sell"
+            ? "فروش "
+            : "خرید "
+        ) +
+        transaction.symbol +
+        " — " +
+        (
+          transaction.strategy ===
+          "swing"
+            ? "نوسان"
+            : "هولد"
+        );
+
+      const details =
+        document.createElement("span");
+
+      details.textContent =
+        formatNumber(
+          transaction.quantity,
+          8
+        ) +
+        " " +
+        transaction.symbol +
+        " × " +
+        portfolioMoney(
+          transaction.priceUsd,
+          "USD"
+        ) +
+        " | " +
+        new Date(
+          transaction.timestamp
+        ).toLocaleString("fa-IR");
+
+      main.appendChild(title);
+      main.appendChild(details);
+
+      const remove =
+        document.createElement("button");
+
+      remove.type = "button";
+      remove.className =
+        "portfolio-delete-button";
+      remove.textContent = "حذف";
+
+      remove.addEventListener(
+        "click",
+        function () {
+          deletePortfolioTransaction(
+            transaction.id
+          );
+        }
+      );
+
+      row.appendChild(main);
+      row.appendChild(remove);
+      container.appendChild(row);
+    });
+
+  if (!container.children.length) {
+    container.innerHTML =
+      '<div class="portfolio-empty">تراکنشی در این بخش ثبت نشده است.</div>';
+  }
+}
+
+function fillPortfolioFormForAsset(
+  asset,
+  type
+) {
+  document.getElementById(
+    "portfolioTransactionType"
+  ).value = type;
+
+  document.getElementById(
+    "portfolioStrategy"
+  ).value = asset.strategy;
+
+  document.getElementById(
+    "portfolioAssetSelect"
+  ).value = String(asset.cmcId);
+
+  document.getElementById(
+    "portfolioAssetSearch"
+  ).value =
+    asset.symbol || "";
+
+  if (
+    Number.isFinite(
+      asset.currentPrice
+    )
+  ) {
+    document.getElementById(
+      "portfolioPriceUsd"
+    ).value =
+      formatNumericInputValue(
+        asset.currentPrice
+      );
+  }
+
+  if (type === "sell") {
+    document.getElementById(
+      "portfolioQuantity"
+    ).value =
+      formatNumericInputValue(
+        asset.quantity
+      );
+  }
+
+  updatePortfolioStrategyFields();
+  setPortfolioFormRate();
+  updatePortfolioFormPreview();
+
+  document.getElementById(
+    "portfolioTransactionPanel"
+  ).scrollIntoView({
+    behavior: "smooth",
+    block: "start"
+  });
+}
+
+function getPortfolioAvailableQuantity(
+  cmcId,
+  strategy
+) {
+  const ledgers =
+    calculatePortfolioLedger(
+      portfolioTransactions.filter(
+        function (transaction) {
+          return (
+            String(
+              transaction.cmcId
+            ) === String(cmcId) &&
+            transaction.strategy ===
+              strategy
+          );
+        }
+      )
+    );
+
+  return ledgers.length
+    ? ledgers[0].quantity
+    : 0;
+}
+
+async function savePortfolioTransaction() {
+  const type =
+    document.getElementById(
+      "portfolioTransactionType"
+    ).value;
+
+  const strategy =
+    document.getElementById(
+      "portfolioStrategy"
+    ).value;
+
+  const select =
+    document.getElementById(
+      "portfolioAssetSelect"
+    );
+
+  const listing =
+    portfolioListingFromId(
+      select.value
+    );
+
+  const quantity =
+    getNumber("portfolioQuantity");
+
+  const priceUsd =
+    getNumber("portfolioPriceUsd");
+
+  const feeUsd =
+    getNumber("portfolioFeeUsd") || 0;
+
+  const usdtIrtRate =
+    getNumber("portfolioUsdtRate");
+
+  const dateValue =
+    document.getElementById(
+      "portfolioTransactionDate"
+    ).value;
+
+  const timestamp =
+    dateValue
+      ? new Date(dateValue).getTime()
+      : Date.now();
+
+  if (!listing) {
+    showToast(
+      "ارز را از فهرست CoinMarketCap انتخاب کن.",
+      true
+    );
+    return;
+  }
+
+  if (
+    !Number.isFinite(quantity) ||
+    quantity <= 0
+  ) {
+    showToast(
+      "مقدار ارز باید بزرگ‌تر از صفر باشد.",
+      true
+    );
+    return;
+  }
+
+  if (
+    !Number.isFinite(priceUsd) ||
+    priceUsd <= 0
+  ) {
+    showToast(
+      "قیمت معامله را صحیح وارد کن.",
+      true
+    );
+    return;
+  }
+
+  if (
+    !Number.isFinite(usdtIrtRate) ||
+    usdtIrtRate <= 0
+  ) {
+    showToast(
+      "نرخ تتر به تومان را وارد کن.",
+      true
+    );
+    return;
+  }
+
+  if (
+    !Number.isFinite(timestamp)
+  ) {
+    showToast(
+      "تاریخ تراکنش معتبر نیست.",
+      true
+    );
+    return;
+  }
+
+  if (type === "sell") {
+    const available =
+      getPortfolioAvailableQuantity(
+        listing.id,
+        strategy
+      );
+
+    if (
+      quantity >
+      available + 1e-12
+    ) {
+      showToast(
+        "مقدار فروش از موجودی این بخش بیشتر است. موجودی: " +
+        formatNumber(
+          available,
+          8
+        ) +
+        " " +
+        listing.symbol,
+        true
+      );
+      return;
+    }
+  }
+
+  const transaction = {
+    cmcId: listing.id,
+    symbol: listing.symbol,
+    name: listing.name,
+    image: listing.image,
+    strategy:
+      strategy === "swing"
+        ? "swing"
+        : "hold",
+    type:
+      type === "sell"
+        ? "sell"
+        : "buy",
+    quantity: quantity,
+    priceUsd: priceUsd,
+    feeUsd: feeUsd,
+    usdtIrtRate: usdtIrtRate,
+    timestamp: timestamp,
+    exchange:
+      document.getElementById(
+        "portfolioExchange"
+      ).value.trim(),
+    stopPrice:
+      getNumber(
+        "portfolioStopPrice"
+      ),
+    targetPrice:
+      getNumber(
+        "portfolioTargetPrice"
+      ),
+    note:
+      document.getElementById(
+        "portfolioNote"
+      ).value.trim(),
+    createdAt: Date.now()
+  };
+
+  const button =
+    document.getElementById(
+      "portfolioSaveTransactionButton"
+    );
+
+  button.disabled = true;
+  button.textContent =
+    "در حال ذخیره...";
+
+  try {
+    await addPortfolioTransactionToDatabase(
+      transaction
+    );
+
+    showToast(
+      "تراکنش پرتفوی ذخیره شد."
+    );
+
+    document.getElementById(
+      "portfolioQuantity"
+    ).value = "";
+
+    document.getElementById(
+      "portfolioFeeUsd"
+    ).value = "0";
+
+    document.getElementById(
+      "portfolioNote"
+    ).value = "";
+
+    await loadPortfolioData();
+    await maybeCreatePortfolioSnapshot(
+      true
+    );
+    renderPortfolio();
+  } catch (error) {
+    console.error(error);
+    showToast(
+      "ذخیره تراکنش پرتفوی ناموفق بود.",
+      true
+    );
+  } finally {
+    button.disabled = false;
+    button.textContent =
+      "ثبت تراکنش در پرتفوی";
+  }
+}
+
+async function deletePortfolioTransaction(
+  id
+) {
+  if (
+    !window.confirm(
+      "این تراکنش حذف شود؟ محاسبات پرتفوی دوباره ساخته می‌شود."
+    )
+  ) {
+    return;
+  }
+
+  try {
+    await deletePortfolioTransactionFromDatabase(
+      id
+    );
+
+    await loadPortfolioData();
+    renderPortfolio();
+    showToast(
+      "تراکنش حذف شد."
+    );
+  } catch (error) {
+    console.error(error);
+    showToast(
+      "حذف تراکنش ناموفق بود.",
+      true
+    );
+  }
+}
+
+function getPortfolioSnapshotValue(
+  summary
+) {
+  return {
+    timestamp: Date.now(),
+    mode: portfolioMode,
+    valueUsdt:
+      summary.currentValue,
+    valueIrt:
+      summary.currentValueIrt,
+    unrealizedUsdt:
+      summary.unrealizedUsdt,
+    realizedUsdt:
+      summary.realizedUsdt,
+    usdtIrtRate:
+      portfolioCurrentUsdtRate(),
+    assetCount:
+      summary.activeAssetCount
+  };
+}
+
+async function maybeCreatePortfolioSnapshot(
+  force
+) {
+  const assets =
+    buildPortfolioComputedAssets();
+
+  const summary =
+    getPortfolioSummary(assets);
+
+  if (
+    summary.activeAssetCount <= 0 ||
+    summary.currentValue <= 0
+  ) {
+    return;
+  }
+
+  const allSnapshots =
+    await getAllPortfolioSnapshots();
+
+  const sameMode =
+    allSnapshots
+      .filter(function (snapshot) {
+        return (
+          snapshot.mode ===
+          portfolioMode
+        );
+      })
+      .sort(function (a, b) {
+        return (
+          Number(b.timestamp) -
+          Number(a.timestamp)
+        );
+      });
+
+  const latest =
+    sameMode[0];
+
+  if (
+    !force &&
+    latest &&
+    Date.now() -
+      Number(latest.timestamp) <
+      PORTFOLIO_SNAPSHOT_MIN_INTERVAL
+  ) {
+    return;
+  }
+
+  await addPortfolioSnapshotToDatabase(
+    getPortfolioSnapshotValue(
+      summary
+    )
+  );
+
+  portfolioSnapshots =
+    await getAllPortfolioSnapshots();
+}
+
+async function createManualPortfolioSnapshot() {
+  try {
+    await maybeCreatePortfolioSnapshot(
+      true
+    );
+    renderPortfolioValueChart();
+    showToast(
+      "Snapshot پرتفوی ثبت شد."
+    );
+  } catch (error) {
+    console.error(error);
+    showToast(
+      "ثبت Snapshot ناموفق بود.",
+      true
+    );
+  }
+}
+
+function filterPortfolioSnapshots() {
+  const now = Date.now();
+  let minimum = 0;
+
+  if (portfolioChartRange === "1D") {
+    minimum =
+      now - 24 * 60 * 60 * 1000;
+  } else if (
+    portfolioChartRange === "7D"
+  ) {
+    minimum =
+      now - 7 * 24 * 60 * 60 * 1000;
+  } else if (
+    portfolioChartRange === "30D"
+  ) {
+    minimum =
+      now - 30 * 24 * 60 * 60 * 1000;
+  }
+
+  return portfolioSnapshots
+    .filter(function (snapshot) {
+      return (
+        snapshot.mode ===
+          portfolioMode &&
+        (
+          portfolioChartRange ===
+            "ALL" ||
+          Number(snapshot.timestamp) >=
+            minimum
+        )
+      );
+    })
+    .sort(function (a, b) {
+      return (
+        Number(a.timestamp) -
+        Number(b.timestamp)
+      );
+    });
+}
+
+function resizeCanvasToDisplaySize(
+  canvas,
+  cssHeight
+) {
+  const ratio =
+    Math.max(
+      1,
+      window.devicePixelRatio || 1
+    );
+
+  const width =
+    Math.max(
+      1,
+      canvas.clientWidth ||
+      canvas.parentElement.clientWidth ||
+      300
+    );
+
+  const height =
+    cssHeight ||
+    canvas.clientHeight ||
+    200;
+
+  canvas.width =
+    Math.round(width * ratio);
+
+  canvas.height =
+    Math.round(height * ratio);
+
+  const context =
+    canvas.getContext("2d");
+
+  context.setTransform(
+    ratio,
+    0,
+    0,
+    ratio,
+    0,
+    0
+  );
+
+  return {
+    context,
+    width,
+    height
+  };
+}
+
+function drawPortfolioLineChart(
+  canvas,
+  points
+) {
+  const sized =
+    resizeCanvasToDisplaySize(
+      canvas,
+      210
+    );
+
+  const context = sized.context;
+  const width = sized.width;
+  const height = sized.height;
+
+  context.clearRect(
+    0,
+    0,
+    width,
+    height
+  );
+
+  const values =
+    points.map(function (point) {
+      return portfolioCurrency === "IRT"
+        ? Number(point.valueIrt)
+        : Number(point.valueUsdt);
+    });
+
+  const valid =
+    values.filter(Number.isFinite);
+
+  if (valid.length < 2) return false;
+
+  let min = Math.min.apply(null, valid);
+  let max = Math.max.apply(null, valid);
+
+  if (max === min) {
+    max += 1;
+    min -= 1;
+  }
+
+  const padding = {
+    top: 18,
+    right: 12,
+    bottom: 28,
+    left: 12
+  };
+
+  const chartWidth =
+    width -
+    padding.left -
+    padding.right;
+
+  const chartHeight =
+    height -
+    padding.top -
+    padding.bottom;
+
+  context.strokeStyle =
+    "rgba(120, 157, 185, 0.18)";
+
+  context.lineWidth = 1;
+
+  for (let line = 0; line < 4; line += 1) {
+    const y =
+      padding.top +
+      (
+        chartHeight /
+        3
+      ) *
+      line;
+
+    context.beginPath();
+    context.moveTo(
+      padding.left,
+      y
+    );
+    context.lineTo(
+      width - padding.right,
+      y
+    );
+    context.stroke();
+  }
+
+  const gradient =
+    context.createLinearGradient(
+      0,
+      padding.top,
+      0,
+      height - padding.bottom
+    );
+
+  gradient.addColorStop(
+    0,
+    "rgba(46, 204, 113, 0.28)"
+  );
+
+  gradient.addColorStop(
+    1,
+    "rgba(46, 204, 113, 0)"
+  );
+
+  const coordinates =
+    points.map(
+      function (point, index) {
+        const value =
+          portfolioCurrency ===
+            "IRT"
+            ? Number(point.valueIrt)
+            : Number(point.valueUsdt);
+
+        const x =
+          padding.left +
+          (
+            index /
+            Math.max(
+              1,
+              points.length - 1
+            )
+          ) *
+          chartWidth;
+
+        const y =
+          padding.top +
+          (
+            1 -
+            (
+              value - min
+            ) /
+            (
+              max - min
+            )
+          ) *
+          chartHeight;
+
+        return { x, y, value };
+      }
+    );
+
+  context.beginPath();
+  context.moveTo(
+    coordinates[0].x,
+    height - padding.bottom
+  );
+
+  coordinates.forEach(
+    function (coordinate) {
+      context.lineTo(
+        coordinate.x,
+        coordinate.y
+      );
+    }
+  );
+
+  context.lineTo(
+    coordinates[
+      coordinates.length - 1
+    ].x,
+    height - padding.bottom
+  );
+
+  context.closePath();
+  context.fillStyle = gradient;
+  context.fill();
+
+  context.beginPath();
+
+  coordinates.forEach(
+    function (coordinate, index) {
+      if (index === 0) {
+        context.moveTo(
+          coordinate.x,
+          coordinate.y
+        );
+      } else {
+        context.lineTo(
+          coordinate.x,
+          coordinate.y
+        );
+      }
+    }
+  );
+
+  context.strokeStyle = "#2ecc71";
+  context.lineWidth = 2.2;
+  context.lineJoin = "round";
+  context.lineCap = "round";
+  context.stroke();
+
+  const latest =
+    coordinates[
+      coordinates.length - 1
+    ];
+
+  context.beginPath();
+  context.arc(
+    latest.x,
+    latest.y,
+    3.5,
+    0,
+    Math.PI * 2
+  );
+  context.fillStyle = "#ffffff";
+  context.fill();
+
+  context.fillStyle = "#7895ad";
+  context.font =
+    "10px sans-serif";
+  context.textAlign = "left";
+  context.fillText(
+    portfolioCurrency === "IRT"
+      ? formatNumber(max, 0) +
+          " تومان"
+      : formatNumber(max, 2) +
+          " USDT",
+    padding.left,
+    11
+  );
+
+  context.textAlign = "right";
+  context.fillText(
+    new Date(
+      points[
+        points.length - 1
+      ].timestamp
+    ).toLocaleDateString("fa-IR"),
+    width - padding.right,
+    height - 7
+  );
+
+  return true;
+}
+
+function renderPortfolioValueChart() {
+  const canvas =
+    document.getElementById(
+      "portfolioValueChart"
+    );
+
+  const empty =
+    document.getElementById(
+      "portfolioChartEmpty"
+    );
+
+  if (!canvas || !empty) return;
+
+  const points =
+    filterPortfolioSnapshots();
+
+  const drawn =
+    drawPortfolioLineChart(
+      canvas,
+      points
+    );
+
+  canvas.hidden = !drawn;
+  empty.hidden = drawn;
+}
+
+function renderPortfolioAllocationChart(
+  assets,
+  totalValue
+) {
+  const canvas =
+    document.getElementById(
+      "portfolioAllocationChart"
+    );
+
+  const legend =
+    document.getElementById(
+      "portfolioAllocationLegend"
+    );
+
+  if (!canvas || !legend) return;
+
+  legend.innerHTML = "";
+
+  const active = assets
+    .filter(function (asset) {
+      return (
+        asset.quantity > 1e-12 &&
+        Number.isFinite(
+          asset.currentValue
+        ) &&
+        asset.currentValue > 0
+      );
+    })
+    .sort(function (a, b) {
+      return (
+        b.currentValue -
+        a.currentValue
+      );
+    });
+
+  const colors = [
+    "#37b2e8",
+    "#2ecc71",
+    "#f59e0b",
+    "#a78bfa",
+    "#ef5da8",
+    "#14b8a6",
+    "#f97316"
+  ];
+
+  const top = active.slice(0, 6);
+  const rest = active.slice(6);
+
+  if (rest.length) {
+    top.push({
+      symbol: "سایر",
+      currentValue:
+        rest.reduce(
+          function (sum, asset) {
+            return (
+              sum +
+              asset.currentValue
+            );
+          },
+          0
+        )
+    });
+  }
+
+  const sized =
+    resizeCanvasToDisplaySize(
+      canvas,
+      190
+    );
+
+  const context = sized.context;
+  const width = sized.width;
+  const height = sized.height;
+
+  context.clearRect(
+    0,
+    0,
+    width,
+    height
+  );
+
+  if (
+    !top.length ||
+    totalValue <= 0
+  ) {
+    context.fillStyle =
+      "#7895ad";
+    context.font =
+      "12px sans-serif";
+    context.textAlign =
+      "center";
+    context.fillText(
+      "دارایی فعالی وجود ندارد",
+      width / 2,
+      height / 2
+    );
+    return;
+  }
+
+  const centerX = width / 2;
+  const centerY = height / 2;
+  const radius =
+    Math.min(width, height) * 0.35;
+  const innerRadius =
+    radius * 0.58;
+
+  let start =
+    -Math.PI / 2;
+
+  top.forEach(
+    function (asset, index) {
+      const share =
+        asset.currentValue /
+        totalValue;
+
+      const end =
+        start +
+        share *
+          Math.PI *
+          2;
+
+      context.beginPath();
+      context.arc(
+        centerX,
+        centerY,
+        radius,
+        start,
+        end
+      );
+      context.arc(
+        centerX,
+        centerY,
+        innerRadius,
+        end,
+        start,
+        true
+      );
+      context.closePath();
+      context.fillStyle =
+        colors[index % colors.length];
+      context.fill();
+
+      const row =
+        document.createElement("div");
+
+      row.className =
+        "portfolio-allocation-row";
+
+      const dot =
+        document.createElement("span");
+
+      dot.className =
+        "portfolio-allocation-dot";
+      dot.style.setProperty(
+        "--allocation-color",
+        colors[index % colors.length]
+      );
+
+      const symbol =
+        document.createElement("span");
+
+      symbol.className =
+        "portfolio-allocation-symbol";
+      symbol.textContent =
+        asset.symbol;
+
+      const value =
+        document.createElement("span");
+
+      value.textContent =
+        formatNumber(
+          share * 100,
+          2
+        ) + "%";
+
+      row.appendChild(dot);
+      row.appendChild(symbol);
+      row.appendChild(value);
+      legend.appendChild(row);
+
+      start = end;
+    }
+  );
+
+  context.fillStyle = "#ffffff";
+  context.font =
+    "700 14px sans-serif";
+  context.textAlign = "center";
+  context.fillText(
+    formatNumber(
+      top.length,
+      0
+    ) +
+    " بخش",
+    centerX,
+    centerY + 4
+  );
+}
+
+function renderPortfolioCharts() {
+  renderPortfolioValueChart();
+
+  const assets =
+    portfolioComputedAssets;
+
+  const summary =
+    getPortfolioSummary(assets);
+
+  renderPortfolioAllocationChart(
+    assets,
+    summary.currentValue
+  );
+}
+
+function schedulePortfolioRender() {
+  if (portfolioRenderQueued) return;
+
+  portfolioRenderQueued = true;
+
+  requestAnimationFrame(
+    function () {
+      portfolioRenderQueued = false;
+      renderPortfolio();
+    }
+  );
+}
+
+function renderPortfolio() {
+  portfolioComputedAssets =
+    buildPortfolioComputedAssets();
+
+  const summary =
+    getPortfolioSummary(
+      portfolioComputedAssets
+    );
+
+  renderPortfolioSummary(summary);
+  renderPortfolioAssets(
+    portfolioComputedAssets,
+    summary
+  );
+  renderPortfolioTransactions();
+  renderPortfolioCharts();
+
+  const status =
+    document.getElementById(
+      "portfolioStatus"
+    );
+
+  if (status) {
+    status.textContent =
+      portfolioMarketListings.length
+        ? "قیمت " +
+          portfolioMarketListings.length +
+          " ارز برتر از CoinMarketCap — نرخ تتر " +
+          (
+            portfolioCurrentUsdtRate()
+              ? formatIrtRate(
+                  portfolioCurrentUsdtRate()
+                )
+              : "در دسترس نیست"
+          )
+        : "داده بازار CoinMarketCap هنوز دریافت نشده است.";
+  }
+}
+
+async function loadPortfolioData() {
+  const transactions =
+    await getAllPortfolioTransactions();
+
+  const snapshots =
+    await getAllPortfolioSnapshots();
+
+  portfolioTransactions =
+    Array.isArray(transactions)
+      ? transactions
+      : [];
+
+  portfolioSnapshots =
+    Array.isArray(snapshots)
+      ? snapshots
+      : [];
+}
+
+async function refreshPortfolioMarket(
+  manual
+) {
+  const button =
+    document.getElementById(
+      "portfolioRefreshButton"
+    );
+
+  if (button) {
+    button.disabled = true;
+    button.textContent =
+      "در حال دریافت...";
+  }
+
+  try {
+    await Promise.all([
+      refreshMarketPulse(
+        Boolean(manual)
+      ),
+      refreshUsdtIrtRate(
+        Boolean(manual)
+      )
+    ]);
+
+    await loadPortfolioData();
+    renderPortfolio();
+    await maybeCreatePortfolioSnapshot(
+      false
+    );
+
+    if (manual) {
+      showToast(
+        "پرتفوی به‌روزرسانی شد."
+      );
+    }
+  } finally {
+    if (button) {
+      button.disabled = false;
+      button.textContent =
+        "تازه‌سازی";
+    }
+  }
+}
+
+function startPortfolioAutoRefresh() {
+  stopPortfolioAutoRefresh();
+
+  portfolioRefreshTimer =
+    setInterval(function () {
+      const view =
+        document.getElementById(
+          "portfolioView"
+        );
+
+      if (
+        view &&
+        !view.hidden &&
+        document.visibilityState ===
+          "visible"
+      ) {
+        refreshPortfolioMarket(
+          false
+        );
+      }
+    }, PORTFOLIO_AUTO_REFRESH_INTERVAL);
+}
+
+function stopPortfolioAutoRefresh() {
+  if (portfolioRefreshTimer) {
+    clearInterval(
+      portfolioRefreshTimer
+    );
+    portfolioRefreshTimer = null;
+  }
+}
+
+async function exportPortfolioBackup() {
+  try {
+    await loadPortfolioData();
+
+    const payload = {
+      app: "Crypto Master Trade",
+      type:
+        "professional-portfolio-backup",
+      version: 1,
+      exportedAt:
+        new Date().toISOString(),
+      transactions:
+        portfolioTransactions,
+      snapshots:
+        portfolioSnapshots
+    };
+
+    const blob =
+      new Blob(
+        [
+          JSON.stringify(
+            payload,
+            null,
+            2
+          )
+        ],
+        {
+          type:
+            "application/json;charset=utf-8"
+        }
+      );
+
+    const filename =
+      "crypto-master-portfolio-" +
+      new Date()
+        .toISOString()
+        .replace(/[:.]/g, "-") +
+      ".json";
+
+    await deliverBackupFile(
+      blob,
+      filename
+    );
+
+    showToast(
+      "پشتیبان پرتفوی آماده شد."
+    );
+  } catch (error) {
+    console.error(error);
+    showToast(
+      "ساخت پشتیبان پرتفوی ناموفق بود.",
+      true
+    );
+  }
+}
+
+function initializePortfolioForm() {
+  const dateInput =
+    document.getElementById(
+      "portfolioTransactionDate"
+    );
+
+  if (dateInput && !dateInput.value) {
+    const now = new Date();
+    const local =
+      new Date(
+        now.getTime() -
+        now.getTimezoneOffset() *
+          60000
+      );
+
+    dateInput.value =
+      local
+        .toISOString()
+        .slice(0, 16);
+  }
+
+  setPortfolioFormRate();
+  updatePortfolioStrategyFields();
+  updatePortfolioFormPreview();
+}
+
+
+
+function setActiveView(viewId) {
+  [
+    "calculatorView",
+    "marketView",
+    "marketPulseView",
+    "portfolioView",
+    "fundamentalView",
+    "journalView",
+    "statementView",
+    "moreView"
+  ].forEach(function (id) {
+    document.getElementById(id).hidden =
+      id !== viewId;
+  });
+
+  const mapping = {
+    calculatorView: "calculatorNavButton",
+    marketView: "marketNavButton",
+    marketPulseView: "marketPulseNavButton",
+    portfolioView: "portfolioNavButton",
+    journalView: "journalNavButton",
+    fundamentalView: "moreNavButton",
+    statementView: "moreNavButton",
+    moreView: "moreNavButton"
+  };
+
+  [
+    "calculatorNavButton",
+    "marketNavButton",
+    "marketPulseNavButton",
+    "portfolioNavButton",
+    "journalNavButton",
+    "moreNavButton"
+  ].forEach(function (id) {
+    document
+      .getElementById(id)
+      .classList.toggle(
+        "active",
+        id === mapping[viewId]
+      );
+  });
+
+  if (viewId !== "marketView") {
+    stopMarketAutoRefresh();
+  }
+
+  if (viewId !== "marketPulseView") {
+    stopMarketPulseAutoRefresh();
+  }
+
+  if (viewId !== "portfolioView") {
+    stopPortfolioAutoRefresh();
+  }
+
+  if (viewId !== "fundamentalView") {
+    stopFundamentalAutoRefresh();
+  }
+
+  window.scrollTo({
+    top: 0,
+    behavior: "smooth"
+  });
+}
+
+function showCalculator() {
+  setActiveView("calculatorView");
+}
 
     async function showMarket() {
       setActiveView("marketView");
@@ -5197,6 +8852,32 @@
       renderCachedMarketPulse();
       await refreshMarketPulse(false);
       startMarketPulseAutoRefresh();
+    }
+
+    async function showPortfolio() {
+      setActiveView("portfolioView");
+
+      const cached =
+        getMarketPulseCache();
+
+      if (
+        cached &&
+        cached.data
+      ) {
+        applyPortfolioMarketData(
+          cached.data
+        );
+      }
+
+      await loadPortfolioData();
+      initializePortfolioForm();
+      renderPortfolio();
+      await refreshPortfolioMarket(false);
+      startPortfolioAutoRefresh();
+    }
+
+    function showMore() {
+      setActiveView("moreView");
     }
 
     async function showFundamental() {
@@ -5495,6 +9176,8 @@
       renderMarketPulseTrending(data.trending);
       renderPulseMoverList("marketPulseGainers", data.gainers, true);
       renderPulseMoverList("marketPulseLosers", data.losers, false);
+
+      applyPortfolioMarketData(data);
 
       const fetchedAt = data.fetchedAt ? new Date(data.fetchedAt) : new Date();
       document.getElementById("marketPulseUpdatedAt").textContent = "به‌روزرسانی: " + fetchedAt.toLocaleTimeString("fa-IR", { hour: "2-digit", minute: "2-digit" });
@@ -7028,22 +10711,53 @@
     }
 
     window.addEventListener("resize", function () {
-      if (!document.getElementById("statementView").hidden) renderStatement();
+      if (!document.getElementById("statementView").hidden) {
+        renderStatement();
+      }
+
+      if (!document.getElementById("portfolioView").hidden) {
+        renderPortfolioCharts();
+      }
     });
 
     document.addEventListener("visibilitychange", function () {
-      const marketView = document.getElementById("marketView");
-      if (document.visibilityState === "visible" && marketView && !marketView.hidden) {
+      const marketView =
+        document.getElementById("marketView");
+
+      const portfolioView =
+        document.getElementById("portfolioView");
+
+      if (
+        document.visibilityState === "visible" &&
+        marketView &&
+        !marketView.hidden
+      ) {
         startMarketAutoRefresh();
         refreshMarketData();
-      } else if (document.visibilityState === "hidden") {
+      } else if (
+        document.visibilityState === "hidden"
+      ) {
         stopMarketAutoRefresh();
+      }
+
+      if (
+        document.visibilityState === "visible" &&
+        portfolioView &&
+        !portfolioView.hidden
+      ) {
+        startPortfolioAutoRefresh();
+        refreshPortfolioMarket(false);
+      } else if (
+        document.visibilityState === "hidden"
+      ) {
+        stopPortfolioAutoRefresh();
       }
     });
 
     window.addEventListener("beforeunload", function () {
       revokeJournalUrls();
       stopMarketAutoRefresh();
+      stopPortfolioAutoRefresh();
     });
 
     function applyResponsiveWebViewClass() {
@@ -7090,6 +10804,20 @@
 
     refreshUsdtIrtRate(false);
     startUsdtIrtAutoRefresh();
+
+    const cachedPortfolioPulse =
+      getMarketPulseCache();
+
+    if (
+      cachedPortfolioPulse &&
+      cachedPortfolioPulse.data
+    ) {
+      applyPortfolioMarketData(
+        cachedPortfolioPulse.data
+      );
+    }
+
+    initializePortfolioForm();
 
     window.addEventListener("resize", applyResponsiveWebViewClass);
     window.addEventListener("orientationchange", function () {
