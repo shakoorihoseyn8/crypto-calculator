@@ -32,6 +32,7 @@
       --chart-text: #ffffff;
       --footer-height: 34px;
       --nav-height: 72px;
+      --fixed-bars-space: 220px;
     }
 
     html, body { min-height: 100%; }
@@ -3831,6 +3832,35 @@ button,
 :root[data-theme="light"] .news-hub-tab.active{color:#fff}:root[data-theme="light"] .forex-calendar-filter.active,:root[data-theme="light"] .forex-event-currency,:root[data-theme="light"] .forex-calendar-source-button{color:#1d628f}:root[data-theme="light"] .forex-event-impact.high{color:#b82632}:root[data-theme="light"] .forex-event-impact.medium{color:#9a6508}:root[data-theme="light"] .forex-event-impact.low{color:#7b6808}
 @media(max-width:430px){.forex-calendar-toolbar{align-items:stretch}.forex-calendar-summary-card{padding:8px 5px}.forex-event-top{gap:6px}}
 
+  
+/* Alerts V3: measured bottom-bar protection */
+.app {
+  padding-bottom: var(--fixed-bars-space) !important;
+}
+
+.alerts-view {
+  padding-bottom: 0 !important;
+}
+
+.alerts-list {
+  padding-bottom: 18px;
+}
+
+.alerts-bottom-spacer {
+  display: block;
+  width: 100%;
+  height: calc(var(--fixed-bars-space) + 96px);
+  pointer-events: none;
+}
+
+.alert-item-actions {
+  margin: 10px 0 12px;
+}
+
+.alert-item-card {
+  scroll-margin-bottom: calc(var(--fixed-bars-space) + 24px);
+}
+
   </style>
 </head>
 <body>
@@ -4727,6 +4757,8 @@ button,
       هنوز هشداری ثبت نشده است.
     </div>
   </section>
+
+  <div class="alerts-bottom-spacer" aria-hidden="true"></div>
 </section>
 
 <section id="moreView" class="view card" hidden>
@@ -11051,7 +11083,10 @@ function createAlertCard(alert) {
 
   actions.appendChild(toggle);
   actions.appendChild(remove);
-  card.appendChild(actions);
+  card.insertBefore(
+    actions,
+    grid
+  );
 
   return card;
 }
@@ -11390,7 +11425,26 @@ async function createTradingAlert() {
       await loadTradingAlerts(false);
     }
 
-    await checkAlertsNow(false);
+    if (
+      response.checker &&
+      response.checker.ok !== false
+    ) {
+      const triggered =
+        Number(
+          response.checker.triggered ||
+          0
+        );
+
+      if (triggered > 0) {
+        showToast(
+          "شرط همین حالا برقرار بود و اعلان ارسال شد."
+        );
+      }
+
+      await loadTradingAlerts(false);
+    } else {
+      await checkAlertsNow(false);
+    }
   } catch (error) {
     showToast(
       error.message ||
@@ -11510,7 +11564,83 @@ function stopAlertsAutoRefresh() {
   }
 }
 
+function syncFixedBarsSpace() {
+  const nav =
+    document.querySelector(
+      ".bottom-nav"
+    );
+
+  const footer =
+    document.querySelector(
+      ".footer"
+    );
+
+  const navHeight =
+    nav
+      ? Math.ceil(
+          nav.getBoundingClientRect()
+            .height
+        )
+      : 90;
+
+  const footerHeight =
+    footer
+      ? Math.ceil(
+          footer.getBoundingClientRect()
+            .height
+        )
+      : 34;
+
+  const total =
+    navHeight +
+    footerHeight +
+    84;
+
+  document.documentElement
+    .style.setProperty(
+      "--fixed-bars-space",
+      total + "px"
+    );
+}
+
+function initializeFixedBarsSpace() {
+  syncFixedBarsSpace();
+
+  window.addEventListener(
+    "resize",
+    syncFixedBarsSpace
+  );
+
+  window.addEventListener(
+    "orientationchange",
+    function () {
+      setTimeout(
+        syncFixedBarsSpace,
+        120
+      );
+    }
+  );
+
+  if (
+    window.Telegram &&
+    window.Telegram.WebApp &&
+    typeof window.Telegram.WebApp
+      .onEvent === "function"
+  ) {
+    window.Telegram.WebApp.onEvent(
+      "viewportChanged",
+      syncFixedBarsSpace
+    );
+  }
+
+  setTimeout(
+    syncFixedBarsSpace,
+    250
+  );
+}
+
 async function showAlerts() {
+  syncFixedBarsSpace();
   setActiveView("alertsView");
   populateAlertSymbolOptions();
   handleAlertMarketChange();
@@ -14008,6 +14138,7 @@ function initializeTheme() {
     });
 
     initializeTheme();
+    initializeFixedBarsSpace();
     setupTelegram();
     initializeFormattedNumberInputs(document);
     updateTradeModeUI();
