@@ -1865,6 +1865,227 @@
       }
     }
 
+  
+    .usdt-rate-card {
+      position: relative;
+      overflow: hidden;
+      border-color: rgba(38, 208, 124, 0.30);
+      background:
+        radial-gradient(circle at 15% 0%, rgba(38, 208, 124, 0.11), transparent 38%),
+        linear-gradient(145deg, rgba(8, 31, 50, 0.98), rgba(7, 25, 42, 0.98));
+    }
+
+    .usdt-rate-card::after {
+      content: "₮";
+      position: absolute;
+      left: 14px;
+      top: -16px;
+      color: rgba(38, 208, 124, 0.08);
+      font-size: 110px;
+      font-weight: 900;
+      line-height: 1;
+      pointer-events: none;
+    }
+
+    .usdt-rate-header {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .usdt-rate-title {
+      margin: 0;
+      color: #f3fbff;
+      font-size: 16px;
+      font-weight: 900;
+    }
+
+    .usdt-rate-subtitle {
+      margin: 5px 0 0;
+      color: #83a2ba;
+      font-size: 10px;
+      line-height: 1.8;
+    }
+
+    .usdt-live-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      flex: 0 0 auto;
+      padding: 5px 8px;
+      border: 1px solid rgba(38, 208, 124, 0.25);
+      border-radius: 999px;
+      background: rgba(38, 208, 124, 0.09);
+      color: #4de09a;
+      font-size: 9px;
+      font-weight: 900;
+    }
+
+    .usdt-live-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #2ed783;
+      box-shadow: 0 0 9px rgba(46, 215, 131, 0.8);
+    }
+
+    .usdt-rate-grid {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+
+    .usdt-rate-tile {
+      min-width: 0;
+      padding: 10px 8px;
+      border: 1px solid rgba(126, 169, 200, 0.16);
+      border-radius: 12px;
+      background: rgba(4, 19, 33, 0.58);
+      text-align: center;
+    }
+
+    .usdt-rate-tile span {
+      display: block;
+      color: #7f9db4;
+      font-size: 9px;
+      line-height: 1.6;
+    }
+
+    .usdt-rate-tile strong {
+      display: block;
+      overflow: hidden;
+      margin-top: 4px;
+      color: #f6fbff;
+      font-size: 14px;
+      font-weight: 900;
+      direction: ltr;
+      font-variant-numeric: tabular-nums;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .usdt-rate-actions {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 7px;
+      margin-top: 9px;
+    }
+
+    .usdt-rate-mini-button {
+      min-height: 36px;
+      padding: 7px 5px;
+      border: 1px solid rgba(126, 169, 200, 0.19);
+      border-radius: 9px;
+      background: rgba(12, 41, 64, 0.78);
+      color: #cfe4f5;
+      font-size: 9px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .usdt-rate-mini-button.primary-rate {
+      border-color: rgba(38, 208, 124, 0.35);
+      background: rgba(38, 208, 124, 0.12);
+      color: #5de5a5;
+    }
+
+    .usdt-rate-status {
+      position: relative;
+      z-index: 1;
+      min-height: 18px;
+      margin-top: 9px;
+      color: #7896ad;
+      font-size: 9px;
+      line-height: 1.7;
+      text-align: center;
+    }
+
+    .usdt-rate-status.error {
+      color: #ff8b95;
+    }
+
+    .usdt-exit-box {
+      margin: 12px 0;
+      padding: 12px;
+      border: 1px solid rgba(38, 208, 124, 0.23);
+      border-radius: 12px;
+      background: rgba(38, 208, 124, 0.055);
+    }
+
+    .usdt-exit-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+
+    .usdt-exit-head strong {
+      color: #56e5a3;
+      font-size: 11px;
+    }
+
+    .usdt-entry-rate-chip {
+      padding: 4px 7px;
+      border: 1px solid rgba(255,255,255,.09);
+      border-radius: 999px;
+      color: #91abc0;
+      font-size: 8px;
+      direction: ltr;
+    }
+
+    .dual-pnl-box {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+      margin: 10px 0;
+    }
+
+    .dual-pnl-item {
+      min-width: 0;
+      padding: 10px;
+      border: 1px solid rgba(255,255,255,.07);
+      border-radius: 10px;
+      background: rgba(5, 20, 34, 0.58);
+    }
+
+    .dual-pnl-item span {
+      display: block;
+      color: #7897af;
+      font-size: 8px;
+      line-height: 1.6;
+    }
+
+    .dual-pnl-item strong {
+      display: block;
+      overflow-wrap: anywhere;
+      margin-top: 4px;
+      color: #f3f9ff;
+      font-size: 12px;
+      direction: ltr;
+    }
+
+    @media (max-width: 460px) {
+      .usdt-rate-grid {
+        grid-template-columns: minmax(0, 1fr);
+      }
+
+      .usdt-rate-actions {
+        grid-template-columns: minmax(0, 1fr);
+      }
+
+      .dual-pnl-box {
+        grid-template-columns: minmax(0, 1fr);
+      }
+    }
+
   </style>
 </head>
 <body>
@@ -1878,6 +2099,50 @@
     </header>
 
     <div id="calculatorView" class="view">
+      <section class="card usdt-rate-card">
+        <div class="usdt-rate-header">
+          <div>
+            <h2 class="usdt-rate-title">نرخ زنده تتر به تومان</h2>
+            <p class="usdt-rate-subtitle">بازار USDTIRT نوبیتکس؛ نرخ ورود قابل ویرایش است.</p>
+          </div>
+          <div class="usdt-live-badge"><span class="usdt-live-dot"></span> آنلاین</div>
+        </div>
+
+        <div class="usdt-rate-grid">
+          <div class="usdt-rate-tile">
+            <span>خرید تتر از بازار</span>
+            <strong id="usdtBuyRateDisplay">—</strong>
+          </div>
+          <div class="usdt-rate-tile">
+            <span>فروش تتر به بازار</span>
+            <strong id="usdtSellRateDisplay">—</strong>
+          </div>
+          <div class="usdt-rate-tile">
+            <span>آخرین معامله</span>
+            <strong id="usdtLastRateDisplay">—</strong>
+          </div>
+        </div>
+
+        <div class="field" style="position:relative;z-index:1;">
+          <label for="entryUsdtIrtRate">نرخ تتر مبنای ورود (تومان)</label>
+          <input
+            id="entryUsdtIrtRate"
+            data-formatted-number="true"
+            type="text"
+            inputmode="decimal"
+            placeholder="پس از دریافت نرخ، خودکار تکمیل می‌شود"
+          />
+        </div>
+
+        <div class="usdt-rate-actions" style="position:relative;z-index:1;">
+          <button class="usdt-rate-mini-button primary-rate" type="button" onclick="useEntryUsdtRate('buy')">استفاده از نرخ خرید</button>
+          <button class="usdt-rate-mini-button" type="button" onclick="useEntryUsdtRate('last')">استفاده از آخرین قیمت</button>
+          <button id="usdtRateRefreshButton" class="usdt-rate-mini-button" type="button" onclick="refreshUsdtIrtRate(true)">تازه‌سازی نرخ</button>
+        </div>
+
+        <div id="usdtRateStatus" class="usdt-rate-status">در حال دریافت نرخ تتر از نوبیتکس...</div>
+      </section>
+
       <section class="card">
         <h2 class="card-title">مشخصات معامله</h2>
 
@@ -2325,6 +2590,12 @@
     const BINANCE_STREAM_BASE = "wss://stream.binance.com:443/stream?streams=";
 
 
+    const USDT_IRT_API_URL =
+      "https://bufobmvflinalnskdlcq.supabase.co/functions/v1/crypto-usdt-irt-rate";
+    const USDT_IRT_CACHE_KEY = "cryptoMasterUsdtIrtRateCacheV1";
+    const USDT_IRT_AUTO_REFRESH_INTERVAL = 30 * 1000;
+    const USDT_IRT_REQUEST_TIMEOUT = 10000;
+
     const MARKET_PULSE_API_URL =
       "https://bufobmvflinalnskdlcq.supabase.co/functions/v1/crypto-market-pulse";
     const MARKET_PULSE_CACHE_KEY = "cryptoMasterMarketPulseCacheV1";
@@ -2336,6 +2607,11 @@
     const FUNDAMENTAL_CACHE_KEY = "cryptoMasterFundamentalNewsCacheV1";
     const FUNDAMENTAL_AUTO_REFRESH_INTERVAL = 2 * 60 * 1000;
     const FUNDAMENTAL_REQUEST_TIMEOUT = 16000;
+
+    let usdtIrtRateData = null;
+    let usdtIrtRefreshTimer = null;
+    let usdtIrtRequestInFlight = false;
+    let entryUsdtRateManual = false;
 
     let marketPulseRefreshTimer = null;
     let marketPulseRequestInFlight = false;
@@ -2469,6 +2745,288 @@
     function getNumberFromElement(element) {
       if (!element) return null;
       return parseNumericValue(element.value);
+    }
+
+    function formatIrtRate(value) {
+      const number = Number(value);
+      return Number.isFinite(number)
+        ? formatNumber(number, 0) + " تومان"
+        : "—";
+    }
+
+    function getCachedUsdtIrtRate() {
+      try {
+        const raw = localStorage.getItem(USDT_IRT_CACHE_KEY);
+        if (!raw) return null;
+        const parsed = JSON.parse(raw);
+        if (!parsed || !parsed.data) return null;
+        return parsed;
+      } catch (error) {
+        return null;
+      }
+    }
+
+    function saveUsdtIrtRateCache(payload) {
+      try {
+        localStorage.setItem(
+          USDT_IRT_CACHE_KEY,
+          JSON.stringify(payload)
+        );
+      } catch (error) {
+        console.log(error);
+      }
+    }
+
+    function normalizeUsdtIrtRatePayload(payload) {
+      const data = payload && payload.data ? payload.data : payload;
+      if (!data) return null;
+
+      const buyIrt = Number(data.buyIrt ?? data.bestAskIrt);
+      const sellIrt = Number(data.sellIrt ?? data.bestBidIrt);
+      const lastIrt = Number(data.lastIrt ?? data.lastTradeIrt);
+
+      if (
+        !Number.isFinite(buyIrt) || buyIrt <= 0 ||
+        !Number.isFinite(sellIrt) || sellIrt <= 0 ||
+        !Number.isFinite(lastIrt) || lastIrt <= 0
+      ) {
+        return null;
+      }
+
+      return {
+        buyIrt: buyIrt,
+        sellIrt: sellIrt,
+        lastIrt: lastIrt,
+        spreadIrt: Number(data.spreadIrt) || Math.max(0, buyIrt - sellIrt),
+        spreadPercent: Number(data.spreadPercent) || 0,
+        lastUpdate: data.lastUpdate || null,
+        fetchedAt: payload.fetchedAt || data.fetchedAt || new Date().toISOString(),
+        source: payload.source || data.source || { name: "Nobitex", market: "USDTIRT" }
+      };
+    }
+
+    function renderUsdtIrtRate(data, fromCache) {
+      if (!data) return;
+      usdtIrtRateData = data;
+
+      document.getElementById("usdtBuyRateDisplay").textContent =
+        formatIrtRate(data.buyIrt);
+      document.getElementById("usdtSellRateDisplay").textContent =
+        formatIrtRate(data.sellIrt);
+      document.getElementById("usdtLastRateDisplay").textContent =
+        formatIrtRate(data.lastIrt);
+
+      const entryRateInput = document.getElementById("entryUsdtIrtRate");
+      if (
+        entryRateInput &&
+        (!entryUsdtRateManual || !getNumber("entryUsdtIrtRate"))
+      ) {
+        entryRateInput.value = formatNumericInputValue(data.buyIrt);
+      }
+
+      const status = document.getElementById("usdtRateStatus");
+      const fetchedAt = new Date(data.fetchedAt || Date.now());
+      status.classList.remove("error");
+      status.textContent =
+        (fromCache ? "نمایش آخرین نرخ ذخیره‌شده" : "نرخ زنده نوبیتکس") +
+        " — " +
+        fetchedAt.toLocaleTimeString("fa-IR", {
+          hour: "2-digit",
+          minute: "2-digit",
+          second: "2-digit"
+        });
+    }
+
+    function useEntryUsdtRate(kind) {
+      const input = document.getElementById("entryUsdtIrtRate");
+      if (!input || !usdtIrtRateData) {
+        showToast("ابتدا نرخ تتر دریافت شود.", true);
+        return;
+      }
+
+      const value =
+        kind === "last"
+          ? usdtIrtRateData.lastIrt
+          : kind === "sell"
+            ? usdtIrtRateData.sellIrt
+            : usdtIrtRateData.buyIrt;
+
+      input.value = formatNumericInputValue(value);
+      entryUsdtRateManual = false;
+      input.dispatchEvent(new Event("input", { bubbles: true }));
+      entryUsdtRateManual = false;
+    }
+
+    async function refreshUsdtIrtRate(force) {
+      if (usdtIrtRequestInFlight) return usdtIrtRateData;
+      usdtIrtRequestInFlight = true;
+
+      const button = document.getElementById("usdtRateRefreshButton");
+      const status = document.getElementById("usdtRateStatus");
+      if (button) {
+        button.disabled = true;
+        button.textContent = "در حال دریافت...";
+      }
+
+      const controller = new AbortController();
+      const timeout = setTimeout(function () {
+        controller.abort();
+      }, USDT_IRT_REQUEST_TIMEOUT);
+
+      try {
+        const response = await fetch(
+          USDT_IRT_API_URL + (force ? "?refresh=1&t=" + Date.now() : ""),
+          { method: "GET", cache: "no-store", signal: controller.signal }
+        );
+
+        if (!response.ok) {
+          throw new Error("HTTP " + response.status);
+        }
+
+        const payload = await response.json();
+        if (!payload || payload.ok !== true) {
+          throw new Error(payload && payload.error ? payload.error : "Invalid rate response");
+        }
+
+        const data = normalizeUsdtIrtRatePayload(payload);
+        if (!data) throw new Error("Invalid Nobitex rate data");
+
+        const cachePayload = { savedAt: Date.now(), data: data };
+        saveUsdtIrtRateCache(cachePayload);
+        renderUsdtIrtRate(data, false);
+        return data;
+      } catch (error) {
+        console.error(error);
+        const cached = getCachedUsdtIrtRate();
+        if (cached && cached.data) {
+          const data = normalizeUsdtIrtRatePayload(cached.data);
+          if (data) {
+            renderUsdtIrtRate(data, true);
+            status.classList.add("error");
+            status.textContent = "دریافت نرخ جدید ناموفق بود؛ آخرین نرخ ذخیره‌شده نمایش داده می‌شود.";
+            return data;
+          }
+        }
+
+        status.classList.add("error");
+        status.textContent = "دریافت نرخ نوبیتکس ناموفق بود؛ نرخ ورود را دستی وارد کن.";
+        return null;
+      } finally {
+        clearTimeout(timeout);
+        usdtIrtRequestInFlight = false;
+        if (button) {
+          button.disabled = false;
+          button.textContent = "تازه‌سازی نرخ";
+        }
+      }
+    }
+
+    function startUsdtIrtAutoRefresh() {
+      if (usdtIrtRefreshTimer) return;
+      usdtIrtRefreshTimer = setInterval(function () {
+        if (document.visibilityState === "visible") {
+          refreshUsdtIrtRate(false);
+        }
+      }, USDT_IRT_AUTO_REFRESH_INTERVAL);
+    }
+
+    function getTradeFxBaseUsdt(trade) {
+      if (normalizeTradeType(trade) === "spot") {
+        const invested = Number(trade.investedAmount ?? trade.positionValue);
+        return Number.isFinite(invested) && invested > 0 ? invested : 0;
+      }
+
+      const margin = Number(trade.requiredMargin);
+      if (Number.isFinite(margin) && margin > 0) return margin;
+      const capital = Number(trade.capital);
+      return Number.isFinite(capital) && capital > 0 ? capital : 0;
+    }
+
+    function calculateIrtOutcome(trade, pnlUsdt, exitRateIrt) {
+      const pnl = Number(pnlUsdt);
+      const exitRate = Number(exitRateIrt);
+      const entryRate = Number(trade.entryUsdtIrtRate);
+      const baseUsdt = getTradeFxBaseUsdt(trade);
+
+      if (!Number.isFinite(pnl) || !Number.isFinite(exitRate) || exitRate <= 0) {
+        return null;
+      }
+
+      const pnlIrt = pnl * exitRate;
+      const hasEntryRate = Number.isFinite(entryRate) && entryRate > 0;
+      const rateImpactIrt = hasEntryRate
+        ? baseUsdt * (exitRate - entryRate)
+        : null;
+      const totalIrtValueChange = hasEntryRate
+        ? (baseUsdt + pnl) * exitRate - baseUsdt * entryRate
+        : pnlIrt;
+
+      return {
+        pnlIrt: pnlIrt,
+        rateImpactIrt: rateImpactIrt,
+        totalIrtValueChange: totalIrtValueChange,
+        baseUsdt: baseUsdt,
+        entryRateIrt: hasEntryRate ? entryRate : null,
+        exitRateIrt: exitRate
+      };
+    }
+
+    function exitUsdtRateHtml(trade) {
+      const entryRate = Number(trade.entryUsdtIrtRate);
+      const preferredExitRate =
+        Number(trade.exitUsdtIrtRate) ||
+        (usdtIrtRateData ? Number(usdtIrtRateData.sellIrt) : 0);
+
+      return (
+        '<div class="usdt-exit-box">' +
+          '<div class="usdt-exit-head">' +
+            '<strong>نرخ تتر هنگام خروج</strong>' +
+            '<span class="usdt-entry-rate-chip">ورود: ' +
+              (Number.isFinite(entryRate) && entryRate > 0 ? formatIrtRate(entryRate) : 'ثبت نشده') +
+            '</span>' +
+          '</div>' +
+          '<div class="field">' +
+            '<label>نرخ فروش تتر در خروج (تومان)</label>' +
+            '<input data-field="exitUsdtIrtRate" data-formatted-number="true" type="text" inputmode="decimal" value="' +
+              (preferredExitRate > 0 ? formatNumericInputValue(preferredExitRate) : '') +
+            '">' +
+          '</div>' +
+          '<button type="button" class="secondary-button" data-action="refreshExitUsdtRate">دریافت نرخ فروش زنده نوبیتکس</button>' +
+          '<div data-field="exitUsdtRateStatus" class="usdt-rate-status">برای تبدیل سود به تومان، نرخ فروش تتر مبناست.</div>' +
+        '</div>'
+      );
+    }
+
+    function setupExitUsdtRateControls(form, onChange) {
+      const input = form.querySelector('[data-field="exitUsdtIrtRate"]');
+      const status = form.querySelector('[data-field="exitUsdtRateStatus"]');
+      const button = form.querySelector('[data-action="refreshExitUsdtRate"]');
+
+      if (!input) return null;
+      input.addEventListener("input", function () {
+        if (typeof onChange === "function") onChange();
+      });
+
+      if (button) {
+        button.addEventListener("click", async function () {
+          button.disabled = true;
+          button.textContent = "در حال دریافت...";
+          const data = await refreshUsdtIrtRate(true);
+          if (data && Number(data.sellIrt) > 0) {
+            input.value = formatNumericInputValue(data.sellIrt);
+            status.textContent = "نرخ فروش تتر از نوبیتکس به‌روزرسانی شد.";
+            status.classList.remove("error");
+            input.dispatchEvent(new Event("input", { bubbles: true }));
+          } else {
+            status.textContent = "دریافت نرخ جدید ناموفق بود؛ نرخ را دستی وارد کن.";
+            status.classList.add("error");
+          }
+          button.disabled = false;
+          button.textContent = "دریافت نرخ فروش زنده نوبیتکس";
+        });
+      }
+
+      return input;
     }
 
     function normalizeTradeType(trade) {
@@ -3086,13 +3644,9 @@
 
     async function saveTradeToJournal() {
       const calculation = calculateTrade();
-      const symbol =
-        document.getElementById("symbol").value
-          .trim()
-          .toUpperCase();
-
-      const tradeNote =
-        document.getElementById("tradeNote").value.trim();
+      const symbol = document.getElementById("symbol").value.trim().toUpperCase();
+      const tradeNote = document.getElementById("tradeNote").value.trim();
+      const entryUsdtIrtRate = getNumber("entryUsdtIrtRate");
 
       if (!symbol) {
         showToast(
@@ -3114,6 +3668,12 @@
         return;
       }
 
+      if (!Number.isFinite(entryUsdtIrtRate) || entryUsdtIrtRate <= 0) {
+        showToast("نرخ تتر هنگام ورود را دریافت یا دستی وارد کن.", true);
+        document.getElementById("entryUsdtIrtRate").focus();
+        return;
+      }
+
       const saveButton = document.getElementById("saveTradeButton");
       saveButton.disabled = true;
       saveButton.textContent = "در حال ذخیره...";
@@ -3126,6 +3686,11 @@
         side: calculation.side,
         entry: calculation.entry,
         entryUsd: calculation.entryUsd ?? null,
+        entryUsdtIrtRate: entryUsdtIrtRate,
+        entryUsdtIrtRateCapturedAt: Date.now(),
+        entryUsdtIrtRateSource: usdtIrtRateData
+          ? "Nobitex USDTIRT / editable"
+          : "manual",
         stop: calculation.stop,
         tp1: getNumber("tp1"),
         tp2: getNumber("tp2"),
@@ -3140,22 +3705,19 @@
         liquidationPrice: calculation.liquidationPrice,
         investedAmount: calculation.investedAmount,
         allocationPercent: calculation.allocationPercent,
-        screenshotBlob:
-          entryScreenshotFile
-            ? entryScreenshotFile.slice(
-                0,
-                entryScreenshotFile.size,
-                entryScreenshotFile.type
-              )
-            : null,
-        screenshotName:
-          entryScreenshotFile
-            ? entryScreenshotFile.name
-            : "",
+        screenshotBlob: entryScreenshotFile
+          ? entryScreenshotFile.slice(0, entryScreenshotFile.size, entryScreenshotFile.type)
+          : null,
+        screenshotName: entryScreenshotFile ? entryScreenshotFile.name : "",
         status: "open",
         exitPrice: null,
+        exitUsdtIrtRate: null,
+        exitUsdtIrtRateCapturedAt: null,
         totalFees: null,
         actualProfitLoss: null,
+        actualProfitLossIrt: null,
+        usdtRateImpactIrt: null,
+        totalIrtValueChange: null,
         actualR: null,
         actualReturnPercent: null,
         exitNote: "",
@@ -3170,11 +3732,10 @@
         removeEntryScreenshot();
         document.getElementById("newTradeDetails").open = false;
         await renderJournalTrades();
-
         showToast(
           calculation.tradeType === "spot"
-            ? "خرید اسپات در ژورنال ذخیره شد."
-            : "معامله فیوچرز در ژورنال ذخیره شد."
+            ? "خرید اسپات با نرخ تتر ورود ذخیره شد."
+            : "معامله فیوچرز با نرخ تتر ورود ذخیره شد."
         );
       } catch (error) {
         console.error(error);
@@ -3231,6 +3792,12 @@
               : "—"
           ],
           ["مبلغ خرید", formatMoney(investedAmount, currency)],
+          [
+            "نرخ تتر ورود",
+            Number(trade.entryUsdtIrtRate) > 0
+              ? formatIrtRate(trade.entryUsdtIrtRate)
+              : "ثبت نشده"
+          ],
           ["مقدار دارایی", formatNumber(trade.quantity, 8)],
           [
             "تخصیص سرمایه",
@@ -3272,6 +3839,12 @@
       } else {
         items = [
           ["ورود", formatTradePrice(trade.entry, "USD")],
+          [
+            "نرخ تتر ورود",
+            Number(trade.entryUsdtIrtRate) > 0
+              ? formatIrtRate(trade.entryUsdtIrtRate)
+              : "ثبت نشده"
+          ],
           ["استاپ", formatTradePrice(trade.stop, "USD")],
           [
             "هدف اول",
@@ -3388,41 +3961,54 @@
                 ? "تعریف نشده"
                 : formatNumber(trade.actualR, 2) + " R";
 
+            const entryRateText =
+              Number(trade.entryUsdtIrtRate) > 0
+                ? formatIrtRate(trade.entryUsdtIrtRate)
+                : "ثبت نشده";
+            const exitRateText =
+              Number(trade.exitUsdtIrtRate) > 0
+                ? formatIrtRate(trade.exitUsdtIrtRate)
+                : "ثبت نشده";
+            const pnlIrtText =
+              Number.isFinite(Number(trade.actualProfitLossIrt))
+                ? formatMoney(trade.actualProfitLossIrt, "IRT")
+                : "—";
+            const rateImpactText =
+              Number.isFinite(Number(trade.usdtRateImpactIrt))
+                ? formatMoney(trade.usdtRateImpactIrt, "IRT")
+                : "—";
+            const totalIrtText =
+              Number.isFinite(Number(trade.totalIrtValueChange))
+                ? formatMoney(trade.totalIrtValueChange, "IRT")
+                : pnlIrtText;
+
             result.innerHTML =
               "<strong>نتیجه معامله</strong><br>" +
               "قیمت خروج: <b dir='ltr'>" +
               formatTradePrice(trade.exitPrice, tradeCurrency) +
               "</b><br>" +
-              "سود/زیان: <b dir='ltr' style='color:" +
-              (
-                Number(trade.actualProfitLoss) >= 0
-                  ? "var(--green)"
-                  : "var(--red)"
-              ) +
-              "'>" +
-              formatMoney(trade.actualProfitLoss, tradeCurrency) +
-              "</b><br>" +
-              "R واقعی: <b dir='ltr'>" +
-              resultR +
-              "</b><br>" +
-              "بازده: <b dir='ltr'>" +
-              formatNumber(trade.actualReturnPercent, 2) +
-              "%</b>" +
+              "سود/زیان معامله: <b dir='ltr' style='color:" +
+              (Number(trade.actualProfitLoss) >= 0 ? "var(--green)" : "var(--red)") +
+              "'>" + formatMoney(trade.actualProfitLoss, "USD") + "</b><br>" +
+              "معادل سود/زیان: <b dir='ltr' style='color:" +
+              (Number(trade.actualProfitLossIrt) >= 0 ? "var(--green)" : "var(--red)") +
+              "'>" + pnlIrtText + "</b><br>" +
+              "نرخ تتر ورود: <b dir='ltr'>" + entryRateText + "</b><br>" +
+              "نرخ تتر خروج: <b dir='ltr'>" + exitRateText + "</b><br>" +
+              "اثر تغییر نرخ تتر: <b dir='ltr'>" + rateImpactText + "</b><br>" +
+              "تغییر کل ارزش تومانی سرمایه درگیر: <b dir='ltr' style='color:" +
+              (Number(trade.totalIrtValueChange) >= 0 ? "var(--green)" : "var(--red)") +
+              "'>" + totalIrtText + "</b><br>" +
+              "R واقعی: <b dir='ltr'>" + resultR + "</b><br>" +
+              "بازده: <b dir='ltr'>" + formatNumber(trade.actualReturnPercent, 2) + "%</b>" +
               (
                 trade.totalFees != null &&
                 Number.isFinite(Number(trade.totalFees)) &&
                 Number(trade.totalFees) > 0
-                  ? "<br>کل کارمزد: <b dir='ltr'>" +
-                    formatMoney(trade.totalFees, tradeCurrency) +
-                    "</b>"
+                  ? "<br>کل کارمزد: <b dir='ltr'>" + formatMoney(trade.totalFees, "USD") + "</b>"
                   : ""
               ) +
-              (
-                trade.exitNote
-                  ? "<br>یادداشت خروج: " +
-                    escapeHtml(trade.exitNote)
-                  : ""
-              );
+              (trade.exitNote ? "<br>یادداشت خروج: " + escapeHtml(trade.exitNote) : "");
             card.appendChild(result);
 
             if (trade.exitScreenshotBlob) {
@@ -3467,282 +4053,271 @@
 
     async function toggleTradeResultForm(tradeId, card) {
       const oldForm = card.querySelector(".trade-result-form");
-
       if (oldForm) {
         oldForm.remove();
         return;
       }
 
       const trade = await getTradeById(tradeId);
-
       if (!trade) {
         showToast("معامله پیدا نشد.", true);
         return;
       }
 
       const tradeType = normalizeTradeType(trade);
-      const currency = getTradeCurrency(trade);
       const form = document.createElement("div");
-
       form.className = "trade-result-form";
 
       if (tradeType === "spot") {
         form.innerHTML =
           '<strong style="display:block;margin-bottom:14px;color:var(--muted);">ثبت نتیجه خرید اسپات</strong>' +
-          '<div class="field"><label>قیمت فروش کامل</label><input data-field="exitPrice" data-formatted-number="true" type="text" inputmode="decimal" value="' + (trade.exitPrice ?? "") + '"></div>' +
-          '<div class="field"><label>کل کارمزد خرید و فروش (' + getCurrencyTitle(currency) + ')</label><input data-field="totalFees" data-formatted-number="true" type="text" inputmode="decimal" value="' + (trade.totalFees ?? 0) + '"></div>' +
-          '<div class="two-grid">' +
-            '<div class="field"><label>سود یا زیان محاسبه‌شده</label><input data-field="actualProfitLoss" type="text" readonly></div>' +
-            '<div class="field"><label>R واقعی</label><input data-field="actualR" type="text" readonly></div>' +
+          exitUsdtRateHtml(trade) +
+          '<div class="field"><label>قیمت فروش کامل (USDT)</label><input data-field="exitPrice" data-formatted-number="true" type="text" inputmode="decimal" value="' + (trade.exitPrice ?? "") + '"></div>' +
+          '<div class="field"><label>کل کارمزد خرید و فروش (USDT)</label><input data-field="totalFees" data-formatted-number="true" type="text" inputmode="decimal" value="' + (trade.totalFees ?? 0) + '"></div>' +
+          '<div class="dual-pnl-box">' +
+            '<div class="dual-pnl-item"><span>سود یا زیان معامله</span><strong data-field="pnlUsdtDisplay">—</strong></div>' +
+            '<div class="dual-pnl-item"><span>معادل سود یا زیان</span><strong data-field="pnlIrtDisplay">—</strong></div>' +
+            '<div class="dual-pnl-item"><span>اثر تغییر نرخ تتر</span><strong data-field="rateImpactDisplay">—</strong></div>' +
+            '<div class="dual-pnl-item"><span>تغییر کل ارزش تومانی</span><strong data-field="totalIrtDisplay">—</strong></div>' +
           '</div>' +
-          '<div class="field"><label>بازده واقعی</label><input data-field="actualReturnPercent" type="text" readonly></div>' +
+          '<div class="two-grid">' +
+            '<div class="field"><label>R واقعی</label><input data-field="actualR" type="text" readonly></div>' +
+            '<div class="field"><label>بازده واقعی</label><input data-field="actualReturnPercent" type="text" readonly></div>' +
+          '</div>' +
           '<div class="field"><label>یادداشت خروج</label><textarea data-field="exitNote" maxlength="1000" placeholder="علت فروش، نکته آموزشی و...">' + escapeHtml(trade.exitNote || "") + '</textarea></div>' +
           '<label class="upload-label">افزودن اسکرین‌شات نقطه فروش<input data-field="exitScreenshot" type="file" accept="image/*" style="display:none;"></label>' +
           '<div class="journal-actions"><button type="button" class="primary-button" data-action="save">ذخیره نتیجه</button><button type="button" class="secondary-button" data-action="cancel">انصراف</button></div>';
 
         initializeFormattedNumberInputs(form);
 
-        const exitPriceInput =
-          form.querySelector('[data-field="exitPrice"]');
-
-        const totalFeesInput =
-          form.querySelector('[data-field="totalFees"]');
-
-        const pnlInput =
-          form.querySelector('[data-field="actualProfitLoss"]');
-
-        const rInput =
-          form.querySelector('[data-field="actualR"]');
-
-        const returnInput =
-          form.querySelector('[data-field="actualReturnPercent"]');
+        const exitPriceInput = form.querySelector('[data-field="exitPrice"]');
+        const totalFeesInput = form.querySelector('[data-field="totalFees"]');
+        const pnlUsdtDisplay = form.querySelector('[data-field="pnlUsdtDisplay"]');
+        const pnlIrtDisplay = form.querySelector('[data-field="pnlIrtDisplay"]');
+        const rateImpactDisplay = form.querySelector('[data-field="rateImpactDisplay"]');
+        const totalIrtDisplay = form.querySelector('[data-field="totalIrtDisplay"]');
+        const rInput = form.querySelector('[data-field="actualR"]');
+        const returnInput = form.querySelector('[data-field="actualReturnPercent"]');
+        let exitRateInput = null;
 
         function calculateSpotOutcome() {
           const exitPrice = getNumberFromElement(exitPriceInput);
           const totalFees = getNumberFromElement(totalFeesInput) ?? 0;
+          const exitUsdtIrtRate = getNumberFromElement(exitRateInput);
           const quantity = Number(trade.quantity);
-
-          const investedAmount =
-            Number.isFinite(Number(trade.investedAmount))
-              ? Number(trade.investedAmount)
-              : Number(trade.positionValue);
+          const investedAmount = Number.isFinite(Number(trade.investedAmount))
+            ? Number(trade.investedAmount)
+            : Number(trade.positionValue);
 
           if (
-            !Number.isFinite(exitPrice) ||
-            exitPrice <= 0 ||
-            !Number.isFinite(totalFees) ||
-            totalFees < 0 ||
-            !Number.isFinite(quantity) ||
-            quantity <= 0 ||
-            !Number.isFinite(investedAmount) ||
-            investedAmount <= 0
+            !Number.isFinite(exitPrice) || exitPrice <= 0 ||
+            !Number.isFinite(totalFees) || totalFees < 0 ||
+            !Number.isFinite(exitUsdtIrtRate) || exitUsdtIrtRate <= 0 ||
+            !Number.isFinite(quantity) || quantity <= 0 ||
+            !Number.isFinite(investedAmount) || investedAmount <= 0
           ) {
-            pnlInput.value = "";
+            pnlUsdtDisplay.textContent = "—";
+            pnlIrtDisplay.textContent = "—";
+            rateImpactDisplay.textContent = "—";
+            totalIrtDisplay.textContent = "—";
             rInput.value = "";
             returnInput.value = "";
             return null;
           }
 
           const actualProfitLoss =
-            (exitPrice - Number(trade.entry)) * quantity -
-            totalFees;
-
-          const actualReturnPercent =
-            (actualProfitLoss / investedAmount) * 100;
-
+            (exitPrice - Number(trade.entry)) * quantity - totalFees;
+          const actualReturnPercent = (actualProfitLoss / investedAmount) * 100;
           const riskAmount = Number(trade.riskAmount);
-
           const actualR =
-            trade.riskAmount != null &&
-            Number.isFinite(riskAmount) &&
-            riskAmount > 0
+            trade.riskAmount != null && Number.isFinite(riskAmount) && riskAmount > 0
               ? actualProfitLoss / riskAmount
               : null;
+          const irtOutcome = calculateIrtOutcome(trade, actualProfitLoss, exitUsdtIrtRate);
 
-          pnlInput.value =
-            formatMoney(actualProfitLoss, currency);
-
-          rInput.value =
-            Number.isFinite(actualR)
-              ? formatNumber(actualR, 2) + " R"
-              : "بدون حد ضرر؛ تعریف نشده";
-
-          returnInput.value =
-            formatNumber(actualReturnPercent, 2) + "%";
+          pnlUsdtDisplay.textContent = formatMoney(actualProfitLoss, "USD");
+          pnlUsdtDisplay.style.color = actualProfitLoss >= 0 ? "var(--green)" : "var(--red)";
+          pnlIrtDisplay.textContent = formatMoney(irtOutcome.pnlIrt, "IRT");
+          pnlIrtDisplay.style.color = irtOutcome.pnlIrt >= 0 ? "var(--green)" : "var(--red)";
+          rateImpactDisplay.textContent = irtOutcome.rateImpactIrt == null
+            ? "نرخ ورود ثبت نشده"
+            : formatMoney(irtOutcome.rateImpactIrt, "IRT");
+          totalIrtDisplay.textContent = formatMoney(irtOutcome.totalIrtValueChange, "IRT");
+          totalIrtDisplay.style.color = irtOutcome.totalIrtValueChange >= 0 ? "var(--green)" : "var(--red)";
+          rInput.value = Number.isFinite(actualR)
+            ? formatNumber(actualR, 2) + " R"
+            : "تعریف نشده";
+          returnInput.value = formatNumber(actualReturnPercent, 2) + "%";
 
           return {
-            exitPrice: exitPrice,
-            totalFees: totalFees,
-            actualProfitLoss: actualProfitLoss,
-            actualR: actualR,
-            actualReturnPercent: actualReturnPercent
+            exitPrice,
+            totalFees,
+            exitUsdtIrtRate,
+            actualProfitLoss,
+            actualProfitLossIrt: irtOutcome.pnlIrt,
+            usdtRateImpactIrt: irtOutcome.rateImpactIrt,
+            totalIrtValueChange: irtOutcome.totalIrtValueChange,
+            actualR,
+            actualReturnPercent
           };
         }
 
+        exitRateInput = setupExitUsdtRateControls(form, calculateSpotOutcome);
         exitPriceInput.addEventListener("input", calculateSpotOutcome);
         totalFeesInput.addEventListener("input", calculateSpotOutcome);
         calculateSpotOutcome();
 
-        form.querySelector('[data-action="save"]')
-          .addEventListener("click", async function () {
-            const outcome = calculateSpotOutcome();
+        form.querySelector('[data-action="save"]').addEventListener("click", async function () {
+          const outcome = calculateSpotOutcome();
+          if (!outcome) {
+            showToast("قیمت فروش، کارمزد و نرخ تتر خروج را صحیح وارد کن.", true);
+            return;
+          }
 
-            if (!outcome) {
-              showToast(
-                "قیمت فروش را صحیح وارد کن. کارمزد می‌تواند صفر باشد.",
-                true
-              );
-              return;
-            }
+          const exitNote = form.querySelector('[data-field="exitNote"]').value.trim();
+          const exitFileInput = form.querySelector('[data-field="exitScreenshot"]');
+          const exitFile = exitFileInput.files && exitFileInput.files[0];
 
-            const exitNote =
-              form.querySelector('[data-field="exitNote"]')
-                .value
-                .trim();
+          trade.status = "closed";
+          trade.exitPrice = outcome.exitPrice;
+          trade.exitUsdtIrtRate = outcome.exitUsdtIrtRate;
+          trade.exitUsdtIrtRateCapturedAt = Date.now();
+          trade.totalFees = outcome.totalFees;
+          trade.actualProfitLoss = outcome.actualProfitLoss;
+          trade.actualProfitLossIrt = outcome.actualProfitLossIrt;
+          trade.usdtRateImpactIrt = outcome.usdtRateImpactIrt;
+          trade.totalIrtValueChange = outcome.totalIrtValueChange;
+          trade.actualR = outcome.actualR;
+          trade.actualReturnPercent = outcome.actualReturnPercent;
+          trade.exitNote = exitNote;
+          trade.closedAt = Date.now();
 
-            const exitFileInput =
-              form.querySelector('[data-field="exitScreenshot"]');
+          if (exitFile) {
+            trade.exitScreenshotBlob = exitFile.slice(0, exitFile.size, exitFile.type);
+            trade.exitScreenshotName = exitFile.name;
+          }
 
-            const exitFile =
-              exitFileInput.files &&
-              exitFileInput.files[0];
-
-            trade.status = "closed";
-            trade.exitPrice = outcome.exitPrice;
-            trade.totalFees = outcome.totalFees;
-            trade.actualProfitLoss = outcome.actualProfitLoss;
-            trade.actualR = outcome.actualR;
-            trade.actualReturnPercent =
-              outcome.actualReturnPercent;
-            trade.exitNote = exitNote;
-            trade.closedAt = Date.now();
-
-            if (exitFile) {
-              trade.exitScreenshotBlob =
-                exitFile.slice(
-                  0,
-                  exitFile.size,
-                  exitFile.type
-                );
-
-              trade.exitScreenshotName = exitFile.name;
-            }
-
-            try {
-              await updateTradeInDatabase(trade);
-              await renderJournalTrades();
-              showToast("نتیجه خرید اسپات ذخیره شد.");
-            } catch (error) {
-              console.error(error);
-              showToast("ذخیره نتیجه ناموفق بود.", true);
-            }
-          });
+          try {
+            await updateTradeInDatabase(trade);
+            await renderJournalTrades();
+            showToast("نتیجه اسپات به تتر و تومان ذخیره شد.");
+          } catch (error) {
+            console.error(error);
+            showToast("ذخیره نتیجه ناموفق بود.", true);
+          }
+        });
       } else {
         form.innerHTML =
           '<strong style="display:block;margin-bottom:14px;color:var(--muted);">ثبت نتیجه معامله فیوچرز</strong>' +
+          exitUsdtRateHtml(trade) +
           '<div class="field"><label>قیمت خروج</label><input data-field="exitPrice" data-formatted-number="true" type="text" inputmode="decimal" value="' + (trade.exitPrice ?? "") + '"></div>' +
-          '<div class="two-grid">' +
-            '<div class="field"><label>سود یا زیان واقعی ($)</label><input data-field="actualProfitLoss" data-formatted-number="true" type="text" inputmode="decimal" value="' + (trade.actualProfitLoss ?? "") + '"></div>' +
-            '<div class="field"><label>R واقعی</label><input data-field="actualR" type="number" inputmode="decimal" step="any" value="' + (trade.actualR ?? "") + '"></div>' +
+          '<div class="field"><label>سود یا زیان واقعی (USDT)</label><input data-field="actualProfitLoss" data-formatted-number="true" type="text" inputmode="decimal" value="' + (trade.actualProfitLoss ?? "") + '"></div>' +
+          '<div class="dual-pnl-box">' +
+            '<div class="dual-pnl-item"><span>سود یا زیان معامله</span><strong data-field="pnlUsdtDisplay">—</strong></div>' +
+            '<div class="dual-pnl-item"><span>معادل سود یا زیان</span><strong data-field="pnlIrtDisplay">—</strong></div>' +
+            '<div class="dual-pnl-item"><span>اثر تغییر نرخ تتر</span><strong data-field="rateImpactDisplay">—</strong></div>' +
+            '<div class="dual-pnl-item"><span>تغییر کل ارزش تومانی</span><strong data-field="totalIrtDisplay">—</strong></div>' +
           '</div>' +
-          '<div class="field"><label>بازده واقعی (%)</label><input data-field="actualReturnPercent" type="number" inputmode="decimal" step="any" value="' + (trade.actualReturnPercent ?? "") + '"></div>' +
+          '<div class="two-grid">' +
+            '<div class="field"><label>R واقعی</label><input data-field="actualR" type="number" inputmode="decimal" step="any" value="' + (trade.actualR ?? "") + '"></div>' +
+            '<div class="field"><label>بازده واقعی (%)</label><input data-field="actualReturnPercent" type="number" inputmode="decimal" step="any" value="' + (trade.actualReturnPercent ?? "") + '"></div>' +
+          '</div>' +
           '<div class="field"><label>یادداشت خروج</label><textarea data-field="exitNote" maxlength="1000" placeholder="علت خروج، اشتباه، نکته آموزشی و...">' + escapeHtml(trade.exitNote || "") + '</textarea></div>' +
           '<label class="upload-label">افزودن اسکرین‌شات نقطه خروج<input data-field="exitScreenshot" type="file" accept="image/*" style="display:none;"></label>' +
           '<div class="journal-actions"><button type="button" class="primary-button" data-action="save">ذخیره نتیجه</button><button type="button" class="secondary-button" data-action="cancel">انصراف</button></div>';
 
         initializeFormattedNumberInputs(form);
 
-        form.querySelector('[data-action="save"]')
-          .addEventListener("click", async function () {
-            const exitPrice =
-              getNumberFromElement(
-                form.querySelector('[data-field="exitPrice"]')
-              );
+        const pnlInput = form.querySelector('[data-field="actualProfitLoss"]');
+        const pnlUsdtDisplay = form.querySelector('[data-field="pnlUsdtDisplay"]');
+        const pnlIrtDisplay = form.querySelector('[data-field="pnlIrtDisplay"]');
+        const rateImpactDisplay = form.querySelector('[data-field="rateImpactDisplay"]');
+        const totalIrtDisplay = form.querySelector('[data-field="totalIrtDisplay"]');
+        let exitRateInput = null;
 
-            const actualProfitLoss =
-              getNumberFromElement(
-                form.querySelector('[data-field="actualProfitLoss"]')
-              );
+        function calculateFuturesIrtPreview() {
+          const pnlUsdt = getNumberFromElement(pnlInput);
+          const exitRate = getNumberFromElement(exitRateInput);
+          const irtOutcome = calculateIrtOutcome(trade, pnlUsdt, exitRate);
 
-            const actualR =
-              getNumberFromElement(
-                form.querySelector('[data-field="actualR"]')
-              );
+          if (!irtOutcome) {
+            pnlUsdtDisplay.textContent = "—";
+            pnlIrtDisplay.textContent = "—";
+            rateImpactDisplay.textContent = "—";
+            totalIrtDisplay.textContent = "—";
+            return null;
+          }
 
-            const actualReturnPercent =
-              getNumberFromElement(
-                form.querySelector('[data-field="actualReturnPercent"]')
-              );
+          pnlUsdtDisplay.textContent = formatMoney(pnlUsdt, "USD");
+          pnlUsdtDisplay.style.color = pnlUsdt >= 0 ? "var(--green)" : "var(--red)";
+          pnlIrtDisplay.textContent = formatMoney(irtOutcome.pnlIrt, "IRT");
+          pnlIrtDisplay.style.color = irtOutcome.pnlIrt >= 0 ? "var(--green)" : "var(--red)";
+          rateImpactDisplay.textContent = irtOutcome.rateImpactIrt == null
+            ? "نرخ ورود ثبت نشده"
+            : formatMoney(irtOutcome.rateImpactIrt, "IRT");
+          totalIrtDisplay.textContent = formatMoney(irtOutcome.totalIrtValueChange, "IRT");
+          totalIrtDisplay.style.color = irtOutcome.totalIrtValueChange >= 0 ? "var(--green)" : "var(--red)";
+          return irtOutcome;
+        }
 
-            const exitNote =
-              form.querySelector('[data-field="exitNote"]')
-                .value
-                .trim();
+        exitRateInput = setupExitUsdtRateControls(form, calculateFuturesIrtPreview);
+        pnlInput.addEventListener("input", calculateFuturesIrtPreview);
+        calculateFuturesIrtPreview();
 
-            const exitFileInput =
-              form.querySelector('[data-field="exitScreenshot"]');
+        form.querySelector('[data-action="save"]').addEventListener("click", async function () {
+          const exitPrice = getNumberFromElement(form.querySelector('[data-field="exitPrice"]'));
+          const actualProfitLoss = getNumberFromElement(pnlInput);
+          const actualR = getNumberFromElement(form.querySelector('[data-field="actualR"]'));
+          const actualReturnPercent = getNumberFromElement(form.querySelector('[data-field="actualReturnPercent"]'));
+          const exitUsdtIrtRate = getNumberFromElement(exitRateInput);
+          const irtOutcome = calculateIrtOutcome(trade, actualProfitLoss, exitUsdtIrtRate);
+          const exitNote = form.querySelector('[data-field="exitNote"]').value.trim();
+          const exitFileInput = form.querySelector('[data-field="exitScreenshot"]');
+          const exitFile = exitFileInput.files && exitFileInput.files[0];
 
-            const exitFile =
-              exitFileInput.files &&
-              exitFileInput.files[0];
+          if (
+            ![exitPrice, actualProfitLoss, actualR, actualReturnPercent, exitUsdtIrtRate].every(Number.isFinite) ||
+            exitPrice <= 0 || exitUsdtIrtRate <= 0 || !irtOutcome
+          ) {
+            showToast("قیمت خروج، سود/زیان، R، بازده و نرخ تتر خروج را کامل وارد کن.", true);
+            return;
+          }
 
-            if (
-              ![
-                exitPrice,
-                actualProfitLoss,
-                actualR,
-                actualReturnPercent
-              ].every(Number.isFinite) ||
-              exitPrice <= 0
-            ) {
-              showToast(
-                "قیمت خروج، سود/زیان، R و بازده را کامل وارد کن.",
-                true
-              );
-              return;
-            }
+          trade.status = "closed";
+          trade.exitPrice = exitPrice;
+          trade.exitUsdtIrtRate = exitUsdtIrtRate;
+          trade.exitUsdtIrtRateCapturedAt = Date.now();
+          trade.actualProfitLoss = actualProfitLoss;
+          trade.actualProfitLossIrt = irtOutcome.pnlIrt;
+          trade.usdtRateImpactIrt = irtOutcome.rateImpactIrt;
+          trade.totalIrtValueChange = irtOutcome.totalIrtValueChange;
+          trade.actualR = actualR;
+          trade.actualReturnPercent = actualReturnPercent;
+          trade.exitNote = exitNote;
+          trade.closedAt = Date.now();
 
-            trade.status = "closed";
-            trade.exitPrice = exitPrice;
-            trade.actualProfitLoss = actualProfitLoss;
-            trade.actualR = actualR;
-            trade.actualReturnPercent =
-              actualReturnPercent;
-            trade.exitNote = exitNote;
-            trade.closedAt = Date.now();
+          if (exitFile) {
+            trade.exitScreenshotBlob = exitFile.slice(0, exitFile.size, exitFile.type);
+            trade.exitScreenshotName = exitFile.name;
+          }
 
-            if (exitFile) {
-              trade.exitScreenshotBlob =
-                exitFile.slice(
-                  0,
-                  exitFile.size,
-                  exitFile.type
-                );
-
-              trade.exitScreenshotName = exitFile.name;
-            }
-
-            try {
-              await updateTradeInDatabase(trade);
-              await renderJournalTrades();
-              showToast("نتیجه معامله فیوچرز ذخیره شد.");
-            } catch (error) {
-              console.error(error);
-              showToast("ذخیره نتیجه ناموفق بود.", true);
-            }
-          });
+          try {
+            await updateTradeInDatabase(trade);
+            await renderJournalTrades();
+            showToast("نتیجه فیوچرز به تتر و تومان ذخیره شد.");
+          } catch (error) {
+            console.error(error);
+            showToast("ذخیره نتیجه ناموفق بود.", true);
+          }
+        });
       }
 
-      form.querySelector('[data-action="cancel"]')
-        .addEventListener("click", function () {
-          form.remove();
-        });
+      form.querySelector('[data-action="cancel"]').addEventListener("click", function () {
+        form.remove();
+      });
 
       card.insertBefore(form, card.lastElementChild);
-      form.scrollIntoView({
-        behavior: "smooth",
-        block: "nearest"
-      });
+      form.scrollIntoView({ behavior: "smooth", block: "nearest" });
     }
 
     async function deleteSavedTrade(tradeId) {
@@ -5713,6 +6288,23 @@
     }
 
     applyResponsiveWebViewClass();
+
+    const cachedUsdtRate = getCachedUsdtIrtRate();
+    if (cachedUsdtRate && cachedUsdtRate.data) {
+      const cachedRateData = normalizeUsdtIrtRatePayload(cachedUsdtRate.data);
+      if (cachedRateData) renderUsdtIrtRate(cachedRateData, true);
+    }
+
+    const entryUsdtRateInput = document.getElementById("entryUsdtIrtRate");
+    if (entryUsdtRateInput) {
+      entryUsdtRateInput.addEventListener("input", function () {
+        entryUsdtRateManual = true;
+      });
+    }
+
+    refreshUsdtIrtRate(false);
+    startUsdtIrtAutoRefresh();
+
     window.addEventListener("resize", applyResponsiveWebViewClass);
     window.addEventListener("orientationchange", function () {
       setTimeout(applyResponsiveWebViewClass, 120);
