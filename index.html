@@ -3295,6 +3295,427 @@ button,
   }
 }
 
+  
+/* =========================
+   Cloud Trading Alerts
+   ========================= */
+.alerts-view {
+  display: grid;
+  gap: 14px;
+  min-width: 0;
+}
+
+.alerts-view[hidden] {
+  display: none !important;
+}
+
+.alerts-hero {
+  position: relative;
+  overflow: hidden;
+  padding: 17px;
+  border: 1px solid rgba(245, 158, 11, 0.32);
+  border-radius: 18px;
+  background:
+    radial-gradient(circle at 12% 0%, rgba(245, 158, 11, 0.14), transparent 36%),
+    radial-gradient(circle at 92% 100%, rgba(55, 178, 232, 0.13), transparent 39%),
+    linear-gradient(145deg, rgba(16, 43, 69, 0.98), rgba(7, 28, 47, 0.98));
+  box-shadow: 0 18px 42px var(--shadow);
+}
+
+.alerts-hero-head,
+.alerts-section-head,
+.alerts-card-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+  min-width: 0;
+}
+
+.alerts-title {
+  margin: 0;
+  color: #ffffff;
+  font-size: 21px;
+}
+
+.alerts-subtitle {
+  margin: 7px 0 0;
+  color: #8ca8bf;
+  font-size: 10px;
+  line-height: 1.9;
+}
+
+.alerts-cloud-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 9px;
+  border: 1px solid rgba(46, 204, 113, 0.32);
+  border-radius: 999px;
+  background: rgba(46, 204, 113, 0.08);
+  color: #8cf1b4;
+  font-size: 9px;
+  font-weight: 900;
+  white-space: nowrap;
+}
+
+.alerts-cloud-badge::before {
+  content: "";
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #2ecc71;
+  box-shadow: 0 0 0 4px rgba(46, 204, 113, 0.12);
+}
+
+.alerts-status {
+  margin-top: 13px;
+  padding: 10px 12px;
+  border: 1px solid rgba(99, 145, 180, 0.28);
+  border-radius: 11px;
+  background: rgba(5, 25, 42, 0.55);
+  color: #89a7bf;
+  font-size: 10px;
+  line-height: 1.9;
+}
+
+.alerts-status.error {
+  border-color: rgba(239, 51, 64, 0.45);
+  background: rgba(239, 51, 64, 0.08);
+  color: #ffd4d7;
+}
+
+.alerts-panel {
+  min-width: 0;
+  padding: 15px;
+  border: 1px solid var(--card-border);
+  border-radius: 17px;
+  background: var(--card);
+}
+
+.alerts-section-title {
+  margin: 0;
+  color: var(--text);
+  font-size: 16px;
+}
+
+.alerts-section-note {
+  margin-top: 4px;
+  color: var(--muted);
+  font-size: 9px;
+  line-height: 1.8;
+}
+
+.alerts-form {
+  display: grid;
+  gap: 10px;
+  margin-top: 13px;
+}
+
+.alerts-form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.alerts-symbol-wrap[hidden],
+.alerts-cooldown-wrap[hidden] {
+  display: none !important;
+}
+
+.alerts-quote {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 9px;
+  align-items: center;
+  min-width: 0;
+  padding: 11px;
+  border: 1px solid rgba(55, 178, 232, 0.27);
+  border-radius: 12px;
+  background: var(--input);
+}
+
+.alerts-quote-main {
+  min-width: 0;
+}
+
+.alerts-quote-label {
+  color: var(--muted);
+  font-size: 9px;
+}
+
+.alerts-quote-value {
+  display: block;
+  margin-top: 5px;
+  overflow-wrap: anywhere;
+  color: var(--text);
+  font-size: 17px;
+  font-weight: 900;
+  direction: ltr;
+  text-align: right;
+}
+
+.alerts-quote-change {
+  display: block;
+  margin-top: 4px;
+  color: var(--muted);
+  font-size: 9px;
+  direction: ltr;
+  text-align: right;
+}
+
+.alerts-switch-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-width: 0;
+  padding: 11px;
+  border: 1px solid var(--card-border);
+  border-radius: 11px;
+  background: var(--input);
+}
+
+.alerts-switch-copy {
+  min-width: 0;
+}
+
+.alerts-switch-copy strong {
+  display: block;
+  color: var(--text);
+  font-size: 11px;
+}
+
+.alerts-switch-copy span {
+  display: block;
+  margin-top: 4px;
+  color: var(--muted);
+  font-size: 9px;
+  line-height: 1.8;
+}
+
+.alerts-switch {
+  position: relative;
+  flex: 0 0 48px;
+  width: 48px;
+  height: 27px;
+}
+
+.alerts-switch input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.alerts-switch-track {
+  position: absolute;
+  inset: 0;
+  border: 1px solid var(--card-border);
+  border-radius: 999px;
+  background: rgba(114, 144, 169, 0.23);
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.alerts-switch-track::after {
+  content: "";
+  position: absolute;
+  top: 3px;
+  right: 3px;
+  width: 19px;
+  height: 19px;
+  border-radius: 50%;
+  background: #ffffff;
+  box-shadow: 0 2px 7px rgba(0, 0, 0, 0.24);
+  transition: transform 0.2s ease;
+}
+
+.alerts-switch input:checked + .alerts-switch-track {
+  border-color: var(--green);
+  background: var(--green);
+}
+
+.alerts-switch input:checked + .alerts-switch-track::after {
+  transform: translateX(-21px);
+}
+
+.alerts-list {
+  display: grid;
+  gap: 10px;
+  margin-top: 13px;
+}
+
+.alert-item {
+  min-width: 0;
+  padding: 13px;
+  border: 1px solid var(--card-border);
+  border-radius: 14px;
+  background: var(--input);
+}
+
+.alert-item.inactive {
+  opacity: 0.63;
+}
+
+.alert-item-title {
+  min-width: 0;
+}
+
+.alert-item-title strong {
+  display: block;
+  overflow: hidden;
+  color: var(--text);
+  font-size: 13px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  direction: ltr;
+  text-align: right;
+}
+
+.alert-item-title span {
+  display: block;
+  margin-top: 4px;
+  color: var(--muted);
+  font-size: 9px;
+  line-height: 1.8;
+}
+
+.alert-item-state {
+  flex: 0 0 auto;
+  padding: 5px 8px;
+  border-radius: 999px;
+  font-size: 9px;
+  font-weight: 900;
+}
+
+.alert-item-state.active {
+  background: rgba(46, 204, 113, 0.12);
+  color: #59d98d;
+}
+
+.alert-item-state.paused {
+  background: rgba(245, 158, 11, 0.13);
+  color: #eaa93e;
+}
+
+.alert-item-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  margin-top: 11px;
+}
+
+.alert-item-metric {
+  min-width: 0;
+  padding: 8px;
+  border-radius: 9px;
+  background: var(--card);
+}
+
+.alert-item-metric span {
+  display: block;
+  color: var(--muted);
+  font-size: 8px;
+}
+
+.alert-item-metric strong {
+  display: block;
+  margin-top: 5px;
+  overflow-wrap: anywhere;
+  color: var(--text);
+  font-size: 10px;
+  direction: ltr;
+  text-align: right;
+}
+
+.alert-item-note {
+  margin-top: 9px;
+  padding: 8px;
+  border-right: 3px solid rgba(55, 178, 232, 0.55);
+  border-radius: 7px;
+  background: var(--card);
+  color: var(--muted);
+  font-size: 9px;
+  line-height: 1.9;
+}
+
+.alert-item-actions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 7px;
+  margin-top: 10px;
+}
+
+.alert-toggle-button,
+.alert-delete-button {
+  min-height: 38px;
+  border-radius: 9px;
+  font-size: 10px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.alert-toggle-button {
+  border: 1px solid rgba(55, 178, 232, 0.42);
+  background: rgba(55, 178, 232, 0.08);
+  color: var(--blue);
+}
+
+.alert-delete-button {
+  border: 1px solid rgba(239, 51, 64, 0.42);
+  background: rgba(239, 51, 64, 0.08);
+  color: var(--red);
+}
+
+.alerts-empty {
+  padding: 22px 12px;
+  color: var(--muted);
+  text-align: center;
+  font-size: 11px;
+  line-height: 2;
+}
+
+:root[data-theme="light"] .alerts-hero {
+  border-color: rgba(198, 132, 15, 0.25);
+  background:
+    radial-gradient(circle at 12% 0%, rgba(245, 158, 11, 0.12), transparent 36%),
+    radial-gradient(circle at 92% 100%, rgba(40, 127, 185, 0.10), transparent 39%),
+    linear-gradient(145deg, #ffffff, #edf5fa);
+  box-shadow: 0 18px 38px rgba(44, 72, 96, 0.12);
+}
+
+:root[data-theme="light"] .alerts-title {
+  color: #172b3d;
+}
+
+:root[data-theme="light"] .alerts-subtitle {
+  color: #607b92;
+}
+
+:root[data-theme="light"] .alerts-status {
+  border-color: rgba(119, 148, 172, 0.27);
+  background: rgba(255, 255, 255, 0.74);
+  color: #607b92;
+}
+
+:root[data-theme="light"] .alerts-cloud-badge {
+  color: #117544;
+}
+
+@media (max-width: 520px) {
+  .alerts-form-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .alert-item-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .alerts-hero-head {
+    flex-direction: column;
+  }
+}
+
   </style>
 </head>
 <body>
@@ -4021,9 +4442,145 @@ button,
   </main>
 
 
+
+<section id="alertsView" class="view alerts-view" hidden>
+  <section class="alerts-hero">
+    <div class="alerts-hero-head">
+      <div>
+        <h2 class="alerts-title">هشدارهای معاملاتی</h2>
+        <p class="alerts-subtitle">
+          قیمت‌ها در سرور بررسی می‌شوند و اعلان حتی هنگام بسته‌بودن مینی‌اپ توسط ربات ارسال می‌شود.
+        </p>
+      </div>
+      <span class="alerts-cloud-badge">ابری و همیشه فعال</span>
+    </div>
+    <div id="alertsCloudStatus" class="alerts-status">
+      در حال بررسی اتصال حساب تلگرام...
+    </div>
+  </section>
+
+  <section class="alerts-panel">
+    <div class="alerts-section-head">
+      <div>
+        <h3 class="alerts-section-title">ساخت هشدار جدید</h3>
+        <div class="alerts-section-note">
+          هشدار قیمت بایننس، تغییر ۲۴ساعته یا قیمت تتر به تومان
+        </div>
+      </div>
+    </div>
+
+    <div class="alerts-form">
+      <div class="alerts-form-grid">
+        <div class="field">
+          <label for="alertsMarketSelect">بازار</label>
+          <select id="alertsMarketSelect" onchange="handleAlertMarketChange()">
+            <option value="binance_spot">اسپات بایننس</option>
+            <option value="nobitex_usdt">تتر به تومان — نوبیتکس</option>
+          </select>
+        </div>
+
+        <div id="alertsSymbolWrap" class="field alerts-symbol-wrap">
+          <label for="alertsSymbolInput">نماد معاملاتی</label>
+          <input
+            id="alertsSymbolInput"
+            type="text"
+            list="alertsSymbolOptions"
+            autocomplete="off"
+            placeholder="مثلاً BTCUSDT"
+            oninput="handleAlertSymbolInput()"
+          />
+          <datalist id="alertsSymbolOptions"></datalist>
+        </div>
+      </div>
+
+      <div class="alerts-form-grid">
+        <div class="field">
+          <label for="alertsConditionSelect">شرط هشدار</label>
+          <select id="alertsConditionSelect" onchange="handleAlertConditionChange()">
+            <option value="price_above">قیمت بالاتر از هدف</option>
+            <option value="price_below">قیمت پایین‌تر از هدف</option>
+            <option value="change24h_above">تغییر ۲۴ساعته بیشتر از درصد هدف</option>
+            <option value="change24h_below">تغییر ۲۴ساعته کمتر از درصد هدف</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label id="alertsTargetLabel" for="alertsTargetInput">قیمت هدف (USDT)</label>
+          <input
+            id="alertsTargetInput"
+            data-formatted-number="true"
+            type="text"
+            inputmode="decimal"
+            placeholder="مثلاً 70000"
+          />
+        </div>
+      </div>
+
+      <div class="alerts-quote">
+        <div class="alerts-quote-main">
+          <span class="alerts-quote-label">مقدار فعلی منبع</span>
+          <strong id="alertsQuoteValue" class="alerts-quote-value">—</strong>
+          <span id="alertsQuoteChange" class="alerts-quote-change">برای دریافت قیمت، نماد را بررسی کن.</span>
+        </div>
+        <button id="alertsQuoteButton" type="button" class="secondary-button" onclick="refreshAlertQuote(true)">
+          بررسی قیمت
+        </button>
+      </div>
+
+      <div class="alerts-switch-row">
+        <div class="alerts-switch-copy">
+          <strong>هشدار تکرارشونده</strong>
+          <span>پس از بازگشت قیمت و عبور دوباره از شرط، اعلان جدید ارسال شود.</span>
+        </div>
+        <label class="alerts-switch">
+          <input id="alertsRecurringInput" type="checkbox" onchange="handleAlertRecurringChange()" />
+          <span class="alerts-switch-track"></span>
+        </label>
+      </div>
+
+      <div id="alertsCooldownWrap" class="field alerts-cooldown-wrap" hidden>
+        <label for="alertsCooldownSelect">حداقل فاصله دو اعلان</label>
+        <select id="alertsCooldownSelect">
+          <option value="15">۱۵ دقیقه</option>
+          <option value="60" selected>۱ ساعت</option>
+          <option value="240">۴ ساعت</option>
+          <option value="1440">۲۴ ساعت</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label for="alertsNoteInput">یادداشت اختیاری</label>
+        <textarea id="alertsNoteInput" maxlength="300" placeholder="مثلاً محدوده ورود پله دوم یا شکست مقاومت"></textarea>
+      </div>
+
+      <button id="alertsCreateButton" type="button" class="primary-button" onclick="createTradingAlert()">
+        ایجاد هشدار ابری
+      </button>
+    </div>
+  </section>
+
+  <section class="alerts-panel">
+    <div class="alerts-section-head">
+      <div>
+        <h3 class="alerts-section-title">هشدارهای من</h3>
+        <div id="alertsListNote" class="alerts-section-note">—</div>
+      </div>
+      <button type="button" class="secondary-button" onclick="loadTradingAlerts(true)">تازه‌سازی</button>
+    </div>
+    <div id="alertsList" class="alerts-list"></div>
+    <div id="alertsEmpty" class="alerts-empty" hidden>
+      هنوز هشداری ثبت نشده است.
+    </div>
+  </section>
+</section>
+
 <section id="moreView" class="view card" hidden>
   <h2 class="card-title">بیشتر</h2>
   <div class="more-grid">
+    <button type="button" class="more-action" onclick="showAlerts()">
+      <strong>هشدارهای معاملاتی</strong>
+      <span>اعلان قیمت، تغییر ۲۴ساعته و نرخ تتر حتی هنگام بسته‌بودن برنامه</span>
+    </button>
     <button type="button" class="more-action" onclick="showFundamental()">
       <strong>اخبار فاندامنتال</strong>
       <span>خبرهای فارسی و تازه بازار رمزارزها</span>
@@ -4174,6 +4731,10 @@ button,
 
     const FUNDAMENTAL_API_URL =
       "https://bufobmvflinalnskdlcq.supabase.co/functions/v1/crypto-fundamental-feed";
+    const ALERTS_API_URL =
+      "https://bufobmvflinalnskdlcq.supabase.co/functions/v1/crypto-alerts-api";
+    const ALERTS_AUTO_REFRESH_INTERVAL = 30 * 1000;
+    const ALERTS_REQUEST_TIMEOUT = 16000;
     const FUNDAMENTAL_CACHE_KEY = "cryptoMasterFundamentalNewsCacheV1";
     const FUNDAMENTAL_AUTO_REFRESH_INTERVAL = 2 * 60 * 1000;
     const FUNDAMENTAL_REQUEST_TIMEOUT = 16000;
@@ -4191,6 +4752,11 @@ button,
     let fundamentalRequestInFlight = false;
     let fundamentalCategory = "all";
     let fundamentalNewsItems = [];
+    let tradingAlerts = [];
+    let alertsRefreshTimer = null;
+    let alertsRequestInFlight = false;
+    let alertsQuoteData = null;
+    let alertsSymbolInputTimer = null;
 
     let portfolioMode = "all";
     let portfolioCurrency = "USD";
@@ -9527,12 +10093,1078 @@ updatePortfolioFormPreview();
 
 
 
+
+function getTelegramInitDataForAlerts() {
+  try {
+    return (
+      window.Telegram &&
+      window.Telegram.WebApp &&
+      String(
+        window.Telegram.WebApp.initData ||
+        ""
+      )
+    ) || "";
+  } catch (error) {
+    return "";
+  }
+}
+
+function setAlertsCloudStatus(message, isError) {
+  const element =
+    document.getElementById(
+      "alertsCloudStatus"
+    );
+
+  if (!element) return;
+
+  element.textContent = message;
+  element.classList.toggle(
+    "error",
+    Boolean(isError)
+  );
+}
+
+function normalizeAlertSymbol(value) {
+  return String(value || "")
+    .trim()
+    .toUpperCase()
+    .replace(/[^A-Z0-9]/g, "");
+}
+
+function getAlertSymbolCandidates() {
+  const map = new Map();
+
+  function add(symbol, name) {
+    const normalized =
+      normalizeAlertSymbol(symbol);
+
+    if (
+      !normalized ||
+      normalized === "USDTUSDT"
+    ) {
+      return;
+    }
+
+    const pair =
+      normalized.endsWith("USDT")
+        ? normalized
+        : normalized + "USDT";
+
+    if (pair === "USDTUSDT") return;
+
+    if (!map.has(pair)) {
+      map.set(pair, {
+        symbol: pair,
+        name: name || pair
+      });
+    }
+  }
+
+  marketCoinsInView.forEach(
+    function (coin) {
+      add(
+        coin.binanceSymbol ||
+          coin.symbol,
+        coin.name
+      );
+    }
+  );
+
+  FALLBACK_MARKET_COINS.forEach(
+    function (coin) {
+      add(coin.symbol, coin.name);
+    }
+  );
+
+  portfolioMarketListings
+    .slice(0, 100)
+    .forEach(function (coin) {
+      add(coin.symbol, coin.name);
+    });
+
+  return Array.from(map.values())
+    .sort(function (a, b) {
+      return a.symbol.localeCompare(
+        b.symbol
+      );
+    });
+}
+
+function populateAlertSymbolOptions() {
+  const datalist =
+    document.getElementById(
+      "alertsSymbolOptions"
+    );
+
+  if (!datalist) return;
+
+  datalist.innerHTML = "";
+
+  getAlertSymbolCandidates()
+    .forEach(function (item) {
+      const option =
+        document.createElement("option");
+
+      option.value = item.symbol;
+      option.label =
+        item.symbol +
+        " — " +
+        item.name;
+
+      datalist.appendChild(option);
+    });
+
+  const input =
+    document.getElementById(
+      "alertsSymbolInput"
+    );
+
+  if (
+    input &&
+    !input.value
+  ) {
+    input.value = "BTCUSDT";
+  }
+}
+
+function getAlertConditionLabel(condition) {
+  const labels = {
+    price_above:
+      "قیمت بالاتر از هدف",
+    price_below:
+      "قیمت پایین‌تر از هدف",
+    change24h_above:
+      "تغییر ۲۴ساعته بیشتر از هدف",
+    change24h_below:
+      "تغییر ۲۴ساعته کمتر از هدف"
+  };
+
+  return labels[condition] || condition;
+}
+
+function getAlertMarketLabel(market) {
+  return market === "nobitex_usdt"
+    ? "تتر نوبیتکس"
+    : "اسپات بایننس";
+}
+
+function formatAlertValue(
+  value,
+  market,
+  condition
+) {
+  const number = Number(value);
+
+  if (!Number.isFinite(number)) {
+    return "—";
+  }
+
+  if (
+    condition === "change24h_above" ||
+    condition === "change24h_below"
+  ) {
+    return (
+      (number > 0 ? "+" : "") +
+      formatNumber(number, 2) +
+      "%"
+    );
+  }
+
+  if (market === "nobitex_usdt") {
+    return (
+      formatNumber(number, 0) +
+      " تومان"
+    );
+  }
+
+  return (
+    formatTradePrice(number, "USD") +
+    " USDT"
+  );
+}
+
+async function callAlertsApi(
+  action,
+  payload
+) {
+  const initData =
+    getTelegramInitDataForAlerts();
+
+  if (!initData) {
+    throw new Error(
+      "برای استفاده از هشدارهای ابری، برنامه را داخل تلگرام و از طریق ربات باز کن."
+    );
+  }
+
+  const controller =
+    new AbortController();
+
+  const timeout =
+    setTimeout(function () {
+      controller.abort();
+    }, ALERTS_REQUEST_TIMEOUT);
+
+  try {
+    const response =
+      await fetch(ALERTS_API_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type":
+            "application/json"
+        },
+        body: JSON.stringify({
+          action: action,
+          initData: initData,
+          ...(payload || {})
+        }),
+        signal: controller.signal,
+        cache: "no-store"
+      });
+
+    const data =
+      await response.json()
+        .catch(function () {
+          return {};
+        });
+
+    if (
+      !response.ok ||
+      !data.ok
+    ) {
+      throw new Error(
+        data.error ||
+        "ارتباط با سرویس هشدارها ناموفق بود."
+      );
+    }
+
+    return data;
+  } finally {
+    clearTimeout(timeout);
+  }
+}
+
+function handleAlertMarketChange() {
+  const market =
+    document.getElementById(
+      "alertsMarketSelect"
+    ).value;
+
+  const symbolWrap =
+    document.getElementById(
+      "alertsSymbolWrap"
+    );
+
+  const conditionSelect =
+    document.getElementById(
+      "alertsConditionSelect"
+    );
+
+  symbolWrap.hidden =
+    market === "nobitex_usdt";
+
+  Array.from(
+    conditionSelect.options
+  ).forEach(function (option) {
+    const isChange =
+      option.value.startsWith(
+        "change24h_"
+      );
+
+    option.hidden =
+      market === "nobitex_usdt" &&
+      isChange;
+  });
+
+  if (
+    market === "nobitex_usdt" &&
+    conditionSelect.value.startsWith(
+      "change24h_"
+    )
+  ) {
+    conditionSelect.value =
+      "price_above";
+  }
+
+  handleAlertConditionChange();
+  refreshAlertQuote(false);
+}
+
+function handleAlertConditionChange() {
+  const market =
+    document.getElementById(
+      "alertsMarketSelect"
+    ).value;
+
+  const condition =
+    document.getElementById(
+      "alertsConditionSelect"
+    ).value;
+
+  const label =
+    document.getElementById(
+      "alertsTargetLabel"
+    );
+
+  const input =
+    document.getElementById(
+      "alertsTargetInput"
+    );
+
+  if (
+    condition.startsWith(
+      "change24h_"
+    )
+  ) {
+    label.textContent =
+      "درصد هدف ۲۴ساعته";
+    input.placeholder =
+      "مثلاً 5 یا -3";
+  } else if (
+    market === "nobitex_usdt"
+  ) {
+    label.textContent =
+      "قیمت هدف تتر (تومان)";
+    input.placeholder =
+      "مثلاً 200000";
+  } else {
+    label.textContent =
+      "قیمت هدف (USDT)";
+    input.placeholder =
+      "مثلاً 70000";
+  }
+
+  renderAlertQuote();
+}
+
+function handleAlertRecurringChange() {
+  const recurring =
+    document.getElementById(
+      "alertsRecurringInput"
+    ).checked;
+
+  document.getElementById(
+    "alertsCooldownWrap"
+  ).hidden = !recurring;
+}
+
+function handleAlertSymbolInput() {
+  if (alertsSymbolInputTimer) {
+    clearTimeout(
+      alertsSymbolInputTimer
+    );
+  }
+
+  alertsSymbolInputTimer =
+    setTimeout(function () {
+      refreshAlertQuote(false);
+    }, 650);
+}
+
+function renderAlertQuote() {
+  const value =
+    document.getElementById(
+      "alertsQuoteValue"
+    );
+
+  const change =
+    document.getElementById(
+      "alertsQuoteChange"
+    );
+
+  const market =
+    document.getElementById(
+      "alertsMarketSelect"
+    ).value;
+
+  const condition =
+    document.getElementById(
+      "alertsConditionSelect"
+    ).value;
+
+  if (!alertsQuoteData) {
+    value.textContent = "—";
+    change.textContent =
+      "برای دریافت قیمت، دکمه بررسی قیمت را بزن.";
+    return;
+  }
+
+  value.textContent =
+    formatAlertValue(
+      alertsQuoteData.price,
+      market,
+      "price_above"
+    );
+
+  if (
+    market === "binance_spot"
+  ) {
+    change.textContent =
+      "تغییر ۲۴ساعته: " +
+      formatAlertValue(
+        alertsQuoteData.change24h,
+        market,
+        "change24h_above"
+      ) +
+      " | " +
+      (
+        alertsQuoteData.symbol ||
+        ""
+      );
+  } else {
+    change.textContent =
+      "آخرین نرخ نوبیتکس — مبنا: تومان";
+  }
+
+  if (
+    condition.startsWith(
+      "change24h_"
+    )
+  ) {
+    value.textContent =
+      formatAlertValue(
+        alertsQuoteData.change24h,
+        market,
+        condition
+      );
+  }
+}
+
+async function refreshAlertQuote(manual) {
+  if (alertsRequestInFlight) return;
+
+  const market =
+    document.getElementById(
+      "alertsMarketSelect"
+    ).value;
+
+  const symbol =
+    market === "nobitex_usdt"
+      ? "USDTIRT"
+      : normalizeAlertSymbol(
+          document.getElementById(
+            "alertsSymbolInput"
+          ).value
+        );
+
+  if (
+    market === "binance_spot" &&
+    !symbol
+  ) {
+    alertsQuoteData = null;
+    renderAlertQuote();
+    return;
+  }
+
+  const button =
+    document.getElementById(
+      "alertsQuoteButton"
+    );
+
+  alertsRequestInFlight = true;
+
+  if (button) {
+    button.disabled = true;
+    button.textContent =
+      "در حال دریافت...";
+  }
+
+  try {
+    const response =
+      await callAlertsApi(
+        "quote",
+        {
+          market: market,
+          symbol: symbol
+        }
+      );
+
+    alertsQuoteData =
+      response.quote || null;
+
+    renderAlertQuote();
+
+    if (manual) {
+      showToast(
+        "قیمت فعلی دریافت شد."
+      );
+    }
+  } catch (error) {
+    alertsQuoteData = null;
+    renderAlertQuote();
+
+    if (manual) {
+      showToast(
+        error.message ||
+        "دریافت قیمت ناموفق بود.",
+        true
+      );
+    }
+  } finally {
+    alertsRequestInFlight = false;
+
+    if (button) {
+      button.disabled = false;
+      button.textContent =
+        "بررسی قیمت";
+    }
+  }
+}
+
+function createAlertCard(alert) {
+  const card =
+    document.createElement("article");
+
+  card.className =
+    "alert-item" +
+    (
+      alert.is_active
+        ? ""
+        : " inactive"
+    );
+
+  const head =
+    document.createElement("div");
+
+  head.className =
+    "alerts-card-head";
+
+  const title =
+    document.createElement("div");
+
+  title.className =
+    "alert-item-title";
+
+  const strong =
+    document.createElement("strong");
+
+  strong.textContent =
+    alert.market === "nobitex_usdt"
+      ? "USDT / TOMAN"
+      : alert.symbol;
+
+  const subtitle =
+    document.createElement("span");
+
+  subtitle.textContent =
+    getAlertMarketLabel(
+      alert.market
+    ) +
+    " — " +
+    getAlertConditionLabel(
+      alert.condition
+    );
+
+  title.appendChild(strong);
+  title.appendChild(subtitle);
+
+  const state =
+    document.createElement("span");
+
+  state.className =
+    "alert-item-state " +
+    (
+      alert.is_active
+        ? "active"
+        : "paused"
+    );
+
+  state.textContent =
+    alert.is_active
+      ? "فعال"
+      : "متوقف";
+
+  head.appendChild(title);
+  head.appendChild(state);
+
+  const grid =
+    document.createElement("div");
+
+  grid.className =
+    "alert-item-grid";
+
+  const metrics = [
+    [
+      "هدف",
+      formatAlertValue(
+        alert.target_value,
+        alert.market,
+        alert.condition
+      )
+    ],
+    [
+      "آخرین مقدار",
+      formatAlertValue(
+        alert.current_value,
+        alert.market,
+        alert.condition
+      )
+    ],
+    [
+      "نوع",
+      alert.is_recurring
+        ? "تکرارشونده"
+        : "یک‌بارمصرف"
+    ],
+    [
+      "تعداد اعلان",
+      formatNumber(
+        alert.trigger_count || 0,
+        0
+      )
+    ],
+    [
+      "فاصله اعلان",
+      alert.is_recurring
+        ? formatNumber(
+            alert.cooldown_minutes,
+            0
+          ) +
+          " دقیقه"
+        : "—"
+    ],
+    [
+      "ساخته‌شده",
+      new Date(
+        alert.created_at
+      ).toLocaleDateString("fa-IR")
+    ]
+  ];
+
+  metrics.forEach(function (metric) {
+    const box =
+      document.createElement("div");
+
+    box.className =
+      "alert-item-metric";
+
+    const label =
+      document.createElement("span");
+
+    label.textContent = metric[0];
+
+    const value =
+      document.createElement("strong");
+
+    value.textContent = metric[1];
+
+    box.appendChild(label);
+    box.appendChild(value);
+    grid.appendChild(box);
+  });
+
+  card.appendChild(head);
+  card.appendChild(grid);
+
+  if (alert.note) {
+    const note =
+      document.createElement("div");
+
+    note.className =
+      "alert-item-note";
+
+    note.textContent = alert.note;
+    card.appendChild(note);
+  }
+
+  const actions =
+    document.createElement("div");
+
+  actions.className =
+    "alert-item-actions";
+
+  const toggle =
+    document.createElement("button");
+
+  toggle.type = "button";
+  toggle.className =
+    "alert-toggle-button";
+
+  toggle.textContent =
+    alert.is_active
+      ? "توقف هشدار"
+      : "فعال‌سازی";
+
+  toggle.addEventListener(
+    "click",
+    function () {
+      toggleTradingAlert(
+        alert.id,
+        !alert.is_active
+      );
+    }
+  );
+
+  const remove =
+    document.createElement("button");
+
+  remove.type = "button";
+  remove.className =
+    "alert-delete-button";
+  remove.textContent = "حذف هشدار";
+
+  remove.addEventListener(
+    "click",
+    function () {
+      deleteTradingAlert(
+        alert.id
+      );
+    }
+  );
+
+  actions.appendChild(toggle);
+  actions.appendChild(remove);
+  card.appendChild(actions);
+
+  return card;
+}
+
+function renderTradingAlerts() {
+  const list =
+    document.getElementById(
+      "alertsList"
+    );
+
+  const empty =
+    document.getElementById(
+      "alertsEmpty"
+    );
+
+  const note =
+    document.getElementById(
+      "alertsListNote"
+    );
+
+  if (!list || !empty || !note) {
+    return;
+  }
+
+  list.innerHTML = "";
+
+  empty.hidden =
+    tradingAlerts.length > 0;
+
+  const activeCount =
+    tradingAlerts.filter(
+      function (alert) {
+        return alert.is_active;
+      }
+    ).length;
+
+  note.textContent =
+    formatNumber(
+      activeCount,
+      0
+    ) +
+    " فعال از " +
+    formatNumber(
+      tradingAlerts.length,
+      0
+    ) +
+    " هشدار";
+
+  tradingAlerts.forEach(
+    function (alert) {
+      list.appendChild(
+        createAlertCard(alert)
+      );
+    }
+  );
+}
+
+async function loadTradingAlerts(manual) {
+  try {
+    const response =
+      await callAlertsApi(
+        "list",
+        {}
+      );
+
+    tradingAlerts =
+      Array.isArray(
+        response.alerts
+      )
+        ? response.alerts
+        : [];
+
+    renderTradingAlerts();
+
+    setAlertsCloudStatus(
+      "حساب تلگرام تأیید شد. بررسی هشدارها در سرور انجام می‌شود.",
+      false
+    );
+
+    if (manual) {
+      showToast(
+        "فهرست هشدارها تازه شد."
+      );
+    }
+  } catch (error) {
+    tradingAlerts = [];
+    renderTradingAlerts();
+
+    setAlertsCloudStatus(
+      error.message ||
+      "اتصال به سرویس هشدارها ناموفق بود.",
+      true
+    );
+
+    if (manual) {
+      showToast(
+        error.message ||
+        "دریافت هشدارها ناموفق بود.",
+        true
+      );
+    }
+  }
+}
+
+async function createTradingAlert() {
+  const market =
+    document.getElementById(
+      "alertsMarketSelect"
+    ).value;
+
+  const condition =
+    document.getElementById(
+      "alertsConditionSelect"
+    ).value;
+
+  const symbol =
+    market === "nobitex_usdt"
+      ? "USDTIRT"
+      : normalizeAlertSymbol(
+          document.getElementById(
+            "alertsSymbolInput"
+          ).value
+        );
+
+  const targetValue =
+    getNumber("alertsTargetInput");
+
+  const recurring =
+    document.getElementById(
+      "alertsRecurringInput"
+    ).checked;
+
+  const cooldownMinutes =
+    Number(
+      document.getElementById(
+        "alertsCooldownSelect"
+      ).value
+    );
+
+  const note =
+    document.getElementById(
+      "alertsNoteInput"
+    ).value.trim();
+
+  if (
+    market === "binance_spot" &&
+    !symbol
+  ) {
+    showToast(
+      "نماد معاملاتی را وارد کن.",
+      true
+    );
+    return;
+  }
+
+  if (
+    !Number.isFinite(targetValue)
+  ) {
+    showToast(
+      "مقدار هدف را صحیح وارد کن.",
+      true
+    );
+    return;
+  }
+
+  const button =
+    document.getElementById(
+      "alertsCreateButton"
+    );
+
+  button.disabled = true;
+  button.textContent =
+    "در حال ایجاد...";
+
+  try {
+    const response =
+      await callAlertsApi(
+        "create",
+        {
+          market: market,
+          symbol: symbol,
+          condition: condition,
+          targetValue: targetValue,
+          isRecurring: recurring,
+          cooldownMinutes:
+            recurring
+              ? cooldownMinutes
+              : 60,
+          note: note
+        }
+      );
+
+    showToast(
+      "هشدار ابری ایجاد شد."
+    );
+
+    document.getElementById(
+      "alertsTargetInput"
+    ).value = "";
+
+    document.getElementById(
+      "alertsNoteInput"
+    ).value = "";
+
+    if (response.alert) {
+      tradingAlerts.unshift(
+        response.alert
+      );
+      renderTradingAlerts();
+    } else {
+      await loadTradingAlerts(false);
+    }
+  } catch (error) {
+    showToast(
+      error.message ||
+      "ایجاد هشدار ناموفق بود.",
+      true
+    );
+  } finally {
+    button.disabled = false;
+    button.textContent =
+      "ایجاد هشدار ابری";
+  }
+}
+
+async function toggleTradingAlert(
+  id,
+  isActive
+) {
+  try {
+    await callAlertsApi(
+      "toggle",
+      {
+        id: id,
+        isActive: isActive
+      }
+    );
+
+    const alert =
+      tradingAlerts.find(
+        function (item) {
+          return item.id === id;
+        }
+      );
+
+    if (alert) {
+      alert.is_active = isActive;
+      alert.last_condition_met =
+        false;
+    }
+
+    renderTradingAlerts();
+
+    showToast(
+      isActive
+        ? "هشدار فعال شد."
+        : "هشدار متوقف شد."
+    );
+  } catch (error) {
+    showToast(
+      error.message ||
+      "تغییر وضعیت هشدار ناموفق بود.",
+      true
+    );
+  }
+}
+
+async function deleteTradingAlert(id) {
+  if (
+    !window.confirm(
+      "این هشدار برای همیشه حذف شود؟"
+    )
+  ) {
+    return;
+  }
+
+  try {
+    await callAlertsApi(
+      "delete",
+      { id: id }
+    );
+
+    tradingAlerts =
+      tradingAlerts.filter(
+        function (item) {
+          return item.id !== id;
+        }
+      );
+
+    renderTradingAlerts();
+    showToast("هشدار حذف شد.");
+  } catch (error) {
+    showToast(
+      error.message ||
+      "حذف هشدار ناموفق بود.",
+      true
+    );
+  }
+}
+
+function startAlertsAutoRefresh() {
+  stopAlertsAutoRefresh();
+
+  alertsRefreshTimer =
+    setInterval(function () {
+      const view =
+        document.getElementById(
+          "alertsView"
+        );
+
+      if (
+        view &&
+        !view.hidden &&
+        document.visibilityState ===
+          "visible"
+      ) {
+        loadTradingAlerts(false);
+        refreshAlertQuote(false);
+      }
+    }, ALERTS_AUTO_REFRESH_INTERVAL);
+}
+
+function stopAlertsAutoRefresh() {
+  if (alertsRefreshTimer) {
+    clearInterval(
+      alertsRefreshTimer
+    );
+    alertsRefreshTimer = null;
+  }
+}
+
+async function showAlerts() {
+  setActiveView("alertsView");
+  populateAlertSymbolOptions();
+  handleAlertMarketChange();
+  handleAlertRecurringChange();
+  await Promise.all([
+    loadTradingAlerts(false),
+    refreshAlertQuote(false)
+  ]);
+  startAlertsAutoRefresh();
+}
+
+
 function setActiveView(viewId) {
   [
     "calculatorView",
     "marketView",
     "marketPulseView",
     "portfolioView",
+    "alertsView",
     "fundamentalView",
     "journalView",
     "statementView",
@@ -9547,6 +11179,7 @@ function setActiveView(viewId) {
     marketView: "marketNavButton",
     marketPulseView: "marketPulseNavButton",
     portfolioView: "portfolioNavButton",
+    alertsView: "moreNavButton",
     journalView: "journalNavButton",
     fundamentalView: "moreNavButton",
     statementView: "moreNavButton",
@@ -9579,6 +11212,10 @@ function setActiveView(viewId) {
 
   if (viewId !== "portfolioView") {
     stopPortfolioAutoRefresh();
+  }
+
+  if (viewId !== "alertsView") {
+    stopAlertsAutoRefresh();
   }
 
   if (viewId !== "fundamentalView") {
@@ -11912,6 +13549,7 @@ function initializeTheme() {
       revokeJournalUrls();
       stopMarketAutoRefresh();
       stopPortfolioAutoRefresh();
+      stopAlertsAutoRefresh();
     });
 
     function applyResponsiveWebViewClass() {
