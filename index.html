@@ -52,7 +52,15 @@
       width: 100%;
       max-width: 830px;
       margin: 0 auto;
-      padding: 12px 7px calc(var(--footer-height) + var(--nav-height) + 28px);
+      padding:
+        12px
+        7px
+        calc(
+          var(--footer-height) +
+          var(--nav-height) +
+          68px +
+          env(safe-area-inset-bottom)
+        );
     }
 
     .header {
@@ -3303,6 +3311,76 @@ button,
   display: grid;
   gap: 14px;
   min-width: 0;
+  padding-bottom: calc(32px + env(safe-area-inset-bottom));
+  scroll-padding-bottom:
+    calc(
+      var(--footer-height) +
+      var(--nav-height) +
+      40px +
+      env(safe-area-inset-bottom)
+    );
+}
+
+.alerts-panel:last-child {
+  margin-bottom: calc(24px + env(safe-area-inset-bottom));
+}
+
+.alerts-diagnostic-actions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.alerts-diagnostic-button {
+  min-height: 42px;
+  padding: 8px 9px;
+  border: 1px solid rgba(55, 178, 232, 0.38);
+  border-radius: 10px;
+  background: rgba(55, 178, 232, 0.08);
+  color: var(--blue);
+  font-size: 10px;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.alerts-diagnostic-button.test {
+  border-color: rgba(46, 204, 113, 0.40);
+  background: rgba(46, 204, 113, 0.08);
+  color: #68dfa0;
+}
+
+.alerts-diagnostic-button:disabled {
+  opacity: 0.55;
+  cursor: wait;
+}
+
+.alert-item-error {
+  margin-top: 9px;
+  padding: 9px 10px;
+  border: 1px solid rgba(239, 51, 64, 0.42);
+  border-radius: 9px;
+  background: rgba(239, 51, 64, 0.08);
+  color: #ffd4d7;
+  font-size: 9px;
+  line-height: 1.9;
+  overflow-wrap: anywhere;
+}
+
+.alert-item-health {
+  margin-top: 9px;
+  padding: 8px 10px;
+  border-radius: 9px;
+  background: var(--card);
+  color: var(--muted);
+  font-size: 9px;
+  line-height: 1.9;
+}
+
+@media (max-width: 430px) {
+  .alerts-diagnostic-actions {
+    grid-template-columns: minmax(0, 1fr);
+  }
 }
 
 .alerts-view[hidden] {
@@ -4513,6 +4591,26 @@ button,
     </div>
     <div id="alertsCloudStatus" class="alerts-status">
       در حال بررسی اتصال حساب تلگرام...
+    </div>
+
+    <div class="alerts-diagnostic-actions">
+      <button
+        id="alertsTestNotificationButton"
+        type="button"
+        class="alerts-diagnostic-button test"
+        onclick="testAlertNotification()"
+      >
+        آزمایش اعلان تلگرام
+      </button>
+
+      <button
+        id="alertsCheckNowButton"
+        type="button"
+        class="alerts-diagnostic-button"
+        onclick="checkAlertsNow(true)"
+      >
+        بررسی فوری هشدارها
+      </button>
     </div>
   </section>
 
@@ -10794,6 +10892,38 @@ function createAlertCard(alert) {
         : "—"
     ],
     [
+      "آخرین بررسی",
+      alert.updated_at
+        ? new Date(
+            alert.updated_at
+          ).toLocaleString(
+            "fa-IR",
+            {
+              hour: "2-digit",
+              minute: "2-digit",
+              month: "2-digit",
+              day: "2-digit"
+            }
+          )
+        : "—"
+    ],
+    [
+      "آخرین اعلان",
+      alert.last_triggered_at
+        ? new Date(
+            alert.last_triggered_at
+          ).toLocaleString(
+            "fa-IR",
+            {
+              hour: "2-digit",
+              minute: "2-digit",
+              month: "2-digit",
+              day: "2-digit"
+            }
+          )
+        : "هنوز ارسال نشده"
+    ],
+    [
       "ساخته‌شده",
       new Date(
         alert.created_at
@@ -10825,6 +10955,43 @@ function createAlertCard(alert) {
 
   card.appendChild(head);
   card.appendChild(grid);
+
+  const health =
+    document.createElement("div");
+
+  health.className =
+    "alert-item-health";
+
+  if (alert.is_active) {
+    health.textContent =
+      alert.last_condition_met
+        ? "شرط در آخرین بررسی برقرار بوده؛ هشدار تکرارشونده پس از خروج از شرط و عبور دوباره اعلان می‌دهد."
+        : "هشدار فعال است و منتظر رسیدن مقدار بازار به شرط تعیین‌شده است.";
+  } else if (
+    Number(alert.trigger_count || 0) > 0
+  ) {
+    health.textContent =
+      "هشدار یک‌بارمصرف پس از ارسال اعلان متوقف شده است.";
+  } else {
+    health.textContent =
+      "این هشدار متوقف است و در سرور بررسی نمی‌شود.";
+  }
+
+  card.appendChild(health);
+
+  if (alert.error_message) {
+    const errorBox =
+      document.createElement("div");
+
+    errorBox.className =
+      "alert-item-error";
+
+    errorBox.textContent =
+      "خطای سرویس: " +
+      alert.error_message;
+
+    card.appendChild(errorBox);
+  }
 
   if (alert.note) {
     const note =
@@ -10989,6 +11156,131 @@ async function loadTradingAlerts(manual) {
   }
 }
 
+async function testAlertNotification() {
+  const button =
+    document.getElementById(
+      "alertsTestNotificationButton"
+    );
+
+  if (button) {
+    button.disabled = true;
+    button.textContent =
+      "در حال ارسال آزمایشی...";
+  }
+
+  try {
+    await callAlertsApi(
+      "test_notification",
+      {}
+    );
+
+    setAlertsCloudStatus(
+      "اعلان آزمایشی با موفقیت در گفت‌وگوی خصوصی ربات ارسال شد.",
+      false
+    );
+
+    showToast(
+      "پیام آزمایشی تلگرام ارسال شد."
+    );
+  } catch (error) {
+    setAlertsCloudStatus(
+      error.message ||
+      "ارسال اعلان آزمایشی ناموفق بود.",
+      true
+    );
+
+    showToast(
+      error.message ||
+      "ارسال اعلان آزمایشی ناموفق بود.",
+      true
+    );
+  } finally {
+    if (button) {
+      button.disabled = false;
+      button.textContent =
+        "آزمایش اعلان تلگرام";
+    }
+  }
+}
+
+async function checkAlertsNow(manual) {
+  const button =
+    document.getElementById(
+      "alertsCheckNowButton"
+    );
+
+  if (button) {
+    button.disabled = true;
+    button.textContent =
+      "در حال بررسی سرور...";
+  }
+
+  try {
+    const response =
+      await callAlertsApi(
+        "check_now",
+        {}
+      );
+
+    const checker =
+      response.checker || {};
+
+    const checked =
+      Number(checker.checked || 0);
+
+    const triggered =
+      Number(checker.triggered || 0);
+
+    const failed =
+      Number(checker.failed || 0);
+
+    setAlertsCloudStatus(
+      "بررسی فوری: " +
+      formatNumber(checked, 0) +
+      " هشدار بررسی، " +
+      formatNumber(triggered, 0) +
+      " اعلان ارسال، " +
+      formatNumber(failed, 0) +
+      " خطا.",
+      failed > 0
+    );
+
+    await loadTradingAlerts(false);
+
+    if (manual) {
+      showToast(
+        triggered > 0
+          ? "شرط برقرار بود و اعلان ارسال شد."
+          : "بررسی انجام شد؛ هنوز شرط هیچ هشداری برقرار نیست."
+      );
+    }
+
+    return checker;
+  } catch (error) {
+    setAlertsCloudStatus(
+      error.message ||
+      "بررسی فوری هشدارها ناموفق بود.",
+      true
+    );
+
+    if (manual) {
+      showToast(
+        error.message ||
+        "بررسی فوری هشدارها ناموفق بود.",
+        true
+      );
+    }
+
+    return null;
+  } finally {
+    if (button) {
+      button.disabled = false;
+      button.textContent =
+        "بررسی فوری هشدارها";
+    }
+  }
+}
+
 async function createTradingAlert() {
   const market =
     document.getElementById(
@@ -11097,6 +11389,8 @@ async function createTradingAlert() {
     } else {
       await loadTradingAlerts(false);
     }
+
+    await checkAlertsNow(false);
   } catch (error) {
     showToast(
       error.message ||
