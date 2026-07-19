@@ -3716,6 +3716,43 @@ button,
   }
 }
 
+  
+.news-hub-tabs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:0 0 14px;padding:5px;border:1px solid var(--card-border);border-radius:13px;background:var(--input)}
+.news-hub-tab{min-height:42px;border:1px solid transparent;border-radius:9px;background:transparent;color:var(--muted);font-size:11px;font-weight:900;cursor:pointer}
+.news-hub-tab.active{border-color:var(--green);background:var(--green);color:#071d12}
+.news-hub-panel[hidden]{display:none!important}
+.forex-calendar-toolbar{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:11px}
+.forex-calendar-status{color:var(--muted);font-size:10px;line-height:1.85}
+.forex-calendar-refresh{width:auto;min-width:90px;min-height:39px;padding:7px 10px;flex:0 0 auto}
+.forex-calendar-filter-block{display:grid;gap:8px;margin-bottom:12px}
+.forex-calendar-filters{display:flex;gap:7px;overflow-x:auto;padding:1px 0 2px;scrollbar-width:thin}
+.forex-calendar-filter{flex:0 0 auto;min-height:34px;padding:6px 11px;border:1px solid var(--card-border);border-radius:999px;background:var(--input);color:var(--muted);font-size:10px;font-weight:800;cursor:pointer}
+.forex-calendar-filter.active{border-color:var(--blue);background:rgba(90,167,236,.15);color:#d9ecff}
+.forex-calendar-summary{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-bottom:12px}
+.forex-calendar-summary-card{min-width:0;padding:10px;border:1px solid var(--card-border);border-radius:10px;background:var(--input);text-align:center}
+.forex-calendar-summary-card span{display:block;color:var(--muted);font-size:8px}
+.forex-calendar-summary-card strong{display:block;margin-top:5px;color:var(--text);font-size:15px}
+.forex-calendar-loading,.forex-calendar-error,.forex-calendar-empty{padding:15px;border:1px solid var(--card-border);border-radius:11px;background:var(--input);color:var(--muted);text-align:center;font-size:11px;line-height:2}
+.forex-calendar-error{border-color:rgba(239,51,64,.65);background:rgba(239,51,64,.08);color:#ffd6da}
+.forex-calendar-list{display:grid;gap:13px}
+.forex-calendar-day{display:grid;gap:8px}
+.forex-calendar-day-title{position:sticky;top:-1px;z-index:2;padding:8px 10px;border:1px solid var(--card-border);border-radius:9px;background:var(--card);color:var(--text);font-size:11px;font-weight:900}
+.forex-event-card{position:relative;overflow:hidden;padding:12px;border:1px solid var(--card-border);border-radius:12px;background:var(--input)}
+.forex-event-card:before{content:"";position:absolute;top:0;right:0;width:4px;height:100%;background:#7895ad}
+.forex-event-card[data-impact="High"]:before{background:#ef3340}.forex-event-card[data-impact="Medium"]:before{background:#f59e0b}.forex-event-card[data-impact="Low"]:before{background:#f4d03f}
+.forex-event-top{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;min-width:0}
+.forex-event-identity{display:flex;align-items:center;gap:7px;min-width:0}
+.forex-event-currency{flex:0 0 auto;min-width:47px;padding:5px 7px;border:1px solid rgba(90,167,236,.46);border-radius:8px;background:rgba(90,167,236,.11);color:#d9ecff;text-align:center;font-size:10px;font-weight:900;direction:ltr}
+.forex-event-impact{flex:0 0 auto;padding:5px 8px;border-radius:999px;font-size:8px;font-weight:900}
+.forex-event-impact.high{background:rgba(239,51,64,.13);color:#ff9aa1}.forex-event-impact.medium{background:rgba(245,158,11,.14);color:#f3b85e}.forex-event-impact.low{background:rgba(244,208,63,.13);color:#f7de78}.forex-event-impact.holiday,.forex-event-impact.noneconomic,.forex-event-impact.unknown{background:rgba(120,149,173,.15);color:#aac1d4}
+.forex-event-time-wrap{flex:0 0 auto;text-align:left}.forex-event-time{display:block;color:var(--text);font-size:11px;font-weight:900;direction:ltr}.forex-event-countdown{display:block;margin-top:4px;color:var(--muted);font-size:8px;white-space:nowrap}
+.forex-event-title{margin:10px 0 0;color:var(--text);font-size:13px;line-height:1.8;font-weight:900;direction:ltr;text-align:left;overflow-wrap:anywhere}
+.forex-event-data{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:10px}.forex-event-value{min-width:0;padding:8px;border-radius:9px;background:var(--card)}.forex-event-value span{display:block;color:var(--muted);font-size:8px}.forex-event-value strong{display:block;margin-top:5px;color:var(--text);font-size:11px;direction:ltr;text-align:right;overflow-wrap:anywhere}
+.forex-calendar-source-note{margin:13px 0 0;padding:10px;border:1px solid var(--card-border);border-radius:10px;background:var(--input);color:var(--muted);font-size:9px;line-height:2;text-align:center}
+.forex-calendar-source-button{width:100%;min-height:39px;margin-top:9px;border:1px solid var(--card-border);border-radius:9px;background:rgba(90,167,236,.12);color:#d9ecff;font-size:10px;font-weight:900;cursor:pointer}
+:root[data-theme="light"] .news-hub-tab.active{color:#fff}:root[data-theme="light"] .forex-calendar-filter.active,:root[data-theme="light"] .forex-event-currency,:root[data-theme="light"] .forex-calendar-source-button{color:#1d628f}:root[data-theme="light"] .forex-event-impact.high{color:#b82632}:root[data-theme="light"] .forex-event-impact.medium{color:#9a6508}:root[data-theme="light"] .forex-event-impact.low{color:#7b6808}
+@media(max-width:430px){.forex-calendar-toolbar{align-items:stretch}.forex-calendar-summary-card{padding:8px 5px}.forex-event-top{gap:6px}}
+
   </style>
 </head>
 <body>
@@ -4316,45 +4353,65 @@ button,
   </section>
 </section>
 
-    <section id="fundamentalView" class="view card" hidden>
-      <h2 class="card-title">اخبار فاندامنتال فارسی</h2>
 
-      <div class="fundamental-toolbar">
-        <div id="fundamentalStatus" class="fundamental-status">
-          تازه‌ترین اخبار فارسی بازار رمزارزها
-        </div>
-        <button
-          id="fundamentalRefreshButton"
-          type="button"
-          class="secondary-button fundamental-refresh-button"
-          onclick="refreshFundamentalNews(true)"
-        >
-          تازه‌سازی
-        </button>
-      </div>
+<section id="fundamentalView" class="view card" hidden>
+  <h2 class="card-title">اخبار و تقویم اقتصادی</h2>
+  <div class="news-hub-tabs" role="tablist" aria-label="انتخاب محتوای خبری">
+    <button id="newsHubPersianTab" type="button" class="news-hub-tab active" role="tab" aria-selected="true" onclick="selectNewsHubSection('persian', true)">اخبار فارسی</button>
+    <button id="newsHubForexTab" type="button" class="news-hub-tab" role="tab" aria-selected="false" onclick="selectNewsHubSection('forex', true)">تقویم Forex Factory</button>
+  </div>
 
-      <div class="fundamental-filters" aria-label="فیلتر اخبار">
-        <button type="button" class="fundamental-filter active" data-news-category="all" onclick="selectFundamentalCategory('all')">همه</button>
-        <button type="button" class="fundamental-filter" data-news-category="bitcoin" onclick="selectFundamentalCategory('bitcoin')">بیت‌کوین</button>
-        <button type="button" class="fundamental-filter" data-news-category="ethereum" onclick="selectFundamentalCategory('ethereum')">اتریوم</button>
-        <button type="button" class="fundamental-filter" data-news-category="altcoin" onclick="selectFundamentalCategory('altcoin')">آلت‌کوین‌ها</button>
-        <button type="button" class="fundamental-filter" data-news-category="regulation" onclick="selectFundamentalCategory('regulation')">قوانین و ETF</button>
-        <button type="button" class="fundamental-filter" data-news-category="security" onclick="selectFundamentalCategory('security')">امنیت و هک</button>
-      </div>
+  <div id="fundamentalNewsPanel" class="news-hub-panel">
+    <div class="fundamental-toolbar">
+      <div id="fundamentalStatus" class="fundamental-status">تازه‌ترین اخبار فارسی بازار رمزارزها</div>
+      <button id="fundamentalRefreshButton" type="button" class="secondary-button fundamental-refresh-button" onclick="refreshFundamentalNews(true)">تازه‌سازی</button>
+    </div>
+    <div class="fundamental-filters" aria-label="فیلتر اخبار">
+      <button type="button" class="fundamental-filter active" data-news-category="all" onclick="selectFundamentalCategory('all')">همه</button>
+      <button type="button" class="fundamental-filter" data-news-category="bitcoin" onclick="selectFundamentalCategory('bitcoin')">بیت‌کوین</button>
+      <button type="button" class="fundamental-filter" data-news-category="ethereum" onclick="selectFundamentalCategory('ethereum')">اتریوم</button>
+      <button type="button" class="fundamental-filter" data-news-category="altcoin" onclick="selectFundamentalCategory('altcoin')">آلت‌کوین‌ها</button>
+      <button type="button" class="fundamental-filter" data-news-category="regulation" onclick="selectFundamentalCategory('regulation')">قوانین و ETF</button>
+      <button type="button" class="fundamental-filter" data-news-category="security" onclick="selectFundamentalCategory('security')">امنیت و هک</button>
+    </div>
+    <div id="fundamentalLoading" class="fundamental-loading">در حال دریافت اخبار فاندامنتال...</div>
+    <div id="fundamentalError" class="fundamental-error" hidden></div>
+    <div id="fundamentalEmpty" class="fundamental-empty" hidden>خبری در این دسته پیدا نشد.</div>
+    <div id="fundamentalList" class="fundamental-list" hidden></div>
+    <p class="note" style="text-align:center;margin-top:13px;line-height:2;">تیتر و خلاصه‌ها از منابع فارسی دریافت می‌شوند. برای مطالعه کامل، خبر را در منبع اصلی باز کن.</p>
+  </div>
 
-      <div id="fundamentalLoading" class="fundamental-loading">
-        در حال دریافت اخبار فاندامنتال...
+  <div id="forexCalendarPanel" class="news-hub-panel" hidden>
+    <div class="forex-calendar-toolbar">
+      <div id="forexCalendarStatus" class="forex-calendar-status">تقویم اقتصادی هفتگی با ساعت رسمی تهران</div>
+      <button id="forexCalendarRefreshButton" type="button" class="secondary-button forex-calendar-refresh" onclick="refreshForexCalendar(true)">تازه‌سازی</button>
+    </div>
+    <div class="forex-calendar-filter-block">
+      <div class="forex-calendar-filters" aria-label="فیلتر بازه زمانی">
+        <button type="button" class="forex-calendar-filter active" data-forex-range="today" onclick="selectForexCalendarRange('today')">امروز</button>
+        <button type="button" class="forex-calendar-filter" data-forex-range="upcoming" onclick="selectForexCalendarRange('upcoming')">رویدادهای پیش‌رو</button>
+        <button type="button" class="forex-calendar-filter" data-forex-range="week" onclick="selectForexCalendarRange('week')">کل هفته</button>
       </div>
-      <div id="fundamentalError" class="fundamental-error" hidden></div>
-      <div id="fundamentalEmpty" class="fundamental-empty" hidden>
-        خبری در این دسته پیدا نشد.
+      <div class="forex-calendar-filters" aria-label="فیلتر اهمیت">
+        <button type="button" class="forex-calendar-filter active" data-forex-impact="all" onclick="selectForexCalendarImpact('all')">همه اهمیت‌ها</button>
+        <button type="button" class="forex-calendar-filter" data-forex-impact="High" onclick="selectForexCalendarImpact('High')">زیاد</button>
+        <button type="button" class="forex-calendar-filter" data-forex-impact="Medium" onclick="selectForexCalendarImpact('Medium')">متوسط</button>
+        <button type="button" class="forex-calendar-filter" data-forex-impact="Low" onclick="selectForexCalendarImpact('Low')">کم</button>
       </div>
-      <div id="fundamentalList" class="fundamental-list" hidden></div>
-
-      <p class="note" style="text-align:center;margin-top:13px;line-height:2;">
-        تیتر و خلاصه‌ها از منابع فارسی دریافت می‌شوند. برای مطالعه کامل، خبر را در منبع اصلی باز کن.
-      </p>
-    </section>
+      <div id="forexCurrencyFilters" class="forex-calendar-filters" aria-label="فیلتر ارز"></div>
+    </div>
+    <div class="forex-calendar-summary">
+      <div class="forex-calendar-summary-card"><span>رویداد قابل نمایش</span><strong id="forexCalendarVisibleCount">۰</strong></div>
+      <div class="forex-calendar-summary-card"><span>اهمیت زیاد</span><strong id="forexCalendarHighCount">۰</strong></div>
+      <div class="forex-calendar-summary-card"><span>رویداد بعدی</span><strong id="forexCalendarNextTime">—</strong></div>
+    </div>
+    <div id="forexCalendarLoading" class="forex-calendar-loading">در حال دریافت تقویم Forex Factory...</div>
+    <div id="forexCalendarError" class="forex-calendar-error" hidden></div>
+    <div id="forexCalendarEmpty" class="forex-calendar-empty" hidden>رویدادی مطابق این فیلترها پیدا نشد.</div>
+    <div id="forexCalendarList" class="forex-calendar-list" hidden></div>
+    <div class="forex-calendar-source-note">داده‌ها از خروجی رسمی هفتگی Forex Factory دریافت می‌شوند. همه زمان‌ها مستقل از ساعت دستگاه، براساس ساعت رسمی تهران نمایش داده می‌شوند و ممکن است طبق اعلام منبع تغییر کنند.<button type="button" class="forex-calendar-source-button" onclick="openForexFactoryCalendar()">بازکردن تقویم اصلی Forex Factory</button></div>
+  </div>
+</section>
 
     <section id="journalView" class="view card" hidden>
       <h2 class="card-title">ژورنال معاملات</h2>
@@ -4582,8 +4639,8 @@ button,
       <span>اعلان قیمت، تغییر ۲۴ساعته و نرخ تتر حتی هنگام بسته‌بودن برنامه</span>
     </button>
     <button type="button" class="more-action" onclick="showFundamental()">
-      <strong>اخبار فاندامنتال</strong>
-      <span>خبرهای فارسی و تازه بازار رمزارزها</span>
+      <strong>اخبار و تقویم اقتصادی</strong>
+      <span>اخبار فارسی رمزارزها و تقویم مستقیم Forex Factory</span>
     </button>
     <button type="button" class="more-action" onclick="showStatement()">
       <strong>استیتمنت معاملاتی</strong>
@@ -4731,6 +4788,12 @@ button,
 
     const FUNDAMENTAL_API_URL =
       "https://bufobmvflinalnskdlcq.supabase.co/functions/v1/crypto-fundamental-feed";
+    const FOREX_FACTORY_CALENDAR_API_URL =
+      "https://bufobmvflinalnskdlcq.supabase.co/functions/v1/forex-factory-calendar";
+    const FOREX_CALENDAR_CACHE_KEY = "cryptoMasterForexFactoryCalendarV1";
+    const FOREX_CALENDAR_REQUEST_TIMEOUT = 16000;
+    const FOREX_CALENDAR_AUTO_REFRESH_INTERVAL = 5 * 60 * 1000;
+    const FOREX_CALENDAR_TIME_ZONE = "Asia/Tehran";
     const ALERTS_API_URL =
       "https://bufobmvflinalnskdlcq.supabase.co/functions/v1/crypto-alerts-api";
     const ALERTS_AUTO_REFRESH_INTERVAL = 30 * 1000;
@@ -4752,6 +4815,14 @@ button,
     let fundamentalRequestInFlight = false;
     let fundamentalCategory = "all";
     let fundamentalNewsItems = [];
+    let newsHubSection = "persian";
+    let forexCalendarItems = [];
+    let forexCalendarRange = "today";
+    let forexCalendarImpact = "all";
+    let forexCalendarCurrency = "all";
+    let forexCalendarRequestInFlight = false;
+    let forexCalendarRefreshTimer = null;
+    let forexCalendarCountdownTimer = null;
     let tradingAlerts = [];
     let alertsRefreshTimer = null;
     let alertsRequestInFlight = false;
@@ -11220,6 +11291,7 @@ function setActiveView(viewId) {
 
   if (viewId !== "fundamentalView") {
     stopFundamentalAutoRefresh();
+    stopForexCalendarAutoRefresh();
   }
 
   window.scrollTo({
@@ -11274,9 +11346,7 @@ function showCalculator() {
 
     async function showFundamental() {
       setActiveView("fundamentalView");
-      renderCachedFundamentalNews();
-      await refreshFundamentalNews(false);
-      startFundamentalAutoRefresh();
+      await selectNewsHubSection(newsHubSection || "persian", false);
     }
 
     async function showJournal() {
@@ -11656,6 +11726,31 @@ function showCalculator() {
         marketPulseRefreshTimer = null;
       }
     }
+
+
+function getForexCalendarCache(){try{const raw=localStorage.getItem(FOREX_CALENDAR_CACHE_KEY);if(!raw)return null;const cache=JSON.parse(raw);return cache&&Array.isArray(cache.items)?cache:null}catch(error){return null}}
+function saveForexCalendarCache(items,fetchedAt,meta){try{localStorage.setItem(FOREX_CALENDAR_CACHE_KEY,JSON.stringify({items:items,fetchedAt:fetchedAt,meta:meta||null}))}catch(error){console.log("ذخیره تقویم ناموفق بود",error)}}
+function setForexCalendarStatus(message){const el=document.getElementById("forexCalendarStatus");if(el)el.textContent=message}
+function getTehranDateKey(value){const d=new Date(value);if(!Number.isFinite(d.getTime()))return"";const parts=new Intl.DateTimeFormat("en-CA",{timeZone:FOREX_CALENDAR_TIME_ZONE,year:"numeric",month:"2-digit",day:"2-digit"}).formatToParts(d);const values={};parts.forEach(part=>{if(part.type==="year"||part.type==="month"||part.type==="day")values[part.type]=part.value});return values.year&&values.month&&values.day?[values.year,values.month,values.day].join("-"):""}
+function getForexImpactLabel(v){return{High:"اهمیت زیاد",Medium:"اهمیت متوسط",Low:"اهمیت کم",Holiday:"تعطیلی",NonEconomic:"غیراقتصادی"}[v]||v||"نامشخص"}
+function formatForexEventDate(v){const d=new Date(v);return Number.isFinite(d.getTime())?new Intl.DateTimeFormat("fa-IR",{timeZone:FOREX_CALENDAR_TIME_ZONE,weekday:"long",month:"long",day:"numeric"}).format(d):"تاریخ نامشخص"}
+function formatForexEventTime(v){const d=new Date(v);return Number.isFinite(d.getTime())?new Intl.DateTimeFormat("fa-IR",{timeZone:FOREX_CALENDAR_TIME_ZONE,hour:"2-digit",minute:"2-digit",hour12:false}).format(d):"—"}
+function formatForexCountdown(v){const d=new Date(v);if(!Number.isFinite(d.getTime()))return"زمان نامشخص";const diff=d.getTime()-Date.now(),a=Math.abs(diff);if(diff>0){if(a<60000)return"کمتر از یک دقیقه دیگر";if(a<3600000)return Math.ceil(a/60000).toLocaleString("fa-IR")+" دقیقه دیگر";if(a<86400000)return Math.ceil(a/3600000).toLocaleString("fa-IR")+" ساعت دیگر";return Math.ceil(a/86400000).toLocaleString("fa-IR")+" روز دیگر"}if(a<3600000)return Math.max(1,Math.round(a/60000)).toLocaleString("fa-IR")+" دقیقه پیش";return"منتشرشده"}
+function openForexFactoryCalendar(){openFundamentalLink("https://www.forexfactory.com/calendar")}
+function populateForexCurrencyFilters(){const box=document.getElementById("forexCurrencyFilters");if(!box)return;const currencies=Array.from(new Set(forexCalendarItems.map(i=>String(i.country||"").toUpperCase()).filter(Boolean))).sort();box.innerHTML="";["all",...currencies].forEach(value=>{const b=document.createElement("button");b.type="button";b.className="forex-calendar-filter";b.dataset.forexCurrency=value;b.textContent=value==="all"?"همه ارزها":value;b.addEventListener("click",()=>selectForexCalendarCurrency(value));box.appendChild(b)})}
+function getFilteredForexCalendarItems(){const now=Date.now(),today=getTehranDateKey(new Date());return forexCalendarItems.filter(item=>{const t=new Date(item.date).getTime();if(!Number.isFinite(t))return false;if(forexCalendarRange==="today")return getTehranDateKey(item.date)===today;if(forexCalendarRange==="upcoming")return t>=now-300000;return true}).filter(item=>forexCalendarImpact==="all"||item.impact===forexCalendarImpact).filter(item=>forexCalendarCurrency==="all"||String(item.country||"").toUpperCase()===forexCalendarCurrency).sort((a,b)=>new Date(a.date)-new Date(b.date))}
+function createForexEventCard(item){const card=document.createElement("article");card.className="forex-event-card";card.dataset.impact=item.impact||"";const top=document.createElement("div");top.className="forex-event-top";const ident=document.createElement("div");ident.className="forex-event-identity";const currency=document.createElement("span");currency.className="forex-event-currency";currency.textContent=item.country||"—";const impact=document.createElement("span");impact.className="forex-event-impact "+String(item.impact||"unknown").toLowerCase();impact.textContent=getForexImpactLabel(item.impact);ident.append(currency,impact);const tw=document.createElement("div");tw.className="forex-event-time-wrap";const time=document.createElement("time");time.className="forex-event-time";time.dateTime=item.date||"";time.textContent=formatForexEventTime(item.date);const cd=document.createElement("span");cd.className="forex-event-countdown";cd.dataset.forexCountdown=item.date||"";cd.textContent=formatForexCountdown(item.date);const tz=document.createElement("span");tz.className="forex-event-countdown";tz.textContent="به وقت تهران";tw.append(time,tz,cd);top.append(ident,tw);const title=document.createElement("h3");title.className="forex-event-title";title.textContent=item.title||"Economic Event";const values=document.createElement("div");values.className="forex-event-data";[["پیش‌بینی",item.forecast||"—"],["مقدار قبلی",item.previous||"—"]].forEach(entry=>{const box=document.createElement("div");box.className="forex-event-value";const l=document.createElement("span");l.textContent=entry[0];const v=document.createElement("strong");v.textContent=entry[1];box.append(l,v);values.appendChild(box)});card.append(top,title,values);return card}
+function updateForexCalendarSummary(items){const visible=document.getElementById("forexCalendarVisibleCount"),high=document.getElementById("forexCalendarHighCount"),next=document.getElementById("forexCalendarNextTime");if(visible)visible.textContent=items.length.toLocaleString("fa-IR");if(high)high.textContent=items.filter(i=>i.impact==="High").length.toLocaleString("fa-IR");const upcoming=items.find(i=>new Date(i.date).getTime()>=Date.now());if(next)next.textContent=upcoming?formatForexEventTime(upcoming.date):"—"}
+function updateForexCalendarCountdowns(){document.querySelectorAll("[data-forex-countdown]").forEach(el=>el.textContent=formatForexCountdown(el.dataset.forexCountdown));updateForexCalendarSummary(getFilteredForexCalendarItems())}
+function renderForexCalendar(){const list=document.getElementById("forexCalendarList"),empty=document.getElementById("forexCalendarEmpty"),items=getFilteredForexCalendarItems();document.querySelectorAll("[data-forex-range]").forEach(b=>b.classList.toggle("active",b.dataset.forexRange===forexCalendarRange));document.querySelectorAll("[data-forex-impact]").forEach(b=>b.classList.toggle("active",b.dataset.forexImpact===forexCalendarImpact));document.querySelectorAll("[data-forex-currency]").forEach(b=>b.classList.toggle("active",b.dataset.forexCurrency===forexCalendarCurrency));list.innerHTML="";updateForexCalendarSummary(items);if(!items.length){list.hidden=true;empty.hidden=false;return}empty.hidden=true;const groups=new Map();items.forEach(item=>{const key=getTehranDateKey(item.date);if(!groups.has(key))groups.set(key,[]);groups.get(key).push(item)});groups.forEach(dayItems=>{const day=document.createElement("section");day.className="forex-calendar-day";const h=document.createElement("div");h.className="forex-calendar-day-title";h.textContent=formatForexEventDate(dayItems[0].date);day.appendChild(h);dayItems.forEach(item=>day.appendChild(createForexEventCard(item)));list.appendChild(day)});list.hidden=false;updateForexCalendarCountdowns()}
+function selectForexCalendarRange(v){forexCalendarRange=v||"today";renderForexCalendar()}
+function selectForexCalendarImpact(v){forexCalendarImpact=v||"all";renderForexCalendar()}
+function selectForexCalendarCurrency(v){forexCalendarCurrency=v||"all";renderForexCalendar()}
+function renderCachedForexCalendar(){const cache=getForexCalendarCache();if(!cache)return false;forexCalendarItems=cache.items||[];populateForexCurrencyFilters();renderForexCalendar();document.getElementById("forexCalendarLoading").hidden=true;setForexCalendarStatus("نسخه ذخیره‌شده؛ "+formatPersianDateTime(cache.fetchedAt));return true}
+async function refreshForexCalendar(forceRefresh){if(forexCalendarRequestInFlight)return;const loading=document.getElementById("forexCalendarLoading"),errorBox=document.getElementById("forexCalendarError"),button=document.getElementById("forexCalendarRefreshButton"),hasCache=forexCalendarItems.length>0||renderCachedForexCalendar();forexCalendarRequestInFlight=true;button.disabled=true;button.textContent="در حال دریافت";errorBox.hidden=true;if(!hasCache)loading.hidden=false;setForexCalendarStatus("در حال دریافت تقویم مستقیم Forex Factory...");const controller=new AbortController(),timeout=setTimeout(()=>controller.abort(),FOREX_CALENDAR_REQUEST_TIMEOUT);try{const url=FOREX_FACTORY_CALENDAR_API_URL+(forceRefresh?"?refresh="+Date.now():"?view=week");const response=await fetch(url,{method:"GET",headers:{Accept:"application/json"},signal:controller.signal,cache:forceRefresh?"no-store":"default"});const payload=await response.json().catch(()=>null);if(!response.ok||!payload||!Array.isArray(payload.items))throw new Error(payload&&payload.error?payload.error:"پاسخ تقویم معتبر نبود.");forexCalendarItems=payload.items;const fetchedAt=payload.fetchedAt||new Date().toISOString();saveForexCalendarCache(payload.items,fetchedAt,payload.meta||null);populateForexCurrencyFilters();renderForexCalendar();loading.hidden=true;errorBox.hidden=true;setForexCalendarStatus("به‌روزرسانی: "+formatPersianDateTime(fetchedAt)+" | "+payload.items.length.toLocaleString("fa-IR")+" رویداد")}catch(error){console.error(error);loading.hidden=true;errorBox.hidden=false;errorBox.textContent=error&&error.name==="AbortError"?"دریافت تقویم بیش از حد طول کشید. اینترنت یا VPN را بررسی کن.":"دریافت تقویم ناموفق بود: "+(error.message||"خطای نامشخص");setForexCalendarStatus(forexCalendarItems.length?"نمایش نسخه ذخیره‌شده تقویم":"سرویس تقویم در دسترس نیست")}finally{clearTimeout(timeout);forexCalendarRequestInFlight=false;button.disabled=false;button.textContent="تازه‌سازی"}}
+function startForexCalendarAutoRefresh(){stopForexCalendarAutoRefresh();forexCalendarRefreshTimer=setInterval(()=>refreshForexCalendar(false),FOREX_CALENDAR_AUTO_REFRESH_INTERVAL);forexCalendarCountdownTimer=setInterval(updateForexCalendarCountdowns,60000)}
+function stopForexCalendarAutoRefresh(){if(forexCalendarRefreshTimer){clearInterval(forexCalendarRefreshTimer);forexCalendarRefreshTimer=null}if(forexCalendarCountdownTimer){clearInterval(forexCalendarCountdownTimer);forexCalendarCountdownTimer=null}}
+async function selectNewsHubSection(section,announce){newsHubSection=section==="forex"?"forex":"persian";const news=document.getElementById("fundamentalNewsPanel"),forex=document.getElementById("forexCalendarPanel"),newsTab=document.getElementById("newsHubPersianTab"),forexTab=document.getElementById("newsHubForexTab"),isForex=newsHubSection==="forex";news.hidden=isForex;forex.hidden=!isForex;newsTab.classList.toggle("active",!isForex);forexTab.classList.toggle("active",isForex);newsTab.setAttribute("aria-selected",isForex?"false":"true");forexTab.setAttribute("aria-selected",isForex?"true":"false");if(isForex){stopFundamentalAutoRefresh();renderCachedForexCalendar();await refreshForexCalendar(false);startForexCalendarAutoRefresh();if(announce)showToast("تقویم اقتصادی Forex Factory")}else{stopForexCalendarAutoRefresh();renderCachedFundamentalNews();await refreshFundamentalNews(false);startFundamentalAutoRefresh();if(announce)showToast("اخبار فارسی رمزارزها")}}
 
     function getFundamentalCache() {
       try {
@@ -13550,6 +13645,8 @@ function initializeTheme() {
       stopMarketAutoRefresh();
       stopPortfolioAutoRefresh();
       stopAlertsAutoRefresh();
+      stopFundamentalAutoRefresh();
+      stopForexCalendarAutoRefresh();
     });
 
     function applyResponsiveWebViewClass() {
