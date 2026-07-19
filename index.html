@@ -2616,6 +2616,17 @@
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 10px;
 }
+.portfolio-field-hint {
+  display: block;
+  margin-top: 6px;
+  color: var(--muted);
+  font-size: 9px;
+  line-height: 1.8;
+}
+
+.portfolio-amount-grid {
+  align-items: start;
+}
 
 .portfolio-form-preview {
   display: grid;
@@ -3790,16 +3801,24 @@ button,
         </select>
       </div>
 
-      <div class="portfolio-form-grid">
-        <div class="field">
-          <label for="portfolioQuantity">مقدار ارز</label>
-          <input id="portfolioQuantity" data-formatted-number="true" type="text" inputmode="decimal" placeholder="مثلاً 0.015" oninput="updatePortfolioFormPreview()" />
-        </div>
-        <div class="field">
-          <label for="portfolioPriceUsd">قیمت هر واحد (USDT)</label>
-          <input id="portfolioPriceUsd" data-formatted-number="true" type="text" inputmode="decimal" placeholder="مثلاً 68000" oninput="updatePortfolioFormPreview()" />
-        </div>
-      </div>
+      
+<div class="portfolio-form-grid portfolio-amount-grid">
+  <div class="field">
+    <label for="portfolioAmountUsd">مبلغ معامله (USDT)</label>
+    <input id="portfolioAmountUsd" data-formatted-number="true" type="text" inputmode="decimal" placeholder="مثلاً 10" oninput="handlePortfolioAmountInput()" />
+    <small class="portfolio-field-hint">مبلغ پرداختی خرید یا مبلغ ناخالص فروش</small>
+  </div>
+  <div class="field">
+    <label for="portfolioQuantity">مقدار ارز</label>
+    <input id="portfolioQuantity" data-formatted-number="true" type="text" inputmode="decimal" placeholder="خودکار محاسبه می‌شود" oninput="handlePortfolioQuantityInput()" />
+    <small class="portfolio-field-hint">با واردکردن مبلغ، مقدار ارز خودکار محاسبه می‌شود</small>
+  </div>
+</div>
+<div class="field">
+  <label for="portfolioPriceUsd">قیمت هر واحد (USDT)</label>
+  <input id="portfolioPriceUsd" data-formatted-number="true" type="text" inputmode="decimal" placeholder="مثلاً 68000" oninput="handlePortfolioPriceInput()" />
+  <small class="portfolio-field-hint">قیمت CoinMarketCap خودکار درج می‌شود و قابل ویرایش است</small>
+</div>
 
       <div class="portfolio-form-grid">
         <div class="field">
@@ -4183,6 +4202,8 @@ button,
     let portfolioMarketMap = new Map();
     let portfolioRefreshTimer = null;
     let portfolioRenderQueued = false;
+    let portfolioAmountSource = "amount";
+    let portfolioLinkUpdateInProgress = false;
 
     const PORTFOLIO_SNAPSHOT_MIN_INTERVAL = 30 * 60 * 1000;
     const PORTFOLIO_AUTO_REFRESH_INTERVAL = 2 * 60 * 1000;
@@ -6952,10 +6973,8 @@ function selectPortfolioAsset() {
         listing.priceUsd
       );
 
-    input.dispatchEvent(
-      new Event("input", {
-        bubbles: true
-      })
+    updatePortfolioLinkedFields(
+      "price"
     );
   }
 
@@ -7067,6 +7086,105 @@ function setPortfolioFormRate() {
   }
 }
 
+
+function roundPortfolioQuantity(value) {
+  const number = Number(value);
+  if (!Number.isFinite(number)) return null;
+  return Number(number.toFixed(12));
+}
+
+function roundPortfolioAmount(value) {
+  const number = Number(value);
+  if (!Number.isFinite(number)) return null;
+  return Number(number.toFixed(8));
+}
+
+function setPortfolioLinkedInputValue(inputId, value, maximumFractionDigits) {
+  const input = document.getElementById(inputId);
+  if (!input) return;
+
+  if (!Number.isFinite(Number(value))) {
+    input.value = "";
+    return;
+  }
+
+  input.value = Number(value).toLocaleString("en-US", {
+    useGrouping: true,
+    maximumFractionDigits: maximumFractionDigits
+  });
+}
+
+function updatePortfolioLinkedFields(source) {
+  if (portfolioLinkUpdateInProgress) return;
+
+  portfolioLinkUpdateInProgress = true;
+
+  try {
+    const price = getNumber("portfolioPriceUsd");
+    const amount = getNumber("portfolioAmountUsd");
+    const quantity = getNumber("portfolioQuantity");
+
+    if (!Number.isFinite(price) || price <= 0) return;
+
+    if (source === "amount") {
+      portfolioAmountSource = "amount";
+
+      if (Number.isFinite(amount) && amount >= 0) {
+        setPortfolioLinkedInputValue(
+          "portfolioQuantity",
+          roundPortfolioQuantity(amount / price),
+          12
+        );
+      }
+    } else if (source === "quantity") {
+      portfolioAmountSource = "quantity";
+
+      if (Number.isFinite(quantity) && quantity >= 0) {
+        setPortfolioLinkedInputValue(
+          "portfolioAmountUsd",
+          roundPortfolioAmount(quantity * price),
+          8
+        );
+      }
+    } else if (source === "price") {
+      if (
+        portfolioAmountSource === "quantity" &&
+        Number.isFinite(quantity) &&
+        quantity >= 0
+      ) {
+        setPortfolioLinkedInputValue(
+          "portfolioAmountUsd",
+          roundPortfolioAmount(quantity * price),
+          8
+        );
+      } else if (Number.isFinite(amount) && amount >= 0) {
+        setPortfolioLinkedInputValue(
+          "portfolioQuantity",
+          roundPortfolioQuantity(amount / price),
+          12
+        );
+      }
+    }
+  } finally {
+    portfolioLinkUpdateInProgress = false;
+  }
+}
+
+function handlePortfolioAmountInput() {
+  updatePortfolioLinkedFields("amount");
+  updatePortfolioFormPreview();
+}
+
+function handlePortfolioQuantityInput() {
+  updatePortfolioLinkedFields("quantity");
+  updatePortfolioFormPreview();
+}
+
+function handlePortfolioPriceInput() {
+  updatePortfolioLinkedFields("price");
+  updatePortfolioFormPreview();
+}
+
 function updatePortfolioFormPreview() {
   const type =
     document.getElementById(
@@ -7075,20 +7193,28 @@ function updatePortfolioFormPreview() {
 
   setPortfolioFormRate();
 
-  const quantity =
-    getNumber("portfolioQuantity");
-  const price =
-    getNumber("portfolioPriceUsd");
-  const fee =
-    getNumber("portfolioFeeUsd") || 0;
-  const rate =
-    getNumber("portfolioUsdtRate");
+  
+const quantity =
+  getNumber("portfolioQuantity");
+const price =
+  getNumber("portfolioPriceUsd");
+const amount =
+  getNumber("portfolioAmountUsd");
+const fee =
+  getNumber("portfolioFeeUsd") || 0;
+const rate =
+  getNumber("portfolioUsdtRate");
 
-  const gross =
-    Number.isFinite(quantity) &&
-    Number.isFinite(price)
-      ? quantity * price
-      : null;
+const calculatedGross =
+  Number.isFinite(quantity) &&
+  Number.isFinite(price)
+    ? quantity * price
+    : null;
+
+const gross =
+  Number.isFinite(amount)
+    ? amount
+    : calculatedGross;
 
   let net = null;
 
@@ -7212,8 +7338,17 @@ function calculatePortfolioLedger(
             ledger.quantity
           : 0;
 
+      const storedAmount =
+        Number(transaction.amountUsd);
+
+      const grossProceedsUsdt =
+        Number.isFinite(storedAmount) &&
+        storedAmount > 0
+          ? storedAmount
+          : sellQuantity * price;
+
       const proceedsUsdt =
-        sellQuantity * price - fee;
+        grossProceedsUsdt - fee;
 
       const proceedsIrt =
         Number.isFinite(rate) &&
@@ -7249,8 +7384,17 @@ function calculatePortfolioLedger(
 
       ledger.sells += 1;
     } else {
+      const storedAmount =
+        Number(transaction.amountUsd);
+
+      const grossUsdt =
+        Number.isFinite(storedAmount) &&
+        storedAmount > 0
+          ? storedAmount
+          : quantity * price;
+
       const totalUsdt =
-        quantity * price + fee;
+        grossUsdt + fee;
 
       ledger.quantity += quantity;
       ledger.costUsdt += totalUsdt;
@@ -8092,22 +8236,22 @@ function renderPortfolioTransactions() {
       const details =
         document.createElement("span");
 
-      details.textContent =
-        formatNumber(
-          transaction.quantity,
-          8
-        ) +
-        " " +
-        transaction.symbol +
-        " × " +
-        portfolioMoney(
-          transaction.priceUsd,
-          "USD"
-        ) +
-        " | " +
-        new Date(
-          transaction.timestamp
-        ).toLocaleString("fa-IR");
+      
+const transactionAmount =
+  Number.isFinite(Number(transaction.amountUsd))
+    ? Number(transaction.amountUsd)
+    : Number(transaction.quantity) * Number(transaction.priceUsd);
+
+details.textContent =
+  portfolioMoney(transactionAmount, "USD") +
+  " → " +
+  formatNumber(transaction.quantity, 8) +
+  " " +
+  transaction.symbol +
+  " | قیمت " +
+  portfolioMoney(transaction.priceUsd, "USD") +
+  " | " +
+  new Date(transaction.timestamp).toLocaleString("fa-IR");
 
       main.appendChild(title);
       main.appendChild(details);
@@ -8174,16 +8318,19 @@ function fillPortfolioFormForAsset(
       );
   }
 
-  if (type === "sell") {
-    document.getElementById(
-      "portfolioQuantity"
-    ).value =
-      formatNumericInputValue(
-        asset.quantity
-      );
-  }
+  
+if (type === "sell") {
+  portfolioAmountSource = "quantity";
+  document.getElementById("portfolioQuantity").value =
+    formatNumericInputValue(asset.quantity);
+  updatePortfolioLinkedFields("quantity");
+} else {
+  portfolioAmountSource = "amount";
+  document.getElementById("portfolioAmountUsd").value = "";
+  document.getElementById("portfolioQuantity").value = "";
+}
 
-  updatePortfolioStrategyFields();
+updatePortfolioStrategyFields();
   setPortfolioFormRate();
   updatePortfolioFormPreview();
 
@@ -8240,11 +8387,15 @@ async function savePortfolioTransaction() {
       select.value
     );
 
-  const quantity =
-    getNumber("portfolioQuantity");
+  
+let quantity =
+  getNumber("portfolioQuantity");
 
-  const priceUsd =
-    getNumber("portfolioPriceUsd");
+const priceUsd =
+  getNumber("portfolioPriceUsd");
+
+let amountUsd =
+  getNumber("portfolioAmountUsd");
 
   const feeUsd =
     getNumber("portfolioFeeUsd") || 0;
@@ -8270,27 +8421,44 @@ async function savePortfolioTransaction() {
     return;
   }
 
-  if (
-    !Number.isFinite(quantity) ||
-    quantity <= 0
-  ) {
-    showToast(
-      "مقدار ارز باید بزرگ‌تر از صفر باشد.",
-      true
-    );
-    return;
-  }
+  
+if (!Number.isFinite(priceUsd) || priceUsd <= 0) {
+  showToast("قیمت معامله را صحیح وارد کن.", true);
+  return;
+}
 
-  if (
-    !Number.isFinite(priceUsd) ||
-    priceUsd <= 0
-  ) {
-    showToast(
-      "قیمت معامله را صحیح وارد کن.",
-      true
-    );
-    return;
+if (!Number.isFinite(amountUsd) && Number.isFinite(quantity)) {
+  amountUsd = roundPortfolioAmount(quantity * priceUsd);
+}
+
+if (!Number.isFinite(quantity) && Number.isFinite(amountUsd)) {
+  quantity = roundPortfolioQuantity(amountUsd / priceUsd);
+}
+
+if (!Number.isFinite(amountUsd) || amountUsd <= 0) {
+  showToast("مبلغ معامله به تتر باید بزرگ‌تر از صفر باشد.", true);
+  return;
+}
+
+if (!Number.isFinite(quantity) || quantity <= 0) {
+  showToast("مقدار ارز باید بزرگ‌تر از صفر باشد.", true);
+  return;
+}
+
+const expectedAmount = quantity * priceUsd;
+const amountDifference = Math.abs(expectedAmount - amountUsd);
+const allowedDifference = Math.max(
+  0.00000001,
+  Math.abs(amountUsd) * 0.000001
+);
+
+if (amountDifference > allowedDifference) {
+  if (portfolioAmountSource === "quantity") {
+    amountUsd = roundPortfolioAmount(expectedAmount);
+  } else {
+    quantity = roundPortfolioQuantity(amountUsd / priceUsd);
   }
+}
 
   if (
     !Number.isFinite(usdtIrtRate) ||
@@ -8352,6 +8520,7 @@ async function savePortfolioTransaction() {
         ? "sell"
         : "buy",
     quantity: quantity,
+    amountUsd: amountUsd,
     priceUsd: priceUsd,
     feeUsd: feeUsd,
     usdtIrtRate: usdtIrtRate,
@@ -8396,6 +8565,12 @@ async function savePortfolioTransaction() {
     document.getElementById(
       "portfolioQuantity"
     ).value = "";
+
+    document.getElementById(
+      "portfolioAmountUsd"
+    ).value = "";
+
+    portfolioAmountSource = "amount";
 
     document.getElementById(
       "portfolioFeeUsd"
@@ -9342,9 +9517,12 @@ function initializePortfolioForm() {
         .slice(0, 16);
   }
 
-  setPortfolioFormRate();
-  updatePortfolioStrategyFields();
-  updatePortfolioFormPreview();
+  
+portfolioAmountSource = "amount";
+setPortfolioFormRate();
+updatePortfolioStrategyFields();
+updatePortfolioLinkedFields("price");
+updatePortfolioFormPreview();
 }
 
 
