@@ -32,7 +32,6 @@
       --chart-text: #ffffff;
       --footer-height: 34px;
       --nav-height: 72px;
-      --fixed-bars-space: 220px;
     }
 
     html, body { min-height: 100%; }
@@ -3833,32 +3832,220 @@ button,
 @media(max-width:430px){.forex-calendar-toolbar{align-items:stretch}.forex-calendar-summary-card{padding:8px 5px}.forex-event-top{gap:6px}}
 
   
-/* Alerts V3: measured bottom-bar protection */
+/* ======================================================
+   Mobile bottom navigation V6
+   Protect every view from Telegram/Android bottom chrome.
+   ====================================================== */
+:root {
+  --mobile-bottom-ui-height: 138px;
+  --mobile-footer-height: 28px;
+  --mobile-nav-height: 76px;
+}
+
+html,
+body {
+  min-height: 100%;
+  min-height: 100dvh;
+}
+
+body {
+  padding-bottom: 0;
+  overscroll-behavior-y: contain;
+}
+
 .app {
-  padding-bottom: var(--fixed-bars-space) !important;
+  min-height: 100dvh;
+  padding-bottom:
+    calc(
+      var(--mobile-bottom-ui-height) +
+      54px +
+      env(safe-area-inset-bottom)
+    ) !important;
 }
 
-.alerts-view {
-  padding-bottom: 0 !important;
+.view:not([hidden]) {
+  min-width: 0;
+  max-width: 100%;
+  padding-bottom: 30px;
+  scroll-margin-bottom:
+    calc(
+      var(--mobile-bottom-ui-height) +
+      30px
+    );
 }
 
-.alerts-list {
-  padding-bottom: 18px;
+.view:not([hidden]) > :last-child {
+  margin-bottom: 24px;
 }
 
-.alerts-bottom-spacer {
+.bottom-nav {
+  right: 0 !important;
+  left: 0 !important;
+  bottom:
+    calc(
+      var(--mobile-footer-height) +
+      env(safe-area-inset-bottom)
+    ) !important;
+  transform: none !important;
+  width: 100% !important;
+  max-width: 830px !important;
+  height: var(--mobile-nav-height);
+  min-height: var(--mobile-nav-height) !important;
+  margin-inline: auto;
+  grid-template-columns:
+    repeat(6, minmax(0, 1fr));
+  align-items: stretch;
+  gap: 5px;
+  padding:
+    7px
+    max(6px, env(safe-area-inset-right))
+    7px
+    max(6px, env(safe-area-inset-left));
+  box-sizing: border-box;
+  overflow: visible;
+}
+
+.nav-item {
+  min-width: 0;
+  width: 100%;
+  min-height: 60px !important;
+  height: 60px;
+  padding: 5px 1px !important;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  overflow: hidden;
+  white-space: normal !important;
+  line-height: 1.05;
+  border-radius: 11px;
+  box-sizing: border-box;
+}
+
+.nav-icon {
+  display: block;
+  flex: 0 0 auto;
+  font-size: 16px;
+  line-height: 1;
+  font-family:
+    system-ui,
+    -apple-system,
+    "Segoe UI Emoji",
+    sans-serif;
+}
+
+.nav-label {
   display: block;
   width: 100%;
-  height: calc(var(--fixed-bars-space) + 96px);
-  pointer-events: none;
+  min-width: 0;
+  overflow: hidden;
+  color: inherit;
+  font-size: 9px;
+  font-weight: 900;
+  line-height: 1.15;
+  text-align: center;
+  text-overflow: clip;
+  white-space: normal;
+  overflow-wrap: anywhere;
 }
 
-.alert-item-actions {
-  margin: 10px 0 12px;
+.footer {
+  right: 0 !important;
+  left: 0 !important;
+  bottom: env(safe-area-inset-bottom) !important;
+  transform: none !important;
+  width: 100% !important;
+  max-width: 830px !important;
+  height: var(--mobile-footer-height) !important;
+  min-height: var(--mobile-footer-height);
+  margin-inline: auto;
+  padding:
+    0
+    max(6px, env(safe-area-inset-right))
+    0
+    max(6px, env(safe-area-inset-left));
+  box-sizing: border-box;
+  font-size: 11px;
 }
 
-.alert-item-card {
-  scroll-margin-bottom: calc(var(--fixed-bars-space) + 24px);
+.toast {
+  bottom:
+    calc(
+      var(--mobile-bottom-ui-height) +
+      env(safe-area-inset-bottom) +
+      12px
+    ) !important;
+}
+
+@media (max-width: 390px) {
+  :root {
+    --mobile-nav-height: 72px;
+  }
+
+  .bottom-nav {
+    gap: 4px;
+    padding-right:
+      max(4px, env(safe-area-inset-right));
+    padding-left:
+      max(4px, env(safe-area-inset-left));
+  }
+
+  .nav-item {
+    height: 56px;
+    min-height: 56px !important;
+    gap: 3px;
+    border-radius: 9px;
+  }
+
+  .nav-icon {
+    font-size: 15px;
+  }
+
+  .nav-label {
+    font-size: 8px;
+    letter-spacing: -0.15px;
+  }
+}
+
+@media (max-width: 340px) {
+  .nav-label {
+    font-size: 7.5px;
+  }
+
+  .nav-icon {
+    font-size: 14px;
+  }
+}
+
+@media (orientation: landscape) and (max-height: 520px) {
+  :root {
+    --mobile-footer-height: 24px;
+    --mobile-nav-height: 62px;
+  }
+
+  .nav-item {
+    height: 48px;
+    min-height: 48px !important;
+    gap: 2px;
+  }
+
+  .nav-icon {
+    font-size: 13px;
+  }
+
+  .nav-label {
+    font-size: 7.5px;
+  }
+
+  .app {
+    padding-bottom:
+      calc(
+        var(--mobile-bottom-ui-height) +
+        28px +
+        env(safe-area-inset-bottom)
+      ) !important;
+  }
 }
 
   </style>
@@ -4608,166 +4795,9 @@ button,
 
 
 
-<section id="alertsView" class="view alerts-view" hidden>
-  <section class="alerts-hero">
-    <div class="alerts-hero-head">
-      <div>
-        <h2 class="alerts-title">هشدارهای معاملاتی</h2>
-        <p class="alerts-subtitle">
-          قیمت‌ها در سرور بررسی می‌شوند و اعلان حتی هنگام بسته‌بودن مینی‌اپ توسط ربات ارسال می‌شود.
-        </p>
-      </div>
-      <span class="alerts-cloud-badge">ابری و همیشه فعال</span>
-    </div>
-    <div id="alertsCloudStatus" class="alerts-status">
-      در حال بررسی اتصال حساب تلگرام...
-    </div>
-
-    <div class="alerts-diagnostic-actions">
-      <button
-        id="alertsTestNotificationButton"
-        type="button"
-        class="alerts-diagnostic-button test"
-        onclick="testAlertNotification()"
-      >
-        آزمایش اعلان تلگرام
-      </button>
-
-      <button
-        id="alertsCheckNowButton"
-        type="button"
-        class="alerts-diagnostic-button"
-        onclick="checkAlertsNow(true)"
-      >
-        بررسی فوری هشدارها
-      </button>
-    </div>
-  </section>
-
-  <section class="alerts-panel">
-    <div class="alerts-section-head">
-      <div>
-        <h3 class="alerts-section-title">ساخت هشدار جدید</h3>
-        <div class="alerts-section-note">
-          هشدار قیمت بایننس، تغییر ۲۴ساعته یا قیمت تتر به تومان
-        </div>
-      </div>
-    </div>
-
-    <div class="alerts-form">
-      <div class="alerts-form-grid">
-        <div class="field">
-          <label for="alertsMarketSelect">بازار</label>
-          <select id="alertsMarketSelect" onchange="handleAlertMarketChange()">
-            <option value="binance_spot">اسپات بایننس</option>
-            <option value="nobitex_usdt">تتر به تومان — نوبیتکس</option>
-          </select>
-        </div>
-
-        <div id="alertsSymbolWrap" class="field alerts-symbol-wrap">
-          <label for="alertsSymbolInput">نماد معاملاتی</label>
-          <input
-            id="alertsSymbolInput"
-            type="text"
-            list="alertsSymbolOptions"
-            autocomplete="off"
-            placeholder="مثلاً BTCUSDT"
-            oninput="handleAlertSymbolInput()"
-          />
-          <datalist id="alertsSymbolOptions"></datalist>
-        </div>
-      </div>
-
-      <div class="alerts-form-grid">
-        <div class="field">
-          <label for="alertsConditionSelect">شرط هشدار</label>
-          <select id="alertsConditionSelect" onchange="handleAlertConditionChange()">
-            <option value="price_above">قیمت بالاتر از هدف</option>
-            <option value="price_below">قیمت پایین‌تر از هدف</option>
-            <option value="change24h_above">تغییر ۲۴ساعته بیشتر از درصد هدف</option>
-            <option value="change24h_below">تغییر ۲۴ساعته کمتر از درصد هدف</option>
-          </select>
-        </div>
-
-        <div class="field">
-          <label id="alertsTargetLabel" for="alertsTargetInput">قیمت هدف (USDT)</label>
-          <input
-            id="alertsTargetInput"
-            data-formatted-number="true"
-            type="text"
-            inputmode="decimal"
-            placeholder="مثلاً 70000"
-          />
-        </div>
-      </div>
-
-      <div class="alerts-quote">
-        <div class="alerts-quote-main">
-          <span class="alerts-quote-label">مقدار فعلی منبع</span>
-          <strong id="alertsQuoteValue" class="alerts-quote-value">—</strong>
-          <span id="alertsQuoteChange" class="alerts-quote-change">برای دریافت قیمت، نماد را بررسی کن.</span>
-        </div>
-        <button id="alertsQuoteButton" type="button" class="secondary-button" onclick="refreshAlertQuote(true)">
-          بررسی قیمت
-        </button>
-      </div>
-
-      <div class="alerts-switch-row">
-        <div class="alerts-switch-copy">
-          <strong>هشدار تکرارشونده</strong>
-          <span>پس از بازگشت قیمت و عبور دوباره از شرط، اعلان جدید ارسال شود.</span>
-        </div>
-        <label class="alerts-switch">
-          <input id="alertsRecurringInput" type="checkbox" onchange="handleAlertRecurringChange()" />
-          <span class="alerts-switch-track"></span>
-        </label>
-      </div>
-
-      <div id="alertsCooldownWrap" class="field alerts-cooldown-wrap" hidden>
-        <label for="alertsCooldownSelect">حداقل فاصله دو اعلان</label>
-        <select id="alertsCooldownSelect">
-          <option value="15">۱۵ دقیقه</option>
-          <option value="60" selected>۱ ساعت</option>
-          <option value="240">۴ ساعت</option>
-          <option value="1440">۲۴ ساعت</option>
-        </select>
-      </div>
-
-      <div class="field">
-        <label for="alertsNoteInput">یادداشت اختیاری</label>
-        <textarea id="alertsNoteInput" maxlength="300" placeholder="مثلاً محدوده ورود پله دوم یا شکست مقاومت"></textarea>
-      </div>
-
-      <button id="alertsCreateButton" type="button" class="primary-button" onclick="createTradingAlert()">
-        ایجاد هشدار ابری
-      </button>
-    </div>
-  </section>
-
-  <section class="alerts-panel">
-    <div class="alerts-section-head">
-      <div>
-        <h3 class="alerts-section-title">هشدارهای من</h3>
-        <div id="alertsListNote" class="alerts-section-note">—</div>
-      </div>
-      <button type="button" class="secondary-button" onclick="loadTradingAlerts(true)">تازه‌سازی</button>
-    </div>
-    <div id="alertsList" class="alerts-list"></div>
-    <div id="alertsEmpty" class="alerts-empty" hidden>
-      هنوز هشداری ثبت نشده است.
-    </div>
-  </section>
-
-  <div class="alerts-bottom-spacer" aria-hidden="true"></div>
-</section>
-
 <section id="moreView" class="view card" hidden>
   <h2 class="card-title">بیشتر</h2>
   <div class="more-grid">
-    <button type="button" class="more-action" onclick="showAlerts()">
-      <strong>هشدارهای معاملاتی</strong>
-      <span>اعلان قیمت، تغییر ۲۴ساعته و نرخ تتر حتی هنگام بسته‌بودن برنامه</span>
-    </button>
     <button type="button" class="more-action" onclick="showFundamental()">
       <strong>اخبار و تقویم اقتصادی</strong>
       <span>اخبار فارسی رمزارزها و تقویم مستقیم Forex Factory</span>
@@ -4851,12 +4881,30 @@ button,
 
 
 <nav class="bottom-nav" aria-label="ناوبری اصلی">
-  <button id="calculatorNavButton" class="nav-item active" type="button" onclick="showCalculator()">ماشین‌حساب</button>
-  <button id="marketNavButton" class="nav-item" type="button" onclick="showMarket()">بازار</button>
-  <button id="marketPulseNavButton" class="nav-item" type="button" onclick="showMarketPulse()">نبض</button>
-  <button id="portfolioNavButton" class="nav-item" type="button" onclick="showPortfolio()">پرتفوی</button>
-  <button id="journalNavButton" class="nav-item" type="button" onclick="showJournal()">ژورنال</button>
-  <button id="moreNavButton" class="nav-item" type="button" onclick="showMore()">بیشتر</button>
+  <button id="calculatorNavButton" class="nav-item active" type="button" onclick="showCalculator()" aria-label="ماشین‌حساب">
+    <span class="nav-icon" aria-hidden="true">🧮</span>
+    <span class="nav-label">ماشین‌حساب</span>
+  </button>
+  <button id="marketNavButton" class="nav-item" type="button" onclick="showMarket()" aria-label="بازار">
+    <span class="nav-icon" aria-hidden="true">📈</span>
+    <span class="nav-label">بازار</span>
+  </button>
+  <button id="marketPulseNavButton" class="nav-item" type="button" onclick="showMarketPulse()" aria-label="نبض بازار">
+    <span class="nav-icon" aria-hidden="true">📊</span>
+    <span class="nav-label">نبض</span>
+  </button>
+  <button id="portfolioNavButton" class="nav-item" type="button" onclick="showPortfolio()" aria-label="پرتفوی">
+    <span class="nav-icon" aria-hidden="true">💼</span>
+    <span class="nav-label">پرتفوی</span>
+  </button>
+  <button id="journalNavButton" class="nav-item" type="button" onclick="showJournal()" aria-label="ژورنال">
+    <span class="nav-icon" aria-hidden="true">📓</span>
+    <span class="nav-label">ژورنال</span>
+  </button>
+  <button id="moreNavButton" class="nav-item" type="button" onclick="showMore()" aria-label="بیشتر">
+    <span class="nav-icon" aria-hidden="true">•••</span>
+    <span class="nav-label">بیشتر</span>
+  </button>
 </nav>
 
   <footer class="footer">@CryptoSmartTradeBot</footer>
@@ -11083,10 +11131,7 @@ function createAlertCard(alert) {
 
   actions.appendChild(toggle);
   actions.appendChild(remove);
-  card.insertBefore(
-    actions,
-    grid
-  );
+  card.appendChild(actions);
 
   return card;
 }
@@ -11425,26 +11470,7 @@ async function createTradingAlert() {
       await loadTradingAlerts(false);
     }
 
-    if (
-      response.checker &&
-      response.checker.ok !== false
-    ) {
-      const triggered =
-        Number(
-          response.checker.triggered ||
-          0
-        );
-
-      if (triggered > 0) {
-        showToast(
-          "شرط همین حالا برقرار بود و اعلان ارسال شد."
-        );
-      }
-
-      await loadTradingAlerts(false);
-    } else {
-      await checkAlertsNow(false);
-    }
+    await checkAlertsNow(false);
   } catch (error) {
     showToast(
       error.message ||
@@ -11535,24 +11561,6 @@ async function deleteTradingAlert(id) {
 
 function startAlertsAutoRefresh() {
   stopAlertsAutoRefresh();
-
-  alertsRefreshTimer =
-    setInterval(function () {
-      const view =
-        document.getElementById(
-          "alertsView"
-        );
-
-      if (
-        view &&
-        !view.hidden &&
-        document.visibilityState ===
-          "visible"
-      ) {
-        loadTradingAlerts(false);
-        refreshAlertQuote(false);
-      }
-    }, ALERTS_AUTO_REFRESH_INTERVAL);
 }
 
 function stopAlertsAutoRefresh() {
@@ -11564,92 +11572,13 @@ function stopAlertsAutoRefresh() {
   }
 }
 
-function syncFixedBarsSpace() {
-  const nav =
-    document.querySelector(
-      ".bottom-nav"
-    );
-
-  const footer =
-    document.querySelector(
-      ".footer"
-    );
-
-  const navHeight =
-    nav
-      ? Math.ceil(
-          nav.getBoundingClientRect()
-            .height
-        )
-      : 90;
-
-  const footerHeight =
-    footer
-      ? Math.ceil(
-          footer.getBoundingClientRect()
-            .height
-        )
-      : 34;
-
-  const total =
-    navHeight +
-    footerHeight +
-    84;
-
-  document.documentElement
-    .style.setProperty(
-      "--fixed-bars-space",
-      total + "px"
-    );
-}
-
-function initializeFixedBarsSpace() {
-  syncFixedBarsSpace();
-
-  window.addEventListener(
-    "resize",
-    syncFixedBarsSpace
-  );
-
-  window.addEventListener(
-    "orientationchange",
-    function () {
-      setTimeout(
-        syncFixedBarsSpace,
-        120
-      );
-    }
-  );
-
-  if (
-    window.Telegram &&
-    window.Telegram.WebApp &&
-    typeof window.Telegram.WebApp
-      .onEvent === "function"
-  ) {
-    window.Telegram.WebApp.onEvent(
-      "viewportChanged",
-      syncFixedBarsSpace
-    );
-  }
-
-  setTimeout(
-    syncFixedBarsSpace,
-    250
-  );
-}
-
 async function showAlerts() {
-  syncFixedBarsSpace();
-  setActiveView("alertsView");
-  populateAlertSymbolOptions();
-  handleAlertMarketChange();
-  handleAlertRecurringChange();
-  await Promise.all([
-    loadTradingAlerts(false),
-    refreshAlertQuote(false)
-  ]);
-  startAlertsAutoRefresh();
+  setActiveView("moreView");
+
+  showToast(
+    "بخش هشدارهای معاملاتی موقتاً غیرفعال شده است.",
+    true
+  );
 }
 
 
@@ -11659,7 +11588,6 @@ function setActiveView(viewId) {
     "marketView",
     "marketPulseView",
     "portfolioView",
-    "alertsView",
     "fundamentalView",
     "journalView",
     "statementView",
@@ -11674,7 +11602,6 @@ function setActiveView(viewId) {
     marketView: "marketNavButton",
     marketPulseView: "marketPulseNavButton",
     portfolioView: "portfolioNavButton",
-    alertsView: "moreNavButton",
     journalView: "journalNavButton",
     fundamentalView: "moreNavButton",
     statementView: "moreNavButton",
@@ -11709,14 +11636,14 @@ function setActiveView(viewId) {
     stopPortfolioAutoRefresh();
   }
 
-  if (viewId !== "alertsView") {
-    stopAlertsAutoRefresh();
-  }
+  stopAlertsAutoRefresh();
 
   if (viewId !== "fundamentalView") {
     stopFundamentalAutoRefresh();
     stopForexCalendarAutoRefresh();
   }
+
+  syncMobileBottomLayout();
 
   window.scrollTo({
     top: 0,
@@ -14005,6 +13932,114 @@ function initializeTheme() {
   }
 }
 
+
+function syncMobileBottomLayout() {
+  const nav =
+    document.querySelector(
+      ".bottom-nav"
+    );
+
+  const footer =
+    document.querySelector(
+      ".footer"
+    );
+
+  const navHeight =
+    nav
+      ? Math.ceil(
+          nav.getBoundingClientRect()
+            .height
+        )
+      : 76;
+
+  const footerHeight =
+    footer
+      ? Math.ceil(
+          footer.getBoundingClientRect()
+            .height
+        )
+      : 28;
+
+  const breathingRoom = 34;
+
+  document.documentElement
+    .style.setProperty(
+      "--mobile-nav-height",
+      navHeight + "px"
+    );
+
+  document.documentElement
+    .style.setProperty(
+      "--mobile-footer-height",
+      footerHeight + "px"
+    );
+
+  document.documentElement
+    .style.setProperty(
+      "--mobile-bottom-ui-height",
+      (
+        navHeight +
+        footerHeight +
+        breathingRoom
+      ) + "px"
+    );
+}
+
+function initializeMobileBottomLayout() {
+  syncMobileBottomLayout();
+
+  window.addEventListener(
+    "resize",
+    syncMobileBottomLayout
+  );
+
+  window.addEventListener(
+    "orientationchange",
+    function () {
+      setTimeout(
+        syncMobileBottomLayout,
+        120
+      );
+    }
+  );
+
+  if (
+    window.visualViewport
+  ) {
+    window.visualViewport
+      .addEventListener(
+        "resize",
+        syncMobileBottomLayout
+      );
+  }
+
+  try {
+    if (
+      window.Telegram &&
+      window.Telegram.WebApp &&
+      typeof window.Telegram.WebApp
+        .onEvent === "function"
+    ) {
+      window.Telegram.WebApp.onEvent(
+        "viewportChanged",
+        syncMobileBottomLayout
+      );
+    }
+  } catch (error) {
+    console.log(error);
+  }
+
+  setTimeout(
+    syncMobileBottomLayout,
+    250
+  );
+
+  setTimeout(
+    syncMobileBottomLayout,
+    900
+  );
+}
+
     function setupTelegram() {
       try {
         if (window.Telegram && window.Telegram.WebApp) {
@@ -14138,8 +14173,8 @@ function initializeTheme() {
     });
 
     initializeTheme();
-    initializeFixedBarsSpace();
     setupTelegram();
+    initializeMobileBottomLayout();
     initializeFormattedNumberInputs(document);
     updateTradeModeUI();
   </script>
