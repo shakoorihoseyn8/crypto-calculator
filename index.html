@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="theme-color" content="#0d2238" />
+  <meta name="color-scheme" content="dark light" />
   <title>Crypto Master Trade</title>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <style>
@@ -20,6 +21,15 @@
       --green: #2ecc71;
       --red: #ef3340;
       --blue: #5aa7ec;
+      --surface-soft: rgba(16, 40, 64, 0.78);
+      --surface-deep: rgba(4, 23, 40, 0.78);
+      --surface-nav: rgba(13, 34, 56, 0.98);
+      --footer-bg: #111f2c;
+      --footer-text: #d7e7f5;
+      --shadow: rgba(0, 0, 0, 0.26);
+      --chart-grid: rgba(120, 157, 185, 0.18);
+      --chart-muted: #87b9eb;
+      --chart-text: #ffffff;
       --footer-height: 34px;
       --nav-height: 72px;
     }
@@ -2782,6 +2792,498 @@
   }
 }
 
+  
+:root[data-theme="dark"] {
+  color-scheme: dark;
+}
+
+:root[data-theme="light"] {
+  color-scheme: light;
+  --background: #eef3f7;
+  --card: #ffffff;
+  --card-border: #c9d7e3;
+  --input: #f4f7fa;
+  --text: #172b3d;
+  --muted: #607b92;
+  --line: #d6e1ea;
+  --green: #159b58;
+  --red: #d63c48;
+  --blue: #287fb9;
+  --surface-soft: rgba(244, 247, 250, 0.96);
+  --surface-deep: rgba(255, 255, 255, 0.97);
+  --surface-nav: rgba(255, 255, 255, 0.98);
+  --footer-bg: #e3ebf2;
+  --footer-text: #385269;
+  --shadow: rgba(42, 68, 91, 0.14);
+  --chart-grid: rgba(83, 113, 139, 0.20);
+  --chart-muted: #607b92;
+  --chart-text: #172b3d;
+}
+
+body,
+.card,
+input,
+textarea,
+select,
+button,
+.bottom-nav,
+.footer,
+.pulse-hero,
+.pulse-panel,
+.portfolio-hero,
+.portfolio-panel,
+.portfolio-chart-box,
+.portfolio-allocation-box,
+.portfolio-asset-card,
+.more-action {
+  transition:
+    background-color 0.22s ease,
+    border-color 0.22s ease,
+    color 0.22s ease,
+    box-shadow 0.22s ease;
+}
+
+.theme-settings-card {
+  margin-top: 14px;
+  padding: 15px;
+  border: 1px solid var(--card-border);
+  border-radius: 15px;
+  background: var(--input);
+}
+
+.theme-settings-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 13px;
+}
+
+.theme-settings-title {
+  margin: 0;
+  color: var(--text);
+  font-size: 15px;
+}
+
+.theme-settings-note {
+  margin: 5px 0 0;
+  color: var(--muted);
+  font-size: 10px;
+  line-height: 1.9;
+}
+
+.theme-current-badge {
+  flex: 0 0 auto;
+  padding: 5px 9px;
+  border: 1px solid var(--card-border);
+  border-radius: 999px;
+  background: var(--card);
+  color: var(--muted);
+  font-size: 9px;
+  font-weight: 800;
+}
+
+.theme-options {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.theme-option {
+  position: relative;
+  display: grid;
+  gap: 7px;
+  min-width: 0;
+  min-height: 92px;
+  padding: 10px;
+  border: 1px solid var(--card-border);
+  border-radius: 12px;
+  background: var(--card);
+  color: var(--text);
+  text-align: right;
+  cursor: pointer;
+}
+
+.theme-option.active {
+  border-color: var(--green);
+  box-shadow: 0 0 0 2px rgba(46, 204, 113, 0.13);
+}
+
+.theme-option-check {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  display: grid;
+  place-items: center;
+  width: 18px;
+  height: 18px;
+  border: 1px solid var(--card-border);
+  border-radius: 50%;
+  color: transparent;
+  font-size: 11px;
+  font-weight: 900;
+}
+
+.theme-option.active .theme-option-check {
+  border-color: var(--green);
+  background: var(--green);
+  color: #ffffff;
+}
+
+.theme-option-preview {
+  display: grid;
+  grid-template-columns: 1fr 0.55fr;
+  gap: 4px;
+  height: 34px;
+  overflow: hidden;
+  border: 1px solid rgba(104, 130, 153, 0.28);
+  border-radius: 8px;
+  padding: 4px;
+}
+
+.theme-preview-auto {
+  background:
+    linear-gradient(
+      90deg,
+      #102840 0 50%,
+      #f4f7fa 50% 100%
+    );
+}
+
+.theme-preview-light {
+  background: #f4f7fa;
+}
+
+.theme-preview-dark {
+  background: #102840;
+}
+
+.theme-preview-main,
+.theme-preview-side {
+  border-radius: 4px;
+}
+
+.theme-preview-auto .theme-preview-main {
+  background:
+    linear-gradient(
+      90deg,
+      #1b3a5c 0 50%,
+      #ffffff 50% 100%
+    );
+}
+
+.theme-preview-auto .theme-preview-side {
+  background:
+    linear-gradient(
+      90deg,
+      #31516f 0 50%,
+      #c9d7e3 50% 100%
+    );
+}
+
+.theme-preview-light .theme-preview-main {
+  background: #ffffff;
+}
+
+.theme-preview-light .theme-preview-side {
+  background: #c9d7e3;
+}
+
+.theme-preview-dark .theme-preview-main {
+  background: #1b3a5c;
+}
+
+.theme-preview-dark .theme-preview-side {
+  background: #31516f;
+}
+
+.theme-option strong {
+  font-size: 12px;
+}
+
+.theme-option span:last-child {
+  overflow: hidden;
+  color: var(--muted);
+  font-size: 9px;
+  line-height: 1.7;
+  text-overflow: ellipsis;
+}
+
+/* Light theme: global surfaces */
+:root[data-theme="light"] body {
+  background:
+    radial-gradient(circle at 50% -10%, rgba(40, 127, 185, 0.08), transparent 32%),
+    var(--background);
+  color: var(--text);
+}
+
+:root[data-theme="light"] .brand-name .crypto {
+  color: #172b3d;
+}
+
+:root[data-theme="light"] .brand-name .smart {
+  color: #0f987c;
+}
+
+:root[data-theme="light"] .logo {
+  border-color: #ffffff;
+  background: #eaf3f8;
+  color: #0f987c;
+  box-shadow:
+    inset 0 0 0 4px #bfd1df,
+    0 5px 16px rgba(48, 78, 103, 0.12);
+}
+
+:root[data-theme="light"] input::placeholder,
+:root[data-theme="light"] textarea::placeholder {
+  color: #8aa0b2;
+}
+
+:root[data-theme="light"] .result-row,
+:root[data-theme="light"] .summary-row {
+  border-bottom-color: rgba(190, 206, 219, 0.85);
+}
+
+:root[data-theme="light"] .result-box,
+:root[data-theme="light"] .journal-image-status,
+:root[data-theme="light"] .preview-box,
+:root[data-theme="light"] details.entry-details,
+:root[data-theme="light"] .trade-result-form {
+  background: rgba(244, 247, 250, 0.92);
+}
+
+:root[data-theme="light"] .journal-image,
+:root[data-theme="light"] .exit-preview-box img {
+  background: #edf2f6;
+}
+
+:root[data-theme="light"] .market-error,
+:root[data-theme="light"] .fundamental-error,
+:root[data-theme="light"] .journal-image-error {
+  color: #a82430;
+}
+
+:root[data-theme="light"] .trade-type-button.active-futures {
+  color: #1d628f;
+}
+
+:root[data-theme="light"] .trade-type-button.active-spot {
+  color: #8b5c05;
+}
+
+/* Light theme: USDT card */
+:root[data-theme="light"] .usdt-rate-card {
+  border-color: rgba(21, 155, 88, 0.27);
+  background:
+    radial-gradient(circle at 15% 0%, rgba(21, 155, 88, 0.10), transparent 38%),
+    linear-gradient(145deg, #ffffff, #edf7f2);
+  box-shadow: 0 14px 32px rgba(42, 72, 61, 0.10);
+}
+
+:root[data-theme="light"] .usdt-rate-card::after {
+  color: rgba(21, 155, 88, 0.07);
+}
+
+:root[data-theme="light"] .usdt-rate-title {
+  color: #18382b;
+}
+
+:root[data-theme="light"] .usdt-rate-subtitle,
+:root[data-theme="light"] .usdt-rate-caption,
+:root[data-theme="light"] .usdt-rate-time {
+  color: #5e796d;
+}
+
+:root[data-theme="light"] .usdt-rate-tile,
+:root[data-theme="light"] .usdt-rate-entry-panel,
+:root[data-theme="light"] .usdt-exit-rate-box {
+  border-color: rgba(93, 145, 119, 0.25);
+  background: rgba(255, 255, 255, 0.72);
+}
+
+:root[data-theme="light"] .usdt-rate-value,
+:root[data-theme="light"] .usdt-rate-entry-value {
+  color: #17382b;
+}
+
+/* Light theme: pulse */
+:root[data-theme="light"] .pulse-hero {
+  border-color: rgba(40, 127, 185, 0.25);
+  background:
+    radial-gradient(circle at 12% 0%, rgba(40, 127, 185, 0.12), transparent 40%),
+    radial-gradient(circle at 88% 100%, rgba(21, 155, 88, 0.10), transparent 42%),
+    linear-gradient(145deg, #ffffff, #edf5fa);
+  box-shadow: 0 18px 38px rgba(44, 72, 96, 0.12);
+}
+
+:root[data-theme="light"] .pulse-summary-card,
+:root[data-theme="light"] .pulse-gauge-card,
+:root[data-theme="light"] .pulse-panel,
+:root[data-theme="light"] .pulse-metric,
+:root[data-theme="light"] .pulse-mover-column,
+:root[data-theme="light"] .pulse-trending-card {
+  border-color: rgba(119, 148, 172, 0.26);
+  background: rgba(255, 255, 255, 0.78);
+}
+
+:root[data-theme="light"] .pulse-summary-state,
+:root[data-theme="light"] .pulse-score-number,
+:root[data-theme="light"] .pulse-gauge-value,
+:root[data-theme="light"] .pulse-dominance-value,
+:root[data-theme="light"] .pulse-metric-value,
+:root[data-theme="light"] .pulse-section-title,
+:root[data-theme="light"] .pulse-mover-symbol,
+:root[data-theme="light"] .pulse-trending-name {
+  color: #172b3d;
+  text-shadow: none;
+}
+
+:root[data-theme="light"] .pulse-score-track,
+:root[data-theme="light"] .pulse-dominance-track {
+  background: rgba(93, 119, 140, 0.15);
+}
+
+:root[data-theme="light"] .pulse-gauge {
+  background:
+    radial-gradient(circle at center, #f7fafc 0 48%, transparent 49%),
+    conic-gradient(
+      from 225deg,
+      #ef4444 0deg 54deg,
+      #f97316 54deg 108deg,
+      #eab308 108deg 162deg,
+      #84cc16 162deg 216deg,
+      #22c55e 216deg 270deg,
+      rgba(81, 108, 130, 0.08) 270deg 360deg
+    );
+  border-color: rgba(83, 113, 139, 0.22);
+  box-shadow:
+    inset 0 0 28px rgba(48, 75, 99, 0.10),
+    0 14px 30px rgba(48, 75, 99, 0.11);
+}
+
+:root[data-theme="light"] .pulse-gauge-hub {
+  background: #ffffff;
+  border-color: #5d7890;
+}
+
+:root[data-theme="light"] .pulse-gauge-needle {
+  background: linear-gradient(to top, #274f6b, #50728b 62%, #274f6b);
+  box-shadow: 0 0 7px rgba(39, 79, 107, 0.35);
+}
+
+/* Light theme: portfolio */
+:root[data-theme="light"] .portfolio-hero {
+  border-color: rgba(40, 127, 185, 0.24);
+  background:
+    radial-gradient(circle at 12% 0%, rgba(40, 127, 185, 0.11), transparent 35%),
+    radial-gradient(circle at 90% 18%, rgba(21, 155, 88, 0.09), transparent 33%),
+    linear-gradient(145deg, #ffffff, #edf5fa);
+  box-shadow: 0 18px 38px rgba(44, 72, 96, 0.12);
+}
+
+:root[data-theme="light"] .portfolio-title,
+:root[data-theme="light"] .portfolio-section-title,
+:root[data-theme="light"] .portfolio-summary-value,
+:root[data-theme="light"] .portfolio-asset-name strong,
+:root[data-theme="light"] .portfolio-form-preview strong,
+:root[data-theme="light"] .portfolio-transaction-main strong {
+  color: #172b3d;
+}
+
+:root[data-theme="light"] .portfolio-tab {
+  border-color: rgba(110, 139, 163, 0.40);
+  background: rgba(247, 250, 252, 0.92);
+  color: #607b92;
+}
+
+:root[data-theme="light"] .portfolio-tab.active {
+  border-color: rgba(21, 155, 88, 0.55);
+  background: rgba(21, 155, 88, 0.10);
+  color: #117544;
+}
+
+:root[data-theme="light"] .portfolio-summary-card,
+:root[data-theme="light"] .portfolio-panel,
+:root[data-theme="light"] .portfolio-chart-box,
+:root[data-theme="light"] .portfolio-allocation-box,
+:root[data-theme="light"] .portfolio-asset-card,
+:root[data-theme="light"] .portfolio-transaction-row {
+  border-color: rgba(119, 148, 172, 0.27);
+  background: rgba(255, 255, 255, 0.91);
+}
+
+:root[data-theme="light"] .portfolio-asset-metric,
+:root[data-theme="light"] .portfolio-mini-button {
+  border-color: rgba(119, 148, 172, 0.25);
+  background: #f1f5f8;
+  color: #3d5b72;
+}
+
+:root[data-theme="light"] .portfolio-allocation-track {
+  background: rgba(93, 119, 140, 0.15);
+}
+
+/* Light theme: more, nav, toast */
+:root[data-theme="light"] .more-action {
+  border-color: rgba(119, 148, 172, 0.30);
+  background: #ffffff;
+  color: #172b3d;
+  box-shadow: 0 8px 20px rgba(43, 72, 96, 0.06);
+}
+
+:root[data-theme="light"] .more-action span {
+  color: #607b92;
+}
+
+:root[data-theme="light"] .bottom-nav {
+  border-top-color: #c9d7e3;
+  background: var(--surface-nav);
+  box-shadow: 0 -6px 20px rgba(55, 79, 99, 0.08);
+}
+
+:root[data-theme="light"] .nav-item {
+  background: rgba(246, 249, 251, 0.92);
+  color: #607b92;
+}
+
+:root[data-theme="light"] .nav-item.active {
+  background: var(--green);
+  border-color: var(--green);
+  color: #ffffff;
+}
+
+:root[data-theme="light"] .footer {
+  background: var(--footer-bg);
+  color: var(--footer-text);
+}
+
+:root[data-theme="light"] .toast {
+  border-color: #b8c8d5;
+  background: #ffffff;
+  color: #172b3d;
+  box-shadow: 0 12px 30px rgba(43, 72, 96, 0.18);
+}
+
+:root[data-theme="light"] .fundamental-card {
+  border-color: rgba(119, 148, 172, 0.27);
+  background: #ffffff;
+}
+
+:root[data-theme="light"] .fundamental-title,
+:root[data-theme="light"] .fundamental-summary {
+  color: #20384c;
+}
+
+@media (max-width: 430px) {
+  .theme-options {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .theme-option {
+    min-height: 76px;
+  }
+}
+
   </style>
 </head>
 <body>
@@ -3520,6 +4022,68 @@
       <span>خروجی تراکنش‌ها و Snapshotهای پرتفوی</span>
     </button>
   </div>
+
+  <section class="theme-settings-card" aria-labelledby="themeSettingsTitle">
+    <div class="theme-settings-header">
+      <div>
+        <h3 id="themeSettingsTitle" class="theme-settings-title">ظاهر برنامه</h3>
+        <p class="theme-settings-note">
+          انتخاب شما روی همین دستگاه ذخیره می‌شود. حالت خودکار با تم تلگرام یا دستگاه هماهنگ است.
+        </p>
+      </div>
+      <span id="themeCurrentBadge" class="theme-current-badge">تاریک</span>
+    </div>
+
+    <div class="theme-options" role="group" aria-label="انتخاب تم برنامه">
+      <button
+        type="button"
+        class="theme-option"
+        data-theme-choice="auto"
+        aria-pressed="false"
+        onclick="setThemePreference('auto', true)"
+      >
+        <span class="theme-option-check">✓</span>
+        <span class="theme-option-preview theme-preview-auto" aria-hidden="true">
+          <span class="theme-preview-main"></span>
+          <span class="theme-preview-side"></span>
+        </span>
+        <strong>خودکار</strong>
+        <span>هماهنگ با تلگرام</span>
+      </button>
+
+      <button
+        type="button"
+        class="theme-option"
+        data-theme-choice="light"
+        aria-pressed="false"
+        onclick="setThemePreference('light', true)"
+      >
+        <span class="theme-option-check">✓</span>
+        <span class="theme-option-preview theme-preview-light" aria-hidden="true">
+          <span class="theme-preview-main"></span>
+          <span class="theme-preview-side"></span>
+        </span>
+        <strong>روشن</strong>
+        <span>پس‌زمینه سفید و خوانا</span>
+      </button>
+
+      <button
+        type="button"
+        class="theme-option"
+        data-theme-choice="dark"
+        aria-pressed="false"
+        onclick="setThemePreference('dark', true)"
+      >
+        <span class="theme-option-check">✓</span>
+        <span class="theme-option-preview theme-preview-dark" aria-hidden="true">
+          <span class="theme-preview-main"></span>
+          <span class="theme-preview-side"></span>
+        </span>
+        <strong>تاریک</strong>
+        <span>طراحی سرمه‌ای فعلی</span>
+      </button>
+    </div>
+  </section>
 </section>
 
 
@@ -3543,7 +4107,11 @@
     const STORE_NAME = "trades";
     const PORTFOLIO_TRANSACTION_STORE = "portfolioTransactions";
     const PORTFOLIO_SNAPSHOT_STORE = "portfolioSnapshots";
+    const THEME_STORAGE_KEY = "cryptoMasterThemePreferenceV1";
 
+    let themePreference = "auto";
+    let resolvedTheme = "dark";
+    let themeListenerAttached = false;
     let selectedTradeType = "futures";
     let selectedSide = "long";
     let entryScreenshotPrepared = null;
@@ -8127,8 +8695,11 @@ function drawPortfolioLineChart(
     padding.top -
     padding.bottom;
 
+  const themePalette =
+    getThemeCanvasPalette();
+
   context.strokeStyle =
-    "rgba(120, 157, 185, 0.18)";
+    themePalette.grid;
 
   context.lineWidth = 1;
 
@@ -8252,7 +8823,8 @@ function drawPortfolioLineChart(
     }
   );
 
-  context.strokeStyle = "#2ecc71";
+  context.strokeStyle =
+    themePalette.green;
   context.lineWidth = 2.2;
   context.lineJoin = "round";
   context.lineCap = "round";
@@ -8271,10 +8843,14 @@ function drawPortfolioLineChart(
     0,
     Math.PI * 2
   );
-  context.fillStyle = "#ffffff";
+  context.fillStyle =
+    resolvedTheme === "light"
+      ? "#17384f"
+      : "#ffffff";
   context.fill();
 
-  context.fillStyle = "#7895ad";
+  context.fillStyle =
+    themePalette.muted;
   context.font =
     "10px sans-serif";
   context.textAlign = "left";
@@ -8414,7 +8990,7 @@ function renderPortfolioAllocationChart(
     totalValue <= 0
   ) {
     context.fillStyle =
-      "#7895ad";
+      getThemeCanvasPalette().muted;
     context.font =
       "12px sans-serif";
     context.textAlign =
@@ -8512,7 +9088,8 @@ function renderPortfolioAllocationChart(
     }
   );
 
-  context.fillStyle = "#ffffff";
+  context.fillStyle =
+    getThemeCanvasPalette().text;
   context.font =
     "700 14px sans-serif";
   context.textAlign = "center";
@@ -10056,6 +10633,7 @@ function showCalculator() {
 
     function drawStatementChart(canvas, cumulativeValues) {
       const context = canvas.getContext("2d");
+      const themePalette = getThemeCanvasPalette();
       if (!context) return;
       const ratio = window.devicePixelRatio || 1;
       const width = Math.max(canvas.clientWidth, 280);
@@ -10083,12 +10661,12 @@ function showCalculator() {
         const lineValue = max - (index / 4) * range;
         const lineY = padding.top + (index / 4) * chartHeight;
         context.beginPath();
-        context.strokeStyle = "#315878";
+        context.strokeStyle = themePalette.grid;
         context.lineWidth = 1;
         context.moveTo(padding.left, lineY);
         context.lineTo(width - padding.right, lineY);
         context.stroke();
-        context.fillStyle = "#87b9eb";
+        context.fillStyle = themePalette.muted;
         context.fillText(formatNumber(lineValue, 2), padding.left - 7, lineY);
       }
 
@@ -10097,13 +10675,13 @@ function showCalculator() {
         if (index === 0) context.moveTo(x(index), y(value));
         else context.lineTo(x(index), y(value));
       });
-      context.strokeStyle = values[values.length - 1] >= 0 ? "#2ecc71" : "#ef3340";
+      context.strokeStyle = values[values.length - 1] >= 0 ? themePalette.green : themePalette.red;
       context.lineWidth = 2.5;
       context.lineJoin = "round";
       context.lineCap = "round";
       context.stroke();
 
-      context.fillStyle = "#87b9eb";
+      context.fillStyle = themePalette.muted;
       context.textAlign = "center";
       context.textBaseline = "top";
       context.fillText("0", padding.left, height - 21);
@@ -10696,6 +11274,403 @@ function showCalculator() {
       }
     }
 
+
+function getCssThemeColor(variableName, fallback) {
+  const value =
+    getComputedStyle(
+      document.documentElement
+    )
+      .getPropertyValue(variableName)
+      .trim();
+
+  return value || fallback;
+}
+
+function getThemeCanvasPalette() {
+  return {
+    grid: getCssThemeColor(
+      "--chart-grid",
+      "rgba(120, 157, 185, 0.18)"
+    ),
+    muted: getCssThemeColor(
+      "--chart-muted",
+      "#87b9eb"
+    ),
+    text: getCssThemeColor(
+      "--chart-text",
+      "#ffffff"
+    ),
+    green: getCssThemeColor(
+      "--green",
+      "#2ecc71"
+    ),
+    red: getCssThemeColor(
+      "--red",
+      "#ef3340"
+    ),
+    background: getCssThemeColor(
+      "--background",
+      "#0d2238"
+    ),
+    card: getCssThemeColor(
+      "--card",
+      "#1b3a5c"
+    )
+  };
+}
+
+function getTelegramThemeScheme() {
+  try {
+    const scheme =
+      window.Telegram &&
+      window.Telegram.WebApp &&
+      String(
+        window.Telegram.WebApp.colorScheme ||
+        ""
+      ).toLowerCase();
+
+    if (
+      scheme === "light" ||
+      scheme === "dark"
+    ) {
+      return scheme;
+    }
+  } catch (error) {
+    console.log(error);
+  }
+
+  return "";
+}
+
+function getSystemThemeScheme() {
+  if (
+    window.matchMedia &&
+    window.matchMedia(
+      "(prefers-color-scheme: light)"
+    ).matches
+  ) {
+    return "light";
+  }
+
+  return "dark";
+}
+
+function resolveThemePreference(preference) {
+  if (
+    preference === "light" ||
+    preference === "dark"
+  ) {
+    return preference;
+  }
+
+  return (
+    getTelegramThemeScheme() ||
+    getSystemThemeScheme()
+  );
+}
+
+function getStoredThemePreference() {
+  try {
+    const stored =
+      localStorage.getItem(
+        THEME_STORAGE_KEY
+      );
+
+    return [
+      "auto",
+      "light",
+      "dark"
+    ].includes(stored)
+      ? stored
+      : "auto";
+  } catch (error) {
+    return "auto";
+  }
+}
+
+function updateThemeControls() {
+  document
+    .querySelectorAll(
+      "[data-theme-choice]"
+    )
+    .forEach(function (button) {
+      const active =
+        button.dataset.themeChoice ===
+        themePreference;
+
+      button.classList.toggle(
+        "active",
+        active
+      );
+
+      button.setAttribute(
+        "aria-pressed",
+        active ? "true" : "false"
+      );
+    });
+
+  const badge =
+    document.getElementById(
+      "themeCurrentBadge"
+    );
+
+  if (badge) {
+    const preferenceLabel = {
+      auto: "خودکار",
+      light: "روشن",
+      dark: "تاریک"
+    }[themePreference];
+
+    const resolvedLabel =
+      resolvedTheme === "light"
+        ? "روشن"
+        : "تاریک";
+
+    badge.textContent =
+      themePreference === "auto"
+        ? preferenceLabel +
+          " — " +
+          resolvedLabel
+        : resolvedLabel;
+  }
+}
+
+function updateTelegramThemeColors() {
+  const background =
+    resolvedTheme === "light"
+      ? "#eef3f7"
+      : "#0d2238";
+
+  const header =
+    resolvedTheme === "light"
+      ? "#ffffff"
+      : "#0d2238";
+
+  const bottomBar =
+    resolvedTheme === "light"
+      ? "#ffffff"
+      : "#0d2238";
+
+  const meta =
+    document.querySelector(
+      'meta[name="theme-color"]'
+    );
+
+  if (meta) {
+    meta.setAttribute(
+      "content",
+      background
+    );
+  }
+
+  try {
+    if (
+      window.Telegram &&
+      window.Telegram.WebApp
+    ) {
+      const app =
+        window.Telegram.WebApp;
+
+      if (
+        typeof app.setHeaderColor ===
+        "function"
+      ) {
+        app.setHeaderColor(header);
+      }
+
+      if (
+        typeof app.setBackgroundColor ===
+        "function"
+      ) {
+        app.setBackgroundColor(
+          background
+        );
+      }
+
+      if (
+        typeof app.setBottomBarColor ===
+        "function"
+      ) {
+        app.setBottomBarColor(
+          bottomBar
+        );
+      }
+    }
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+function redrawThemeSensitiveContent() {
+  requestAnimationFrame(
+    function () {
+      const portfolioView =
+        document.getElementById(
+          "portfolioView"
+        );
+
+      if (
+        portfolioView &&
+        !portfolioView.hidden &&
+        typeof renderPortfolioCharts ===
+          "function"
+      ) {
+        renderPortfolioCharts();
+      }
+
+      const statementView =
+        document.getElementById(
+          "statementView"
+        );
+
+      if (
+        statementView &&
+        !statementView.hidden &&
+        typeof renderStatement ===
+          "function"
+      ) {
+        renderStatement();
+      }
+    }
+  );
+}
+
+function applyThemePreference(
+  preference,
+  persist,
+  announce
+) {
+  themePreference =
+    [
+      "auto",
+      "light",
+      "dark"
+    ].includes(preference)
+      ? preference
+      : "auto";
+
+  resolvedTheme =
+    resolveThemePreference(
+      themePreference
+    );
+
+  document.documentElement.dataset.theme =
+    resolvedTheme;
+
+  document.documentElement.dataset.themePreference =
+    themePreference;
+
+  if (persist) {
+    try {
+      localStorage.setItem(
+        THEME_STORAGE_KEY,
+        themePreference
+      );
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  updateThemeControls();
+  updateTelegramThemeColors();
+  redrawThemeSensitiveContent();
+
+  if (announce) {
+    const label =
+      resolvedTheme === "light"
+        ? "روشن"
+        : "تاریک";
+
+    showToast(
+      themePreference === "auto"
+        ? "حالت خودکار فعال شد؛ تم فعلی " +
+            label +
+            " است."
+        : "تم " +
+            label +
+            " فعال شد."
+    );
+  }
+}
+
+function setThemePreference(
+  preference,
+  announce
+) {
+  applyThemePreference(
+    preference,
+    true,
+    Boolean(announce)
+  );
+}
+
+function handleAutomaticThemeChange() {
+  if (themePreference === "auto") {
+    applyThemePreference(
+      "auto",
+      false,
+      false
+    );
+  }
+}
+
+function initializeTheme() {
+  themePreference =
+    getStoredThemePreference();
+
+  applyThemePreference(
+    themePreference,
+    false,
+    false
+  );
+
+  if (themeListenerAttached) {
+    return;
+  }
+
+  themeListenerAttached = true;
+
+  if (window.matchMedia) {
+    const media =
+      window.matchMedia(
+        "(prefers-color-scheme: light)"
+      );
+
+    if (
+      typeof media.addEventListener ===
+      "function"
+    ) {
+      media.addEventListener(
+        "change",
+        handleAutomaticThemeChange
+      );
+    } else if (
+      typeof media.addListener ===
+      "function"
+    ) {
+      media.addListener(
+        handleAutomaticThemeChange
+      );
+    }
+  }
+
+  try {
+    if (
+      window.Telegram &&
+      window.Telegram.WebApp &&
+      typeof window.Telegram.WebApp.onEvent ===
+        "function"
+    ) {
+      window.Telegram.WebApp.onEvent(
+        "themeChanged",
+        handleAutomaticThemeChange
+      );
+    }
+  } catch (error) {
+    console.log(error);
+  }
+}
+
     function setupTelegram() {
       try {
         if (window.Telegram && window.Telegram.WebApp) {
@@ -10703,9 +11678,10 @@ function showCalculator() {
           app.ready();
           app.expand();
           try {
-            app.setHeaderColor("#0d2238");
-            app.setBackgroundColor("#0d2238");
-          } catch (error) { console.log(error); }
+            updateTelegramThemeColors();
+          } catch (error) {
+            console.log(error);
+          }
         }
       } catch (error) { console.log(error); }
     }
@@ -10824,6 +11800,7 @@ function showCalculator() {
       setTimeout(applyResponsiveWebViewClass, 120);
     });
 
+    initializeTheme();
     setupTelegram();
     initializeFormattedNumberInputs(document);
     updateTradeModeUI();
